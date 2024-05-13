@@ -1,16 +1,8 @@
 #include <iostream>
 #include <getopt.h>
-
+#include "main.h"
 
 using namespace std;
-
-struct option options[]={
-    {"help", no_argument, 0, 'h'},
-    {"info", no_argument, 0, 'i'},
-    {"background",no_argument, 0, 'b'},
-    {"scan", no_argument, 0,'s'}, //인자값 필요로 한다면 no_argument -> required_argument
-    {0,0,0,0}
-};
 
 void CheckOpt(int argc, char** argv){
     int optionIndex= 0;
@@ -24,11 +16,16 @@ void CheckOpt(int argc, char** argv){
                 break;
 
             case 'i':
-                cout << "INFO" << endl;
+                info();
                 break;
 
             case 'b':
                 cout << "BACKGROUND" << endl;
+                break;
+            
+            case 's':
+                cout << "SCAN" << endl;
+                break;
 
             case '?':
                 cout << "Error" << endl;
