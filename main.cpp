@@ -17,7 +17,8 @@ int main(int argc, char* argv[]){
         cout << "Try 'UdkdAgent --help' for more information." << endl;
 
     int option;
-    while((option = getopt(argc, argv, "bfs") != -1)){
+
+    while((option = getopt(argc, argv, "bfs:") != -1)){
     }
 
 
