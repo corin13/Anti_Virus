@@ -12,7 +12,7 @@ void CheckOpt(int argc, char** argv){
     while((opt = getopt_long(argc, argv, option, options, &optionIndex)) != -1 ){
         switch(opt){
             case 'h':
-                cout << "HELP" << endl; //기능 함수 넣기
+                help(); 
                 break;
 
             case 'i':
@@ -20,11 +20,11 @@ void CheckOpt(int argc, char** argv){
                 break;
 
             case 'b':
-                cout << "BACKGROUND" << endl;
+                background();
                 break;
             
             case 's':
-                cout << "SCAN" << endl;
+                scan();
                 break;
 
             case '?':
