@@ -2,7 +2,7 @@
 #include <iostream>
 
 using namespace std;
-
+//pr test
 struct option options[]={
     {"help", no_argument, 0, 'h'},
     {"info", no_argument, 0, 'i'},
