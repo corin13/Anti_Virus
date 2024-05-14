@@ -3,7 +3,7 @@
 #include <thread>
 
 using namespace std;
-//pr test test2
+
 struct option options[]={
     {"help", no_argument, 0, 'h'},
     {"info", no_argument, 0, 'i'},
@@ -12,12 +12,7 @@ struct option options[]={
     {0,0,0,0}
 };
 
-void info(){
-    cout << "이 프로그램은 .. " <<endl;
-}
-
 int logic1(){
-
 
     return 0;
 }
@@ -32,13 +27,16 @@ void background(){
 
         logic1();
         logic2();
+
         this_thread::sleep_for(chrono::seconds(1));
         
     }
 }
 
 
-
+void info(){
+    cout << "이 프로그램은 .. " <<endl;
+}
 
 void scan(){
     cout << "이 프로그램은 .. " <<endl;

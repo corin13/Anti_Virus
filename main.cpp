@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void CheckOpt(int argc, char** argv){
+void CheckOpt(int &argc, char** &argv){
     int optionIndex= 0;
     int opt;
     const char* option="hibs"; //인자값 필요로 한다면 :붙이기 ex) hib:s:
