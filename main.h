@@ -21,7 +21,12 @@ void scan(){
 }
 
 void help(){
-    cout << "이 프로그램은 .. " << endl;
+    cout << "Usage: ./UdkdAgent [OPTIONS]" << endl;
+    cout << " " << endl;
+    cout << "Options: " << endl;
+    cout << "  -i, --info               Print detailed information about the Agent." << endl;
+    cout << "  -d, --detect             Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging." << endl;
+    cout << "  -s, --scan [path]        Scan files in the specified directory. Default is '/' if no path is provided." << endl; 
 }
 
 void info(){
