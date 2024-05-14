@@ -1,5 +1,8 @@
 #include <getopt.h>
 #include <iostream>
+#include <sys/ptrace.h>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -11,10 +14,6 @@ struct option options[]={
     {"scan", no_argument, 0,'s'}, //인자값 필요로 한다면 no_argument -> required_argument
     {0,0,0,0}
 };
-
-void background(){
-    cout << "이 프로그램은 .. " << endl;
-}
 
 void scan(){
     cout << "이 프로그램은 .. " << endl;
@@ -43,4 +42,30 @@ void info(){
     cout << "    - Anti-Debugging: Protects sensitive code from being analyzed or manipulated by unauthorized debuggers." << endl;
     cout << " " << endl;
     cout << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities." << endl;
+}
+
+int logic1(){
+    return 0;
+}
+
+int logic2(){
+    if (ptrace(PTRACE_TRACEME, 0, 1, 0) == -1)
+    {
+        cout << "don't trace me !!" <<endl;
+        return 1;
+    }
+
+    cout << "normal execution" << endl;
+    return 0;
+}
+
+void background(){
+    while (1){
+        cout << "Anti-debugging Logic Running…" << endl;
+
+        logic1();
+        logic2();
+        this_thread::sleep_for(chrono::seconds(1));
+
+    }
 }
