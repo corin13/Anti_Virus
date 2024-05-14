@@ -3,6 +3,7 @@
 
 using namespace std;
 
+//pr test test2
 struct option options[]={
     {"help", no_argument, 0, 'h'},
     {"info", no_argument, 0, 'i'},
