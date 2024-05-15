@@ -54,19 +54,27 @@ void scanDirectory(const string& path, int option) {
     int file_count = 0;
     long long total_size = 0;
     vector<string> detectedMalware; // 악성파일로 판별된 파일의 경로를 저장
-    vector<string> hashes = loadHashes("hashes.txt"); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일
+    vector<string> hashes = loadHashes("hashes.txt"); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
 
     // 파일을 한개씩 순회해서 사용자가 입력한 옵션에 따라 검사
-    while ((node = fts_read(file_system)) != nullptr) {
-        if (node->fts_info == FTS_F) {
-            file_count++;
-            total_size += node->fts_statp->st_size;
-            cout << node->fts_path << endl;
-        }
-        if(option == 1) {
-            checkYaraRule();
-        }else if(option == 2) {
-            compareByHash(node, detectedMalware, hashes);
+    if(option == 1) {
+        while ((node = fts_read(file_system)) != nullptr) {
+            if (node->fts_info == FTS_F) {
+                file_count++;
+                total_size += node->fts_statp->st_size;
+                cout << node->fts_path << "\n";
+                checkYaraRule();
+            }
+        }    
+    }
+    else if(option == 2) {
+        while ((node = fts_read(file_system)) != nullptr) {
+            if (node->fts_info == FTS_F) {
+                file_count++;
+                total_size += node->fts_statp->st_size;
+                cout << node->fts_path << "\n";
+                compareByHash(node, detectedMalware, hashes);
+            }
         }
     }
 
