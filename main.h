@@ -16,10 +16,6 @@ void background(){
     cout << "이 프로그램은 .. " << endl;
 }
 
-void scan(){
-    cout << "이 프로그램은 .. " << endl;
-}
-
 void help(){
     cout << "Usage: ./UdkdAgent [OPTIONS]" << endl;
     cout << " " << endl;
