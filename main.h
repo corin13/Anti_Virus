@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <algorithm>
 #include "antidbg.h"
+#include "scan.h"
 
 using namespace std;
 
@@ -22,10 +23,6 @@ struct option options[]={
     {"scan", no_argument, 0,'s'}, //인자값 필요로 한다면 no_argument -> required_argument
     {0,0,0,0}
 };
-
-void scan(){
-    cout << "이 프로그램은 .. " << endl;
-}
 
 void error(){
     cout << "Error: Invalid option" << endl;
