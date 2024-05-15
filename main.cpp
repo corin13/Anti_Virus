@@ -59,10 +59,7 @@ void CheckOpt(int &argc, char** &argv){
 }
 
 int main(int argc, char **argv){
-<<<<<<< HEAD
-=======
 
->>>>>>> bd0e8d82cfd89f901fbcf5d261b743c7028d320f
     //옵션 값 확인
     if (argc > 1) 
         CheckOpt(argc, argv);
