@@ -3,6 +3,9 @@
 #include <sys/ptrace.h>
 #include <chrono>
 #include <thread>
+#include <cstdlib>
+#include <unistd.h>
+#include <cstring>
 
 using namespace std;
 
@@ -10,13 +13,18 @@ using namespace std;
 struct option options[]={
     {"help", no_argument, 0, 'h'},
     {"info", no_argument, 0, 'i'},
-    {"background",no_argument, 0, 'b'},
+    {"detect",required_argument, 0, 'd'},
     {"scan", no_argument, 0,'s'}, //인자값 필요로 한다면 no_argument -> required_argument
     {0,0,0,0}
 };
 
 void scan(){
     cout << "이 프로그램은 .. " << endl;
+}
+
+void error(){
+    cout << "Error: Invalid option" << endl;
+    cout << "For usage information, type 'UdkdAgent --help'" << endl;
 }
 
 void help(){
@@ -44,28 +52,28 @@ void info(){
     cout << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities." << endl;
 }
 
+
 int logic1(){
+    cout << "logic1" << endl;
+
     return 0;
 }
 
-int logic2(){
-    if (ptrace(PTRACE_TRACEME, 0, 1, 0) == -1)
-    {
-        cout << "don't trace me !!" <<endl;
+int self(void){
+    if(ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {
+        cout << "No debugging please" << endl;
+        cout << "This will exit gdb now." << endl;
+        sleep(2);
+        exit(1);
         return 1;
     }
-
-    cout << "normal execution" << endl;
     return 0;
 }
 
-void background(){
-    while (1){
-        cout << "Anti-debugging Logic Running…" << endl;
-
+void detect(char* argv){
+    if(strcmp(argv, "logic1")==0){
         logic1();
-        logic2();
-        this_thread::sleep_for(chrono::seconds(1));
-
+    } else if(strcmp(argv, "self") == 0){
+        self();
     }
 }
