@@ -34,35 +34,11 @@ void scan(){
     cout << " " << endl;
 }
 
-void error(){
-    cout << "Error: Invalid option" << endl;
-    cout << "For usage information, type 'UdkdAgent --help'" << endl;
-}
+void error();
 
-void help(){
-    cout << "Usage: ./UdkdAgent [OPTIONS]" << endl;
-    cout << " " << endl;
-    cout << "Options: " << endl;
-    cout << "  -i, --info               Print detailed information about the Agent." << endl;
-    cout << "  -d, --detect             Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging." << endl;
-    cout << "  -s, --scan [path]        Scan files in the specified directory. Default is '/' if no path is provided." << endl;      
-}
+void help();
 
-void info(){
-    cout << "Program Information" << endl;
-    cout << "=====================================================================" << endl;
-    cout << "Name: UdkdAgent" << endl;
-    cout << "Version: " << endl;
-    cout << "Release Date: " << endl;
-    cout << " " << endl;
-    cout << "Description: UdkdAgent is designed to enhance system protection through anti-debugging and malware detection techniques." << endl;
-    cout << " " << endl;
-    cout << "Key Features include: " << endl;
-    cout << "    - Malware Scanning: Eliminates potential threats before they can cause harm." << endl;
-    cout << "    - Anti-Debugging: Protects sensitive code from being analyzed or manipulated by unauthorized debuggers." << endl;
-    cout << " " << endl;
-    cout << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities." << endl;
-}
+void info();
 
 int logic1(){
     cout << "logic1" << endl;
