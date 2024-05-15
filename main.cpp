@@ -14,6 +14,8 @@
 #include <dirent.h>
 #include "scan.h"
 
+#include "scan.h"
+
 using namespace std;
 
 void CheckOpt(int &argc, char** &argv){
@@ -54,10 +56,7 @@ void CheckOpt(int &argc, char** &argv){
 
 }
 
-int main(int argc, char **argv){  
-    if(self()){
-        return 1;
-    }
+int main(int argc, char **argv){
 
     //옵션 값 확인
     if (argc > 1) 
