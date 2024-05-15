@@ -16,6 +16,8 @@
 
 #include "scan.h"
 
+#include "scan.h"
+
 using namespace std;
 
 void CheckOpt(int &argc, char** &argv){
