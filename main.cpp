@@ -12,10 +12,11 @@
 #include <string>
 #include <fstream>
 #include <dirent.h>
+#include "scan.h"
 
 using namespace std;
 
-void CheckOpt(int argc, char** argv){
+void CheckOpt(int &argc, char** &argv){
     int optionIndex= 0;
     int opt;
     const char* option="hid:sp"; //인자값 필요로 한다면 :붙이기 ex) hib:s:
@@ -53,8 +54,7 @@ void CheckOpt(int argc, char** argv){
 
 }
 
-int main(int argc, char **argv){
-    
+int main(int argc, char **argv){  
     if(self()){
         return 1;
     }

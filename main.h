@@ -2,7 +2,6 @@
 #include <iostream>
 #include <sys/ptrace.h>
 #include <chrono>
-#include <thread>
 #include <cstdlib>
 #include <unistd.h>
 #include <cstring>
@@ -12,6 +11,13 @@
 #include <fstream>
 #include <dirent.h>
 #include "process.h"
+#include <fstream>
+#include <vector>
+#include <signal.h>
+#include <algorithm>
+#include "antidbg.h"
+#include "scan.h"
+
 
 using namespace std;
 
