@@ -6,5 +6,12 @@
         "algorithm": "cpp",
         "vector": "cpp",
         "cstdlib": "cpp"
-    }
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/hun/Desktop/Anti_Virus",
+            "binaryPath": "/home/hun/Desktop/Anti_Virus/UdkdAgent",
+            "binaryArgs": []
+        }
+    ]
 }
