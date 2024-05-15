@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <cstring>
 
+#include "scan.h"
 
 using namespace std;
 
