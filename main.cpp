@@ -1,6 +1,7 @@
 #include <iostream>
 #include <getopt.h>
 #include "main.h"
+#include "scan.h"
 
 using namespace std;
 
