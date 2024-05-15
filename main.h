@@ -5,6 +5,12 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <cstring>
+#include <errno.h>
+#include <filesystem>
+#include <string>
+#include <fstream>
+#include <dirent.h>
+#include "process.h"
 #include <dirent.h>
 #include <fstream>
 #include <vector>
@@ -15,14 +21,18 @@
 
 using namespace std;
 
-
 struct option options[]={
     {"help", no_argument, 0, 'h'},
     {"info", no_argument, 0, 'i'},
-    {"detect",required_argument, 0, 'd'},
+    {"detect", required_argument, 0, 'd'},
     {"scan", no_argument, 0,'s'}, //인자값 필요로 한다면 no_argument -> required_argument
+    {"ps", no_argument, 0, 'p'},
     {0,0,0,0}
 };
+
+void scan(){
+    cout << " " << endl;
+}
 
 void error(){
     cout << "Error: Invalid option" << endl;
@@ -35,7 +45,7 @@ void help(){
     cout << "Options: " << endl;
     cout << "  -i, --info               Print detailed information about the Agent." << endl;
     cout << "  -d, --detect             Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging." << endl;
-    cout << "  -s, --scan [path]        Scan files in the specified directory. Default is '/' if no path is provided." << endl; 
+    cout << "  -s, --scan [path]        Scan files in the specified directory. Default is '/' if no path is provided." << endl;      
 }
 
 void info(){
@@ -54,14 +64,19 @@ void info(){
     cout << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities." << endl;
 }
 
-int self(void){
-    if(ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {
-        cout << "No debugging please" << endl;
-        cout << "This will exit gdb now." << endl;
-        sleep(2);
-        exit(1);
-        return 1;
-    }
+int logic1(){
+    cout << "logic1" << endl;
     return 0;
 }
 
+int self(void){
+    return 0;
+}
+
+void detect(char* argv){
+    if(strcmp(argv, "logic1") == 0){
+        logic1();
+    } else if(strcmp(argv, "self") == 0){
+        self();
+    }
+}
