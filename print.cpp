@@ -15,7 +15,7 @@ void help(){
          << "  -i, --info               Print detailed information about the Agent.\n"
          << "  -d, --detect             Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging.\n"
          << "  -s, --scan [path]        Scan files in the specified directory. Default is '/' if no path is provided.\n"
-         << "  -p, --ps                 Focuses on overseeing processes that use excessive resources or act unpredictably, and terminates then as needed to maintain system stability and security.\n";
+         << "  -p, --ps                 Collect detailed information about a process and save it to a file. Also provides options to terminate processes.\n";
 }
 
 void info(){
@@ -30,6 +30,7 @@ void info(){
          << "Key Features include: \n"
          << "    - Malware Scanning: Eliminates potential threats before they can cause harm.\n"
          << "    - Anti-Debugging: Protects sensitive code from being analyzed or manipulated by unauthorized debuggers.\n"
+         << "    - Inspect Process: Focuses on overseeing processes that use excessive resources or act unpredictably, and terminates then as needed to maintain system stability and security.\n"
          << " \n"
          << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities.\n";
 }
