@@ -1,14 +1,4 @@
-#include <iostream>
-#include <sys/ptrace.h>
-#include <getopt.h>
 #include "main.h"
-#include <chrono>
-#include <thread>
-#include <cstdlib>
-#include <unistd.h>
-#include <cstring>
-
-#include "scan.h"
 
 using namespace std;
 
@@ -32,7 +22,7 @@ void CheckOpt(int &argc, char** &argv){
                 break;
             
             case 's':
-                scan();
+
                 break;
 
             case '?':

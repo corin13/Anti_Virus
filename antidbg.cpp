@@ -1,11 +1,4 @@
-#include <iostream>
 #include "antidbg.h"
-#include <vector>
-#include <signal.h>
-#include <algorithm>
-#include <fstream>
-#include <dirent.h>
-#include <cstring>
 
 using namespace std;
 

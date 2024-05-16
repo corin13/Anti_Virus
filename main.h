@@ -1,20 +1,8 @@
 #include <getopt.h>
 #include <iostream>
-#include <sys/ptrace.h>
-#include <chrono>
-#include <cstdlib>
-#include <unistd.h>
-#include <cstring>
-#include <dirent.h>
-#include <fstream>
-#include <vector>
-#include <signal.h>
-#include <algorithm>
 #include "antidbg.h"
-#include "scan.h"
 
 using namespace std;
-
 
 struct option options[]={
     {"help", no_argument, 0, 'h'},
@@ -54,14 +42,4 @@ void info(){
     cout << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities." << endl;
 }
 
-int self(void){
-    if(ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {
-        cout << "No debugging please" << endl;
-        cout << "This will exit gdb now." << endl;
-        sleep(2);
-        exit(1);
-        return 1;
-    }
-    return 0;
-}
 
