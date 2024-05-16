@@ -28,6 +28,8 @@ int logic1(){
     }
     closedir(dir);
     
+    cout << "No debugger detected!" << endl;
+
     return 0;
 }
 
