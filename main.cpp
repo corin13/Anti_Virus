@@ -2,6 +2,7 @@
 #include <sys/ptrace.h>
 #include <getopt.h>
 #include "main.h"
+#include "scan.h"
 #include <chrono>
 #include <thread>
 #include <cstdlib>
