@@ -18,7 +18,7 @@ using namespace std;
 void CheckOpt(int argc, char** argv){
     int optionIndex= 0;
     int opt;
-    const char* option="hid:sp"; //인자값 필요로 한다면 :붙이기 ex) hib:s:
+    const char* option="hidsp"; //인자값 필요로 한다면 :붙이기 ex) hib:s:
 
     while((opt = getopt_long(argc, argv, option, options, &optionIndex)) != -1 ){
         switch(opt){
@@ -35,7 +35,7 @@ void CheckOpt(int argc, char** argv){
                 break;
 
             case 'd':
-                detect(optarg);
+                detect();
                 break;
 
             case 'p':
