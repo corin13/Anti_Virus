@@ -3,6 +3,7 @@
 #include "process.h"
 #include "print.h"
 #include "antidbg.h"
+#include "scan.h"
 
 using namespace std;
 
@@ -15,6 +16,5 @@ struct option options[]={
     {0,0,0,0}
 };
 
-void scan(){
-    cout << " " << endl;
-}
+void CheckOpt(int argc, char** argv);
+
