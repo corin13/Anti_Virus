@@ -1,17 +1,4 @@
-#include <iostream>
-#include <sys/ptrace.h>
-#include <getopt.h>
 #include "main.h"
-#include <chrono>
-#include <thread>
-#include <cstdlib>
-#include <unistd.h>
-#include <cstring>
-#include <errno.h>
-#include <filesystem>
-#include <string>
-#include <fstream>
-#include <dirent.h>
 
 using namespace std;
 
