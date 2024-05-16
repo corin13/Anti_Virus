@@ -1,21 +1,9 @@
 #include <getopt.h>
 #include <iostream>
-#include <sys/ptrace.h>
-#include <chrono>
-#include <cstdlib>
-#include <unistd.h>
-#include <cstring>
-#include <errno.h>
-#include <filesystem>
-#include <string>
-#include <fstream>
-#include <dirent.h>
 #include "process.h"
-#include <dirent.h>
-#include <fstream>
-#include <vector>
 #include "print.h"
-#include "antidbg2.h"
+#include "antidbg.h"
+#include "scan.h"
 
 using namespace std;
 
@@ -28,10 +16,5 @@ struct option options[]={
     {0,0,0,0}
 };
 
-void scan(){
-    cout << " " << endl;
-}
+void CheckOpt(int argc, char** argv);
 
-void detect(){
-    cout << " " << endl;
-}
