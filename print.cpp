@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "print.h"
 
 using namespace std;
@@ -21,11 +23,26 @@ void help(){
 void info(){
     cout << "Program Information\n"
          << "=====================================================================\n"
-         << "Name: UdkdAgent\n"
-         << "Version: \n"
-         << "Release Date: \n"
-         << " \n" 
-         << "Description: UdkdAgent is designed to enhance system protection through anti-debugging and malware detection techniques.\n"
+         << "Name: UdkdAgent\n";
+
+    ifstream file("/etc/os-release");
+    string line;
+
+    if(file.is_open()){
+        while(getline(file, line)){
+            if(line.substr(0, 11) == "PRETTY_NAME"){
+                string version = line.substr(line.find("=") + 2, line.length() - line.find("=") - 3);
+                cout << "Ubuntu Version: " << version << endl;
+                break;
+            }
+        }
+        file.close();
+    } else{
+        cout << "Failed to open /etc/os-release" << endl;
+    }
+
+    cout << " \n"
+         << "Description: UdkdAgent is designed to enhance system protection through anti-debugging, malware detection techniques, and inspecting processes.\n"
          << " \n"
          << "Key Features include: \n"
          << "    - Malware Scanning: Eliminates potential threats before they can cause harm.\n"
