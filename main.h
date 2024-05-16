@@ -27,10 +27,6 @@ struct option options[]={
     {0,0,0,0}
 };
 
-int self(void){
-    return 0;
-}
-
 void scan(){
     cout << " " << endl;
 }
