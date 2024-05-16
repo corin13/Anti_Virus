@@ -16,7 +16,8 @@ void help(){
          << "Options: \n"
          << "  -i, --info               Print detailed information about the Agent.\n"
          << "  -d, --detect             Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging.\n"
-         << "  -s, --scan [path]        Scan files in the specified directory. Default is '/' if no path is provided.\n"
+         << "  -s, --scan               Scan files in the specified directory.\n"
+         //<< "  -s, --scan [path]        Scan files in the specified directory. Default is '/' if no path is provided.\n"
          << "  -p, --ps                 Collect detailed information about a process and save it to a file. Also provides options to terminate processes.\n";
 }
 

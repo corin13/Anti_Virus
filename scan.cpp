@@ -13,9 +13,17 @@ using namespace std;
 
 //-s 혹은 --scan 옵션 입력 시 scan() 함수 실행됨
 void scan(){
-    cout << "Please enter the path : ";
+    cout << "Please enter the path (Default is '/') : ";
     string path;
     getline(cin, path);
+
+    if(path.empty()) {
+        path = "/"; // 경로가 비어있을 경우 디폴트로 '/' 설정
+    }
+    if (!isDirectory(path)) { // 경로 유효성 검사
+        printError("Invalid path. Please enter a valid directory path.");
+        return;
+    }
 
     cout << "\n[-] Scan Path : " << path << "\n\n";
 
@@ -28,7 +36,7 @@ void scan(){
     cin.ignore();
 
     if (option != 1 && option != 2) {
-        cerr << "Invalid option selected. Please enter 1 or 2.\n";
+        printError("Invalid option selected. Please enter 1 or 2.");
         return; // 잘못된 입력일 경우 함수 종료
     }
 
@@ -40,13 +48,22 @@ void scan(){
     return;
 }
 
+// 경로 유효성 검사 함수
+bool isDirectory(const string& path) {
+    struct stat info;
+    if (stat(path.c_str(), &info) != 0) {
+        return false;
+    }
+    return (info.st_mode & S_IFDIR) != 0;
+}
+
 void scanDirectory(const string& path, int option) {
 
     char * const paths[] = {const_cast<char *>(path.c_str()), nullptr};
 
     FTS *file_system = fts_open(paths, FTS_NOCHDIR | FTS_PHYSICAL, nullptr);
     if (file_system == NULL) {
-        cerr << "\n\033[31mFailed to open the directory path.\033[0m\n";
+        printError("Failed to open the directory path.");
         return;
     }
 
@@ -79,7 +96,7 @@ void scanDirectory(const string& path, int option) {
     }
 
     if (fts_close(file_system) < 0) {
-        cerr << "\n\033[31mFailed to close the file system.\033[0m\n";
+        printError("Failed to close the file system.");
     }
 
     cout << "\n### End File Scan ###\n\n";
@@ -107,6 +124,10 @@ void compareByHash(FTSENT *node, vector<string>& detectedMalware, vector<string>
 // hashes.txt의 내용을 vector로 변환
 vector<string> loadHashes(const string& filename) {
     ifstream file(filename);
+    if (!file.is_open()) {
+        printError("Failed to open hash file: " + filename);
+        return {};
+    }
     vector<string> hashes;
     string line;
     while (getline(file, line)) {
@@ -120,7 +141,7 @@ vector<string> loadHashes(const string& filename) {
 string computeSHA256(const string& filename) {
     ifstream file(filename, ifstream::binary);
     if (!file) {
-        cerr << "\n\033[31mCannot open file!\033[0m\n";
+        printError("Cannot open file: " + filename);
         return "";
     }
 
@@ -140,6 +161,10 @@ string computeSHA256(const string& filename) {
     }
 
     return ss.str();
+}
+
+void printError(const string& message) {
+    cerr << "\n\033[31m" << message << "\033[0m\n";
 }
 
 
