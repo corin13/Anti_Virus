@@ -27,9 +27,6 @@ struct option options[]={
     {0,0,0,0}
 };
 
-void scan(){
-    cout << " " << endl;
-}
 
 void detect(){
     cout << " " << endl;
