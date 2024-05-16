@@ -50,15 +50,9 @@ void CheckOpt(int argc, char** argv){
                 abort();
         }
     }
-    
 }
 
 int main(int argc, char **argv){
-    
-    if(self()){
-        return 1;
-    }
-    
     //옵션 값 확인
     if (argc > 1) 
         CheckOpt(argc, argv);
