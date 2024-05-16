@@ -4,8 +4,8 @@
     437 ?        Ss   00:00:00 /lib/systemd/systemd-udevd
     610 ?        Ssl  00:00:00 /lib/systemd/systemd-timesyncd
     665 ?        Ss   00:00:00 /lib/systemd/systemd-networkd
-    667 ?        Ss   00:00:01 /lib/systemd/systemd-resolved
-    706 ?        Ss   00:00:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+    667 ?        Ss   00:00:02 /lib/systemd/systemd-resolved
+    706 ?        Ss   00:00:01 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
     722 ?        Ss   00:00:00 /lib/systemd/systemd-logind
    1366 ?        Ss   00:00:00 /lib/systemd/systemd --user
    1383 ?        Ss   00:00:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
