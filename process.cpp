@@ -9,6 +9,7 @@
 
 using namespace std;
 
+// 명령어를 실행하고 그 결과를 문자열로 반환하는 함수
 string exec(const char* cmd){
     char buffer[128];
     string result = "";
@@ -27,8 +28,9 @@ string exec(const char* cmd){
     return result;
 }
 
+// 특정 프로세스의 정보를 화면에 표시하고 파일에 저장하는 함수
 void DisplayProcessInfo(const string& processName, const string& filename){
-    string cmd = "pidof " + processName;
+    string cmd = "pidof " + processName;    //프로세스 ID를 찾기 위한 명령어
     string output = exec(cmd.c_str());
     
     if(output.empty()){
@@ -43,7 +45,7 @@ void DisplayProcessInfo(const string& processName, const string& filename){
         return;
     }
 
-    outFile << output;
+    outFile << output; 
     outFile.close();
     cout << "Process ID for '" << processName << "': " << output;
 
@@ -52,15 +54,15 @@ void DisplayProcessInfo(const string& processName, const string& filename){
     resourceCmd += processName;
     resourceCmd += "' | grep -v grep > ";
     resourceCmd += filename;
-    system(resourceCmd.c_str());
+    system(resourceCmd.c_str());    // 시스템 명령어를 사용하여 프로세스 정보를 파일에 저장
 
     char choice;
     cout << "Do you want to kill the process? (Y/N): ";
     cin >> choice;
 
     if(choice == 'Y' || choice == 'y'){
-        string killCmd = "pkill -f " + processName;
-        system(killCmd.c_str());
+        string killCmd = "pkill -f " + processName; // 프로세스 종료 명령어
+        system(killCmd.c_str());    // 시스템 명령어를 사용하여 프로세스 종료
         cout << "Process killed." << endl;
     } else{
         cout << "Process not killed." << endl;
