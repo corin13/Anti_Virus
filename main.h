@@ -14,10 +14,6 @@
 #include <dirent.h>
 #include <fstream>
 #include <vector>
-#include <signal.h>
-#include <algorithm>
-#include "antidbg.h"
-#include "scan.h"
 
 using namespace std;
 
