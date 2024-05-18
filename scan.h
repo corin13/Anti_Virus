@@ -22,5 +22,7 @@ string computeSHA256(const string& filename);
 void checkYaraRule(const string& filePath, vector<string>& detectedMalware);
 int yaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* message_data, void* user_data);
 void printError(const string& message);
+void quarantineDetectedMalware(const vector<string>& detectedMalware);
+bool quarantineFile(const string& filePath, const string& quarantineDir);
 
 #endif
