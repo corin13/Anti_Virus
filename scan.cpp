@@ -3,17 +3,15 @@
 #include <sys/stat.h>
 #include <fstream>
 #include "scan.h"
-#include "hash.h"
+#include "util.h"
+#include "malware_hash.h"
 #include "yara_rule.h"
-
-using namespace std;
-
 
 //-s 혹은 --scan 옵션 입력 시 scan() 함수 실행됨
 void scan(){
-    cout << "Please enter the path (Default is '/') : ";
-    string path;
-    getline(cin, path);
+    std::cout << "Please enter the path (Default is '/') : ";
+    std::string path;
+    getline(std::cin, path);
 
     if(path.empty()) {
         path = "/"; // 경로가 비어있을 경우 디폴트로 '/' 설정
@@ -23,14 +21,14 @@ void scan(){
         return;
     }
 
-    cout << "\n[-] Scan Path : " << path << "\n\n";
+    std::cout << "\n[-] Scan Path : " << path << "\n\n";
 
-    cout << "Select a malware scan option:\n\n"
+    std::cout << "Select a malware scan option:\n\n"
             << "1. YARA rule (Default)\n"
             << "2. Simple file hash comparison\n\n"
             << "Please enter the option : ";
-    string input;
-    getline(cin, input);
+    std::string input;
+    getline(std::cin, input);
 
     if (input != "1" && input != "2" && !input.empty()) {
         printError("Invalid option selected. Please enter 1 or 2.");
@@ -39,7 +37,7 @@ void scan(){
 
     int option = (input.empty() || input == "1") ? 1 : 2;
 
-    cout << "\n### File Scan Start ! (Path : " << path << " , Option : " << option << ") ###\n\n";
+    std::cout << "\n### File Scan Start ! (Path : " << path << " , Option : " << option << ") ###\n\n";
 
     // 사용자가 지정한 디렉토리 내의 모든 파일을 순회하면서 악석파일 검사
     scanDirectory(path, option);
@@ -47,16 +45,9 @@ void scan(){
     return;
 }
 
-// 경로 유효성 검사 함수
-bool isDirectory(const string& path) {
-    struct stat info;
-    if (stat(path.c_str(), &info) != 0) {
-        return false;
-    }
-    return (info.st_mode & S_IFDIR) != 0;
-}
 
-void scanDirectory(const string& path, int option) {
+
+void scanDirectory(const std::string& path, int option) {
 
     char * const paths[] = {const_cast<char *>(path.c_str()), nullptr};
 
@@ -69,8 +60,8 @@ void scanDirectory(const string& path, int option) {
     FTSENT *node;
     int file_count = 0;
     long long total_size = 0;
-    vector<string> detectedMalware; // 악성파일로 판별된 파일의 경로를 저장
-    vector<string> hashes = loadHashes("hashes.txt"); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
+    std::vector<std::string> detectedMalware; // 악성파일로 판별된 파일의 경로를 저장
+    std::vector<std::string> hashes = loadHashes("hashes.txt"); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
 
     // 파일을 한개씩 순회해서 사용자가 입력한 옵션에 따라 검사
     if(option == 1) {
@@ -78,7 +69,7 @@ void scanDirectory(const string& path, int option) {
             if (node->fts_info == FTS_F) {
                 file_count++;
                 total_size += node->fts_statp->st_size;
-                cout << node->fts_path << "\n";
+                std::cout << node->fts_path << "\n";
                 checkYaraRule(node->fts_path, detectedMalware);
             }
         }    
@@ -88,7 +79,7 @@ void scanDirectory(const string& path, int option) {
             if (node->fts_info == FTS_F) {
                 file_count++;
                 total_size += node->fts_statp->st_size;
-                cout << node->fts_path << "\n";
+                std::cout << node->fts_path << "\n";
                 compareByHash(node, detectedMalware, hashes);
             }
         }
@@ -98,51 +89,30 @@ void scanDirectory(const string& path, int option) {
         printError("Failed to close the file system.");
     }
 
-    cout << "\n### End File Scan ###\n\n";
+    std::cout << "\n### End File Scan ###\n\n";
 
     // 스캔 결과 출력
-    cout << "\n- File Scan Result -\n\n"
+    std::cout << "\n- File Scan Result -\n\n"
             << "\033[31m[+] Total Malware File : " << detectedMalware.size() << " files\033[0m\n";
     for (int i = 0; i < detectedMalware.size(); ++i) {
-        cout << "\033[31m[" << i + 1 << "] : " << detectedMalware[i] << "\033[0m\n";
+        std::cout << "\033[31m[" << i + 1 << "] : " << detectedMalware[i] << "\033[0m\n";
     }
-    cout << "\n[+] Total Scan File : " << file_count << " files " << total_size << " bytes\n";
+    std::cout << "\n[+] Total Scan File : " << file_count << " files " << total_size << " bytes\n";
 
     // 악성 파일 이동
     moveDetectedMalware(detectedMalware);
 }
 
 
-// hashes.txt의 내용을 vector로 변환
-vector<string> loadHashes(const string& filename) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        printError("Failed to open hash file: " + filename);
-        return {};
-    }
-    vector<string> hashes;
-    string line;
-    while (getline(file, line)) {
-        hashes.push_back(line);
-    }
-    file.close();
-    return hashes;
-}
-
-
-void printError(const string& message) {
-    cerr << "\n\033[31m" << message << "\033[0m\n";
-}
-
-void moveDetectedMalware(const vector<string>& detectedMalware) {
+void moveDetectedMalware(const std::vector<std::string>& detectedMalware) {
     if (!detectedMalware.empty()) {
-        cout << "\nWould you like to move all detected malware files? (Y/n): ";
-        string userResponse;
-        getline(cin, userResponse);
+        std::cout << "\nWould you like to move all detected malware files? (Y/n): ";
+        std::string userResponse;
+        getline(std::cin, userResponse);
 
         if (userResponse == "y" || userResponse.empty()) { // 기본값으로 엔터 입력을 y로 처리
             // 이동할 디렉토리 설정
-            string destinationDir = "./detected-malware";
+            std::string destinationDir = "./detected-malware";
             if (!isDirectory(destinationDir)) {
                 if (mkdir(destinationDir.c_str(), 0700) != 0) {  // 관리자만 접근 가능
                     printError("Failed to create detected-malware directory.");
@@ -153,17 +123,17 @@ void moveDetectedMalware(const vector<string>& detectedMalware) {
             // 발견된 모든 악성 파일을 이동
             for (const auto& malwareFile : detectedMalware) {
                 if (moveFile(malwareFile, destinationDir)) {
-                    cout << "[+] Moved: " << malwareFile << "\n";
+                    std::cout << "[+] Moved: " << malwareFile << "\n";
                 }
             }
         }
     }
 }
 
-bool moveFile(const string& filePath, const string& destinationDir) {
+bool moveFile(const std::string& filePath, const std::string& destinationDir) {
     try {
-        string filename = filePath.substr(filePath.find_last_of("/") + 1);
-        string destination = destinationDir + "/" + filename;
+        std::string filename = filePath.substr(filePath.find_last_of("/") + 1);
+        std::string destination = destinationDir + "/" + filename;
 
         // 파일 이동
         if (rename(filePath.c_str(), destination.c_str()) != 0) {
@@ -178,7 +148,7 @@ bool moveFile(const string& filePath, const string& destinationDir) {
         }
 
         // 파일 이동 로그 기록 (로그 파일이 없으면 생성)
-        ofstream logFile(destinationDir + "/detected-malware.log", ios::out | ios::app);
+        std::ofstream logFile(destinationDir + "/detected-malware.log", std::ios::out | std::ios::app);
         if (!logFile) {
             printError("Failed to open detected-malware log file.");
             return false;
@@ -187,8 +157,8 @@ bool moveFile(const string& filePath, const string& destinationDir) {
         logFile.close();
 
         return true;
-    } catch (const exception& e) {
-        printError("Exception occurred while moving file: " + string(e.what()));
+    } catch (const std::exception& e) {
+        printError("Exception occurred while moving file: " + std::string(e.what()));
         return false;
     }
 }
