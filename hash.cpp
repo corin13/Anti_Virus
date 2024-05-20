@@ -1,12 +1,11 @@
 #include <iostream>
-#include <vector>
-#include <fts.h>
 #include <fstream>
 #include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <openssl/sha.h>
 #include <iomanip>
+#include "hash.h"
 
 using namespace std;
 
