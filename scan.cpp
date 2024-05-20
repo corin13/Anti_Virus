@@ -26,17 +26,18 @@ void scan(){
     cout << "\n[-] Scan Path : " << path << "\n\n";
 
     cout << "Select a malware scan option:\n\n"
-            << "1. YARA rule\n"
+            << "1. YARA rule (Default)\n"
             << "2. Simple file hash comparison\n\n"
             << "Please enter the option : ";
-    int option;
-    cin >> option;
-    cin.ignore();
+    string input;
+    getline(cin, input);
 
-    if (option != 1 && option != 2) {
+    if (input != "1" && input != "2" && !input.empty()) {
         printError("Invalid option selected. Please enter 1 or 2.");
         return; // 잘못된 입력일 경우 함수 종료
     }
+
+    int option = (input.empty() || input == "1") ? 1 : 2;
 
     cout << "\n### File Scan Start ! (Path : " << path << " , Option : " << option << ") ###\n\n";
 
