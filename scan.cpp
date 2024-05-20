@@ -107,8 +107,8 @@ void scanDirectory(const string& path, int option) {
     }
     cout << "\n[+] Total Scan File : " << file_count << " files " << total_size << " bytes\n";
 
-    // 악성 파일 격리
-    quarantineDetectedMalware(detectedMalware);
+    // 악성 파일 이동
+    moveDetectedMalware(detectedMalware);
 }
 
 
@@ -133,40 +133,40 @@ void printError(const string& message) {
     cerr << "\n\033[31m" << message << "\033[0m\n";
 }
 
-void quarantineDetectedMalware(const vector<string>& detectedMalware) {
+void moveDetectedMalware(const vector<string>& detectedMalware) {
     if (!detectedMalware.empty()) {
-        cout << "\nWould you like to quarantine all detected malware files? (Y/n): ";
+        cout << "\nWould you like to move all detected malware files? (Y/n): ";
         string userResponse;
         getline(cin, userResponse);
 
         if (userResponse == "y" || userResponse.empty()) { // 기본값으로 엔터 입력을 y로 처리
-            // 격리 디렉토리 설정
-            string quarantineDir = "./quarantine";
-            if (!isDirectory(quarantineDir)) {
-                if (mkdir(quarantineDir.c_str(), 0700) != 0) {  // 관리자만 접근 가능
-                    printError("Failed to create quarantine directory.");
+            // 이동할 디렉토리 설정
+            string destinationDir = "./detected-malware";
+            if (!isDirectory(destinationDir)) {
+                if (mkdir(destinationDir.c_str(), 0700) != 0) {  // 관리자만 접근 가능
+                    printError("Failed to create detected-malware directory.");
                     return;
                 }
             }
 
-            // 발견된 모든 악성 파일을 격리
+            // 발견된 모든 악성 파일을 이동
             for (const auto& malwareFile : detectedMalware) {
-                if (quarantineFile(malwareFile, quarantineDir)) {
-                    cout << "[+] Quarantined: " << malwareFile << "\n";
+                if (moveFile(malwareFile, destinationDir)) {
+                    cout << "[+] Moved: " << malwareFile << "\n";
                 }
             }
         }
     }
 }
 
-bool quarantineFile(const string& filePath, const string& quarantineDir) {
+bool moveFile(const string& filePath, const string& destinationDir) {
     try {
         string filename = filePath.substr(filePath.find_last_of("/") + 1);
-        string destination = quarantineDir + "/" + filename;
+        string destination = destinationDir + "/" + filename;
 
         // 파일 이동
         if (rename(filePath.c_str(), destination.c_str()) != 0) {
-            printError("Failed to move file to quarantine directory: " + filePath);
+            printError("Failed to move file to detected-malware directory: " + filePath);
             return false;
         }
 
@@ -176,10 +176,10 @@ bool quarantineFile(const string& filePath, const string& quarantineDir) {
             return false;
         }
 
-        // 격리 로그 기록 (파일이 없으면 생성)
-        ofstream logFile(quarantineDir + "/quarantine.log", ios::out | ios::app);
+        // 파일 이동 로그 기록 (로그 파일이 없으면 생성)
+        ofstream logFile(destinationDir + "/detected-malware.log", ios::out | ios::app);
         if (!logFile) {
-            printError("Failed to open quarantine log file.");
+            printError("Failed to open detected-malware log file.");
             return false;
         }
         logFile << filePath << " -> " << destination << "\n";
@@ -187,7 +187,7 @@ bool quarantineFile(const string& filePath, const string& quarantineDir) {
 
         return true;
     } catch (const exception& e) {
-        printError("Exception occurred while quarantining file: " + string(e.what()));
+        printError("Exception occurred while moving file: " + string(e.what()));
         return false;
     }
 }

@@ -15,5 +15,5 @@ bool isDirectory(const std::string& path);
 void scanDirectory(const std::string& path, int option);
 std::vector<std::string> loadHashes(const std::string& filename);
 void printError(const std::string& message);
-void quarantineDetectedMalware(const std::vector<std::string>& detectedMalware);
-bool quarantineFile(const std::string& filePath, const std::string& quarantineDir);
+void moveDetectedMalware(const std::vector<std::string>& detectedMalware);
+bool moveFile(const std::string& filePath, const std::string& quarantineDir);
