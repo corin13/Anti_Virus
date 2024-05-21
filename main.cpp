@@ -26,7 +26,7 @@ void CheckOpt(int argc, char** argv){
                 break;
 
             case 'p':
-                process();
+                CollectAndSaveResourceUsage();
                 break;
 
             case '?':

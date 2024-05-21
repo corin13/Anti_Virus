@@ -1,0 +1,141 @@
+  UNIT                         LOAD   ACTIVE SUB     DESCRIPTION                                                     
+  accounts-daemon.service      loaded active running Accounts Service                                                
+  atd.service                  loaded active running Deferred execution scheduler                                    
+  avahi-daemon.service         loaded active running Avahi mDNS/DNS-SD Stack                                         
+  colord.service               loaded active running Manage, Install and Generate Color Profiles                     
+  cron.service                 loaded active running Regular background program processing daemon                    
+  cups-browsed.service         loaded active running Make remote CUPS printers available locally                     
+  cups.service                 loaded active running CUPS Scheduler                                                  
+  dbus.service                 loaded active running D-Bus System Message Bus                                        
+  gdm.service                  loaded active running GNOME Display Manager                                           
+  irqbalance.service           loaded active running irqbalance daemon                                               
+  kerneloops.service           loaded active running Tool to automatically collect and submit kernel crash signatures
+  ModemManager.service         loaded active running Modem Manager                                                   
+  multipathd.service           loaded active running Device-Mapper Multipath Device Controller                       
+  networkd-dispatcher.service  loaded active running Dispatcher daemon for systemd-networkd                          
+  NetworkManager.service       loaded active running Network Manager                                                 
+  polkit.service               loaded active running Authorization Manager                                           
+  rsyslog.service              loaded active running System Logging Service                                          
+  rtkit-daemon.service         loaded active running RealtimeKit Scheduling Policy Service                           
+  serial-getty@ttyAMA0.service loaded active running Serial Getty on ttyAMA0                                         
+  snapd.service                loaded active running Snap Daemon                                                     
+  spice-vdagentd.service       loaded active running Agent daemon for Spice guests                                   
+  ssh.service                  loaded active running OpenBSD Secure Shell server                                     
+  switcheroo-control.service   loaded active running Switcheroo Control Proxy service                                
+  systemd-journald.service     loaded active running Journal Service                                                 
+  systemd-logind.service       loaded active running Login Service                                                   
+  systemd-networkd.service     loaded active running Network Service                                                 
+  systemd-resolved.service     loaded active running Network Name Resolution                                         
+  systemd-timesyncd.service    loaded active running Network Time Synchronization                                    
+  systemd-udevd.service        loaded active running udev Kernel Device Manager                                      
+  udisks2.service              loaded active running Disk Manager                                                    
+  unattended-upgrades.service  loaded active running Unattended Upgrades Shutdown                                    
+  upower.service               loaded active running Daemon for power management                                     
+  user@1000.service            loaded active running User Manager for UID 1000                                       
+  whoopsie.service             loaded active running crash report submission daemon                                  
+  wpa_supplicant.service       loaded active running WPA supplicant                                                  
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+35 loaded units listed.
+May 20 00:07:07 ysbeam systemd[1]: logrotate.service: Succeeded.
+May 20 00:07:07 ysbeam systemd[1]: Finished Rotate log files.
+May 20 00:07:07 ysbeam kernel: [62973.268776] audit: type=1400 audit(1716163627.204:51): apparmor="DENIED" operation="capable" profile="/usr/sbin/cups-browsed" pid=5979 comm="cups-browsed" capability=23  capname="sys_nice"
+May 20 00:07:07 ysbeam systemd[1]: man-db.service: Succeeded.
+May 20 00:07:07 ysbeam systemd[1]: Finished Daily man-db regeneration.
+May 20 00:07:08 ysbeam fstrim[5941]: /boot/efi: 505.7 MiB (530296832 bytes) trimmed on /dev/disk/by-uuid/0DC6-514F
+May 20 00:07:08 ysbeam fstrim[5941]: /: 45.1 GiB (48437592064 bytes) trimmed on /dev/disk/by-uuid/b5d4d603-4015-433d-8a0f-3bd0fd2b7f6b
+May 20 00:07:08 ysbeam systemd[1]: fstrim.service: Succeeded.
+May 20 00:07:08 ysbeam systemd[1]: Finished Discard unused blocks on filesystems from /etc/fstab.
+May 20 00:07:12 ysbeam 50-motd-news[6016]:  * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s
+May 20 00:07:12 ysbeam 50-motd-news[6016]:    just raised the bar for easy, resilient and secure K8s cluster deployment.
+May 20 00:07:12 ysbeam 50-motd-news[6016]:    https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+May 20 00:07:12 ysbeam systemd[1]: motd-news.service: Succeeded.
+May 20 00:07:12 ysbeam systemd[1]: Finished Message of the Day.
+May 20 00:07:37 ysbeam apt-helper[5931]: E: Sub-process nm-online returned an error code (1)
+May 20 00:07:37 ysbeam systemd[1]: Starting Update APT News...
+May 20 00:07:37 ysbeam systemd[1]: Starting Update the local ESM caches...
+May 20 00:07:39 ysbeam systemd[1]: esm-cache.service: Succeeded.
+May 20 00:07:39 ysbeam systemd[1]: Finished Update the local ESM caches.
+May 20 00:07:41 ysbeam systemd[1]: apt-news.service: Succeeded.
+May 20 00:07:41 ysbeam systemd[1]: Finished Update APT News.
+May 20 00:07:46 ysbeam dbus-daemon[707]: [system] Activating via systemd: service name='org.freedesktop.PackageKit' unit='packagekit.service' requested by ':1.154' (uid=0 pid=6414 comm="/usr/bin/gdbus call --system --dest org.freedeskto" label="unconfined")
+May 20 00:07:46 ysbeam systemd[1]: Starting PackageKit Daemon...
+May 20 00:07:46 ysbeam PackageKit: daemon start
+May 20 00:07:46 ysbeam dbus-daemon[707]: [system] Successfully activated service 'org.freedesktop.PackageKit'
+May 20 00:07:46 ysbeam systemd[1]: Started PackageKit Daemon.
+May 20 00:07:50 ysbeam systemd[1]: apt-daily.service: Succeeded.
+May 20 00:07:50 ysbeam systemd[1]: Finished Daily apt download activities.
+May 20 00:11:36 ysbeam gnome-shell[4709]: cr_parser_new_from_buf: assertion 'a_buf && a_len' failed
+May 20 00:11:36 ysbeam gnome-shell[4709]: cr_declaration_parse_list_from_buf: assertion 'parser' failed
+May 20 00:11:36 ysbeam gnome-shell[4709]: cr_parser_new_from_buf: assertion 'a_buf && a_len' failed
+May 20 00:11:36 ysbeam gnome-shell[4709]: cr_declaration_parse_list_from_buf: assertion 'parser' failed
+May 20 00:11:36 ysbeam gnome-shell[4709]: cr_parser_new_from_buf: assertion 'a_buf && a_len' failed
+May 20 00:11:36 ysbeam gnome-shell[4709]: cr_declaration_parse_list_from_buf: assertion 'parser' failed
+May 20 00:11:36 ysbeam gnome-shell[4709]: g_dbus_connection_emit_signal: assertion 'G_IS_DBUS_CONNECTION (connection)' failed
+May 20 00:11:36 ysbeam gnome-shell[4709]: cr_parser_new_from_buf: assertion 'a_buf && a_len' failed
+May 20 00:11:36 ysbeam gnome-shell[4709]: cr_declaration_parse_list_from_buf: assertion 'parser' failed
+May 20 00:12:07 ysbeam anacron[5928]: Job `cron.daily' started
+May 20 00:12:07 ysbeam anacron[6710]: Updated timestamp for job `cron.daily' to 2024-05-20
+May 20 00:12:07 ysbeam cracklib: no dictionary update necessary.
+May 20 00:12:07 ysbeam anacron[5928]: Job `cron.daily' terminated
+May 20 00:12:07 ysbeam anacron[5928]: Normal exit (1 job run)
+May 20 00:12:07 ysbeam systemd[1]: anacron.service: Succeeded.
+May 20 00:12:51 ysbeam PackageKit: daemon quit
+May 20 00:12:51 ysbeam systemd[1]: packagekit.service: Succeeded.
+May 20 00:17:01 ysbeam CRON[6830]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 01:10:25 ysbeam spice-vdagent[5004]: vdagent_clipboard_grab: sel_id=0: no type supported
+May 20 03:10:01 ysbeam CRON[6898]: (root) CMD (test -e /run/systemd/system || SERVICE_MODE=1 /sbin/e2scrub_all -A -r)
+May 20 03:17:01 ysbeam CRON[6903]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 03:39:36 ysbeam systemd[1]: Started Session 45 of user soyoung.
+May 20 04:17:01 ysbeam CRON[7276]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 05:17:01 ysbeam CRON[8098]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 06:09:06 ysbeam snapd[723]: storehelpers.go:923: cannot refresh: snap has no updates available: "core18", "core22", "lxd", "snapd"
+May 20 06:12:10 ysbeam systemd[1]: Starting Daily apt upgrade and clean activities...
+May 20 06:12:40 ysbeam apt-helper[8136]: E: Sub-process nm-online returned an error code (1)
+May 20 06:12:41 ysbeam systemd[1]: apt-daily-upgrade.service: Succeeded.
+May 20 06:12:41 ysbeam systemd[1]: Finished Daily apt upgrade and clean activities.
+May 20 06:17:01 ysbeam CRON[8257]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 06:25:01 ysbeam CRON[8265]: (root) CMD (test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily ))
+May 20 07:17:01 ysbeam CRON[8296]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 07:30:01 ysbeam CRON[8306]: (root) CMD ([ -x /etc/init.d/anacron ] && if [ ! -d /run/systemd/system ]; then /usr/sbin/invoke-rc.d anacron start >/dev/null; fi)
+May 20 07:33:36 ysbeam systemd[1]: Started Run anacron jobs.
+May 20 07:33:36 ysbeam anacron[8309]: Anacron 2.3 started on 2024-05-20
+May 20 07:33:36 ysbeam anacron[8309]: Normal exit (0 jobs run)
+May 20 07:33:36 ysbeam systemd[1]: anacron.service: Succeeded.
+May 20 08:17:01 ysbeam CRON[8354]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 08:19:34 ysbeam systemd[1]: Starting Cleanup of Temporary Directories...
+May 20 08:19:34 ysbeam systemd[1]: systemd-tmpfiles-clean.service: Succeeded.
+May 20 08:19:34 ysbeam systemd[1]: Finished Cleanup of Temporary Directories.
+May 20 08:30:01 ysbeam CRON[8388]: (root) CMD ([ -x /etc/init.d/anacron ] && if [ ! -d /run/systemd/system ]; then /usr/sbin/invoke-rc.d anacron start >/dev/null; fi)
+May 20 08:31:33 ysbeam systemd[1]: Starting Refresh fwupd metadata and update motd...
+May 20 08:31:33 ysbeam systemd[1]: fwupd-refresh.service: Main process exited, code=exited, status=1/FAILURE
+May 20 08:31:33 ysbeam systemd[1]: fwupd-refresh.service: Failed with result 'exit-code'.
+May 20 08:31:33 ysbeam systemd[1]: Failed to start Refresh fwupd metadata and update motd.
+May 20 08:32:36 ysbeam systemd[1]: Started Run anacron jobs.
+May 20 08:32:36 ysbeam anacron[8416]: Anacron 2.3 started on 2024-05-20
+May 20 08:32:36 ysbeam anacron[8416]: Normal exit (0 jobs run)
+May 20 08:32:36 ysbeam systemd[1]: anacron.service: Succeeded.
+May 20 08:51:11 ysbeam systemd[1]: session-45.scope: Succeeded.
+May 20 09:17:01 ysbeam CRON[8472]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 09:30:01 ysbeam CRON[8478]: (root) CMD ([ -x /etc/init.d/anacron ] && if [ ! -d /run/systemd/system ]; then /usr/sbin/invoke-rc.d anacron start >/dev/null; fi)
+May 20 09:33:22 ysbeam systemd[1]: Started Run anacron jobs.
+May 20 09:33:22 ysbeam anacron[8479]: Anacron 2.3 started on 2024-05-20
+May 20 09:33:22 ysbeam systemd[1]: anacron.service: Succeeded.
+May 20 09:33:22 ysbeam anacron[8479]: Normal exit (0 jobs run)
+May 20 10:17:02 ysbeam CRON[8508]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
+May 20 10:27:08 ysbeam spice-vdagent[5004]: vdagent_clipboard_grab: sel_id=0: no type supported
+May 20 10:30:01 ysbeam CRON[8514]: (root) CMD ([ -x /etc/init.d/anacron ] && if [ ! -d /run/systemd/system ]; then /usr/sbin/invoke-rc.d anacron start >/dev/null; fi)
+May 20 10:32:36 ysbeam systemd[1]: Started Run anacron jobs.
+May 20 10:32:36 ysbeam anacron[8519]: Anacron 2.3 started on 2024-05-20
+May 20 10:32:36 ysbeam anacron[8519]: Normal exit (0 jobs run)
+May 20 10:32:36 ysbeam systemd[1]: anacron.service: Succeeded.
+May 20 10:33:03 ysbeam systemd[1]: Started Session 58 of user soyoung.
+May 20 10:48:05 ysbeam systemd[1]: session-58.scope: Succeeded.
+May 20 11:00:04 ysbeam systemd[1]: Started Session 59 of user soyoung.
+May 20 11:01:19 ysbeam systemd[1]: Starting Daily apt download activities...
+May 20 11:01:49 ysbeam apt-helper[9775]: E: Sub-process nm-online returned an error code (1)
+May 20 11:01:49 ysbeam systemd[1]: apt-daily.service: Succeeded.
+May 20 11:01:49 ysbeam systemd[1]: Finished Daily apt download activities.

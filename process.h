@@ -1,9 +1,15 @@
 #include <string>
 
-using namespace std;
+std::string ExecuteCommand(const char* cmd);
 
-string exec(const char* cmd);
+void SaveInfoToFile(const std::string& data, const std::string& filename);
 
-void DisplayProcessInfo(const string& processName, const string& filename);
+std::string GetCpuUsage();
 
-int process();
+std::string GetDiskUsage();
+
+std::string GetNetworkUsage();
+
+void SaveAllInfo(const std::string& filename);
+
+int CollectAndSaveResourceUsage();
