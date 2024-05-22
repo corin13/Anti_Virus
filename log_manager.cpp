@@ -1,6 +1,8 @@
 #include <iostream>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/basic_file_sink.h"
 #include "log_manager.h"
 
 void ManageLogLevel(){
@@ -53,8 +55,38 @@ void GenerateLogs() {
     }
 }
 
+void MuliSinkLogger() {
+    // 로그 포매팅
+    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [pid %P] [thread %t] [%s:%#] %v");
+
+    // 정보 이상만 콘솔에 출력
+    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    console_sink->set_level(spdlog::level::info);
+
+    // 모든 로그 레벨 기록
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/detailed.log", true);
+    file_sink->set_level(spdlog::level::trace);  
+
+    std::vector<spdlog::sink_ptr> sinks {console_sink, file_sink};
+    auto logger = std::make_shared<spdlog::logger>("multi_sink_logger", sinks.begin(), sinks.end());
+    logger->set_level(spdlog::level::trace);
+
+    spdlog::register_logger(logger);
+
+    std::cout << " " << std::endl;
+    logger->trace("Trace message - very detailed debugging information.");
+    logger->debug("Debug message - useful for seeing the flow of control.");
+    logger->info("Info message - general outputs of operations.");
+    logger->warn("Warning message - something notable happened, but it's not an error.");
+    logger->error("Error message - something went wrong.");
+    logger->critical("Critical message - serious error, program may be unable to continue running.");
+}
+
 void logging(){
     ManageLogLevel();
     RotateLogs();
     GenerateLogs();
+    MuliSinkLogger();
+    spdlog::get("multi_sink_logger")->info("This is an informational message that will appear in console and file.");
+    spdlog::shutdown();
 }
