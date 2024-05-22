@@ -10,7 +10,7 @@ void CheckOption(int &argc, char** &argv){
             case 'h':
                 help(); 
                 break;
-
+            
             case 'i':
                 info();
                 break;
@@ -23,18 +23,31 @@ void CheckOption(int &argc, char** &argv){
 
                 break;
 
+            case 'd':
+                detect();
+                break;
+
+            case 'l':
+                logging();
+                break;
+
+            case 'p':
+                CollectAndSaveResourceUsage();
+                break;
+
             case '?':
                 error();
                 break;
-
+            
             default:
                 abort();
         }
     }
-
 }
 
+
 int main(int argc, char **argv){
+
     //옵션 값 확인
     if (argc > 1) 
         CheckOption(argc, argv);
