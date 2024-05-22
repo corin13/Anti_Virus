@@ -73,13 +73,15 @@ void MuliSinkLogger() {
 
     spdlog::register_logger(logger);
 
-    std::cout << " " << std::endl;
-    logger->trace("Trace message - very detailed debugging information.");
-    logger->debug("Debug message - useful for seeing the flow of control.");
-    logger->info("Info message - general outputs of operations.");
-    logger->warn("Warning message - something notable happened, but it's not an error.");
-    logger->error("Error message - something went wrong.");
-    logger->critical("Critical message - serious error, program may be unable to continue running.");
+    std::cout << " \n";
+    for (int i = 0; i < 5; ++i) {
+        logger->trace("Trace level message {}", i);
+        logger->debug("Debug level message {}", i);
+        logger->info("Info level message {}", i);
+        logger->warn("Warning level message {}", i);
+        logger->error("Error level message {}", i);
+        logger->critical("Critical level message {}", i);
+    }
 }
 
 void logging(){

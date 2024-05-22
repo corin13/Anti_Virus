@@ -1,8 +1,8 @@
 #pragma once
 #include "spdlog/spdlog.h"
 
+void ManageLogLevel();
+void RotateLogs();
+void GenerateLogs();
+void MuliSinkLogger();
 void logging();
-
-void rotating_example();
-
-void generate_logs();
