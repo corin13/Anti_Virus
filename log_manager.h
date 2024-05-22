@@ -4,5 +4,10 @@
 void ManageLogLevel();
 void RotateLogs();
 void GenerateLogs();
-void MuliSinkLogger();
+void MultiSinkLogger();
+void SetupAsyncLogger();
+void MultiThreadedLoggingTest();
+void MeasureAsyncLoggingPerformance();
+void SetupSyncLogger();
+void MeasureSyncLoggingPerformance();
 void logging();
