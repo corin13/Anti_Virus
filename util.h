@@ -2,5 +2,5 @@
 
 #include <string>
 
-bool isDirectory(const std::string& path);
-void printError(const std::string& message);
+bool IsDirectory(const std::string& path);
+void PrintError(const std::string& message);

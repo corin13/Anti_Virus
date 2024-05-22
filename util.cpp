@@ -4,7 +4,7 @@
 #include "util.h"
 
 // 경로 유효성 검사 함수
-bool isDirectory(const std::string& path) {
+bool IsDirectory(const std::string& path) {
     struct stat info;
     if (stat(path.c_str(), &info) != 0) {
         return false;
@@ -12,6 +12,6 @@ bool isDirectory(const std::string& path) {
     return (info.st_mode & S_IFDIR) != 0;
 }
 
-void printError(const std::string& message) {
+void PrintError(const std::string& message) {
     std::cerr << "\n\033[31m" << message << "\033[0m\n";
 }

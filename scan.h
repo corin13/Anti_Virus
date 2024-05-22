@@ -2,13 +2,14 @@
 
 #include <string>
 #include <vector>
+#include "util.h"
 
 struct UserData {
     std::vector<std::string>* detectedMalware;
     const std::string* filePath;
 };
 
-void scan();
-void scanDirectory(const std::string& path, int option);
-void moveDetectedMalware(const std::vector<std::string>& detectedMalware);
-bool moveFile(const std::string& filePath, const std::string& quarantineDir);
+void StartScan();
+void ScanDirectory(const std::string& path, int option);
+void MoveDetectedMalware(const std::vector<std::string>& detectedMalware);
+bool MoveFile(const std::string& filePath, const std::string& quarantineDir);
