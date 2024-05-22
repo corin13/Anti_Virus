@@ -6,6 +6,7 @@
 #include "print.h"
 #include "antidbg.h"
 #include "scan.h"
+#include "log_manager.h"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ struct option options[]={
     {"detect", no_argument, 0, 'd'},
     {"scan", no_argument, 0,'s'}, //인자값 필요로 한다면 no_argument -> required_argument
     {"ps", no_argument, 0, 'p'},
+    {"log", no_argument, 0, 'l'},
     {0,0,0,0}
 };
 
