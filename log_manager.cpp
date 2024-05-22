@@ -3,6 +3,7 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/async.h"
 #include "log_manager.h"
 
 void ManageLogLevel(){
@@ -55,7 +56,7 @@ void GenerateLogs() {
     }
 }
 
-void MuliSinkLogger() {
+void MultiSinkLogger() {
     // 로그 포매팅
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [pid %P] [thread %t] [%s:%#] %v");
 
@@ -84,11 +85,114 @@ void MuliSinkLogger() {
     }
 }
 
+// 비동기 로깅을 설정하는 함수
+void SetupAsyncLogger() {
+    try {
+        spdlog::init_thread_pool(8192, 1);
+
+        if (!spdlog::get("async_file_logger")) {
+            auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/async.log", true);
+            auto async_file_logger = std::make_shared<spdlog::async_logger>("async_file_logger", file_sink, spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+            spdlog::register_logger(async_file_logger);
+        }
+    } catch (const spdlog::spdlog_ex& ex) {
+        std::cerr << "Logger initialization failed: " << ex.what() << std::endl;
+    }
+}
+
+// 멀티스레드 테스트 함수
+void MultiThreadedLoggingTest() {
+    std::vector<std::thread> threads;
+    const int num_threads = 4;
+    const int num_logs_per_thread = 100;
+
+    for (int i = 1; i <= num_threads; ++i) {
+        threads.emplace_back([i, num_logs_per_thread]() {
+            auto logger = spdlog::get("async_file_logger");
+            if (!logger) {
+                std::cerr << "Logger not found in thread " << i << std::endl;
+                return;
+            }
+
+            for (int j = 0; j < num_logs_per_thread; ++j) {
+                logger->trace("Thread {} - Trace message {}", i, j);
+                logger->debug("Thread {} - Debug message {}", i, j);
+                logger->info("Thread {} - Log message {}", i, j);
+                logger->warn("Thread {} - Warning message {}", i, j);
+                logger->error("Thread {} - Error message {}", i, j);
+                logger->critical("Thread {} - Critical message {}", i, j);
+            }
+        });
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+}
+
+// 비동기 로딩 시스템의 성능을 측정하기 위한 함수
+void MeasureAsyncLoggingPerformance() {
+    auto logger = spdlog::get("async_file_logger");
+    
+    if (!logger) {
+        std::cerr << "Logger not found" << std::endl;
+        return;
+    }
+
+    const int num_logs = 10000;
+
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < num_logs; ++i) {
+        logger->info("This is an asynchronous log message number {}", i);
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    std::cout << " " << "\n";
+    std::cout << "Logging " << num_logs << " messages took " << elapsed.count() << " seconds." << std::endl;
+
+    logger->flush();
+}
+
+// 동기 로딩을 설정하는 함수
+void SetupSyncLogger() {
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/sync.log", true);
+    auto sync_file_logger = std::make_shared<spdlog::logger>("sync_file_logger", file_sink);
+    spdlog::register_logger(sync_file_logger);
+}
+
+// 동기 로딩 시스템의 성능을 측정하기 위한 함수
+void MeasureSyncLoggingPerformance() {
+    auto logger = spdlog::get("sync_file_logger");
+    if (!logger) {
+        std::cerr << "Logger not found" << std::endl;
+        return;
+    }
+
+    const int num_logs = 10000;
+
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < num_logs; ++i) {
+        logger->info("This is a synchronous log message number {}", i);
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    std::cout << "Logging " << num_logs << " messages took " << elapsed.count() << " seconds." << std::endl;
+
+    logger->flush();
+}
+
 void logging(){
     ManageLogLevel();
     RotateLogs();
     GenerateLogs();
-    MuliSinkLogger();
+    MultiSinkLogger();
+    SetupAsyncLogger();
+    MultiThreadedLoggingTest();
     spdlog::get("multi_sink_logger")->info("This is an informational message that will appear in console and file.");
+    MeasureAsyncLoggingPerformance();
+    SetupSyncLogger();
+    MeasureSyncLoggingPerformance();
     spdlog::shutdown();
 }
