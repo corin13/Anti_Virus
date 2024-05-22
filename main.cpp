@@ -20,11 +20,7 @@ void CheckOption(int &argc, char** &argv){
                 break;
             
             case 's':
-
-                break;
-
-            case 'd':
-                detect();
+                scan();
                 break;
 
             case 'l':
