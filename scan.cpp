@@ -2,6 +2,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
+#include <chrono>
+#include <iomanip>
 #include "scan.h"
 #include "util.h"
 #include "malware_hash.h"
@@ -49,6 +51,9 @@ void scan(){
 
 void scanDirectory(const std::string& path, int option) {
 
+    // 파일 검사 시작 시간 기록
+    auto start = std::chrono::high_resolution_clock::now();
+
     char * const paths[] = {const_cast<char *>(path.c_str()), nullptr};
 
     FTS *file_system = fts_open(paths, FTS_NOCHDIR | FTS_PHYSICAL, nullptr);
@@ -91,6 +96,13 @@ void scanDirectory(const std::string& path, int option) {
 
     std::cout << "\n### End File Scan ###\n\n";
 
+        // 파일 검사 종료 시간 기록
+    auto stop = std::chrono::high_resolution_clock::now();
+
+    // 소요된 시간 계산 (밀리초 단위)
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    double seconds = duration.count() / 1000.0;
+
     // 스캔 결과 출력
     std::cout << "\n- File Scan Result -\n\n"
             << "\033[31m[+] Total Malware File : " << detectedMalware.size() << " files\033[0m\n";
@@ -98,6 +110,7 @@ void scanDirectory(const std::string& path, int option) {
         std::cout << "\033[31m[" << i + 1 << "] : " << detectedMalware[i] << "\033[0m\n";
     }
     std::cout << "\n[+] Total Scan File : " << file_count << " files " << total_size << " bytes\n";
+    std::cout << "\n[+] File scan time :  " << std::fixed << std::setprecision(3) << seconds << " sec (" << duration.count() << "ms)\n";
 
     // 악성 파일 이동
     moveDetectedMalware(detectedMalware);
