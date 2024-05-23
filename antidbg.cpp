@@ -1,4 +1,5 @@
-#define DETECT (10)
+#define DETECT (201)
+#define NOT_DETECT (200)
 
 #include "antidbg.h"
 
@@ -9,7 +10,7 @@ std::string GetStatInfo(const std::string& path) {
     std::string stat;
 
     if (!stat_file.is_open()) {
-        throw std::runtime_error("Failed to open file: " + stat_path);
+        throw std::runtime_error("File: " + stat_path);
     }
 
     std::getline(stat_file, stat);
@@ -38,7 +39,7 @@ int CheckProcess() {
 
     //dir open
     if ((dir = opendir("/proc")) == nullptr){
-        return 2;
+        return ERROR_CANNOT_OPEN_DIRECTORY;
     }
 
     while ((entry = readdir(dir)) != nullptr) {
@@ -50,7 +51,7 @@ int CheckProcess() {
                 stat = GetStatInfo(path);
             } catch (const std::exception& e) {
                 std::cerr << e.what() << std::endl;
-                return 4;
+                return ERROR_CANNOT_OPEN_FILE;
             }
 
             std::vector<std::string> stat_parse = ParseStat(stat);
@@ -69,41 +70,28 @@ int CheckProcess() {
     for (size_t i = 0; i < udkd_pids.size(); ++i) {
         if (std::find(dbg_pids.begin(), dbg_pids.end(), udkd_ppids[i]) != dbg_pids.end()) {
             kill(std::stoi(udkd_pids[i]), SIGTERM);
-            return 11;
+            return DETECT;
         }
 
     }
-    return 0;
+    return NOT_DETECT;
 }
 
 void Detect() {
     std::cout << "Process started. The system is now protected against debugging attempts." << std::endl;
 
     while (true) {
-        switch (CheckProcess()) {
-            case 0:
-                std::cout << "Anti-debugging Logic Running…" << std::endl;
-                break;
-            case 1:
-                std::cout << "Error : Invalid Function" << std::endl;
-                exit(1);
-                break;
-            case 2:
-                std::cout << "Error : Not Found File/directory" << std::endl;
-                exit(2);
-                break;
-            case 4:
-                std::cout << "Error : Failed Open File" << std::endl;
-                break;
-                
-            case 11:
-                std::cout << "Debugger detected! Terminating program" << std::endl;
-                break;
+        int stateCode = CheckProcess();
 
-            default:
-                std::cout << "Error : Program Error" << std::endl;
-                exit(1);
-                break;
+        if (stateCode == DETECT) {
+            std::cout << "Debugger detected! Terminating program" << std::endl;
+        }
+        else if(stateCode == NOT_DETECT) {
+            std::cout << "Anti-debugging Logic Running…" << std::endl;
+        }
+        else {
+            std::cout << GetErrorMessage(stateCode) << std:: endl;
+            exit(stateCode);
         }
 
         sleep(3);
