@@ -17,6 +17,10 @@ void PrintError(const std::string& message) {
     std::cerr << "\n\033[31m" << message << "\033[0m\n";
 }
 
+void PrintErrorMessage(int code) {
+    std::cerr << "\n\033[31mError: " << GetErrorMessage(code) << "\033[0m\n";
+}
+
 
 // 특정 확장자 파일 필터 함수
 bool IsExtension(const std::string& filePath, const std::string& extension) {

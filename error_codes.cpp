@@ -25,6 +25,8 @@ std::string GetErrorMessage(int code) {
         case 10:
             return "Failed to open directory";
         case 11:
+            return "Failed to compute hash for file";
+        case 12:
         default:
             return "Unknown error";
     }

@@ -17,8 +17,9 @@ struct ScanData {
     double scanTime;
 };
 
-void StartScan();
-void ScanDirectory(ScanData& scanData, int scanTypeOption, int fileTypeOption, std::string& extension);
-void MoveDetectedMalware(const std::vector<std::string>& detectedMalware);
-bool MoveFile(const std::string& filePath, const std::string& quarantineDir);
-void PrintScanResult(const ScanData& scanData);
+int StartScan();
+int PerformFileScan();
+int ScanDirectory(ScanData& scanData, int scanTypeOption, int fileTypeOption, std::string& extension);
+int MoveDetectedMalware(const std::vector<std::string>& detectedMalware);
+int MoveFile(const std::string& filePath, const std::string& quarantineDir);
+int PrintScanResult(const ScanData& scanData);
