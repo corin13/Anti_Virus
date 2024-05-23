@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -8,6 +9,10 @@
 
 void ManageLogLevel(){
     auto logger = spdlog::default_logger();
+
+    // TRACE 레벨 설정
+    spdlog::set_level(spdlog::level::trace); // 전역 로그 레벨을 trace로 설정
+    spdlog::trace("This is a trace message - visible at trace level");
 
     // DEBUG 레벨 설정
     spdlog::set_level(spdlog::level::debug); // 전역 로그 레벨을 debug로 설정
@@ -73,6 +78,8 @@ void MultiSinkLogger() {
     logger->set_level(spdlog::level::trace);
 
     spdlog::register_logger(logger);
+
+    logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [pid %P] [thread %t] [%s:%#] %v");
 
     std::cout << " \n";
     for (int i = 0; i < 5; ++i) {
@@ -149,7 +156,7 @@ void MeasureAsyncLoggingPerformance() {
     std::chrono::duration<double> elapsed = end - start;
 
     std::cout << " " << "\n";
-    std::cout << "Logging " << num_logs << " messages took " << elapsed.count() << " seconds." << std::endl;
+    std::cout << "Logging " << num_logs << " messages took " << elapsed.count() << " seconds using asynchronous logging." << std::endl;
 
     logger->flush();
 }
@@ -178,7 +185,7 @@ void MeasureSyncLoggingPerformance() {
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
 
-    std::cout << "Logging " << num_logs << " messages took " << elapsed.count() << " seconds." << std::endl;
+    std::cout << "Logging " << num_logs << " messages took " << elapsed.count() << " seconds using synchronous logging." << std::endl;
 
     logger->flush();
 }
