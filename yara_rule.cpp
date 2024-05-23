@@ -4,31 +4,31 @@
 using namespace std;
 
 // YARA 룰 매칭 콜백 함수
-int yaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* message_data, void* user_data) {
+int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* userData) {
     if (message == CALLBACK_MSG_RULE_MATCHING) {
-        auto* data = static_cast<UserData*>(user_data);        
+        auto* data = static_cast<UserData*>(userData);        
         vector<string>* detectedMalware = data->detectedMalware;
-        const string* file_path = data->filePath; // 파일 경로 가져오기
-        detectedMalware->push_back(*file_path);
-        cout << "\n\033[31m[+] Malware detected: [" << *file_path << "]\033[0m\n\n";
+        const string* filePath = data->filePath; // 파일 경로 가져오기
+        detectedMalware->push_back(*filePath);
+        cout << "\n\033[31m[+] Malware detected: [" << *filePath << "]\033[0m\n\n";
     }
     return CALLBACK_CONTINUE;
 }
 
 
 
-void checkYaraRule(const string& filePath, vector<string>& detectedMalware) {
+void CheckYaraRule(const string& filePath, vector<string>& detectedMalware) {
     YR_COMPILER* compiler = nullptr;
     YR_RULES* rules = nullptr;
 
     // yara 라이브러리 초기화
     if (yr_initialize() != ERROR_SUCCESS) {
-        cerr << "Failed to initialize YARA." << endl;
+        PrintError("Failed to initialize YARA.");
         return;
     }
     // yara 컴파일러 객체 생성
     if (yr_compiler_create(&compiler) != ERROR_SUCCESS) {
-        cerr << "Failed to create YARA compiler." << endl;
+        PrintError("Failed to create YARA compiler.");
         yr_finalize();
         return;
     }
@@ -36,7 +36,7 @@ void checkYaraRule(const string& filePath, vector<string>& detectedMalware) {
     const char* ruleFile = "rules.yara";
     FILE* ruleFilePtr = fopen(ruleFile, "r");
     if (!ruleFilePtr) {
-        cout << "Failed to open YARA rules file." << endl;
+        PrintError("Failed to open YARA rules file.");
         yr_compiler_destroy(compiler);
         yr_finalize();
         return;
@@ -53,7 +53,7 @@ void checkYaraRule(const string& filePath, vector<string>& detectedMalware) {
 
     
     if (yr_compiler_get_rules(compiler, &rules) != ERROR_SUCCESS) {
-        cerr << "Failed to get compiled YARA rules." << endl;
+        PrintError("Failed to get compiled YARA rules.");
         yr_compiler_destroy(compiler);
         yr_finalize();
         return;
@@ -62,11 +62,11 @@ void checkYaraRule(const string& filePath, vector<string>& detectedMalware) {
     UserData userData { &detectedMalware, &filePath };
 
     // 스캔
-    int scanResult = yr_rules_scan_file(rules, filePath.c_str(), 0, yaraCallbackFunction, &userData, 0);
+    int scanResult = yr_rules_scan_file(rules, filePath.c_str(), 0, YaraCallbackFunction, &userData, 0);
     if (scanResult != ERROR_SUCCESS && scanResult != CALLBACK_MSG_RULE_NOT_MATCHING) {
-        cerr << "Error scanning file " <<filePath <<": " << scanResult << endl;
+        PrintError("Error scanning file " + filePath);
     }
- 
+
     yr_rules_destroy(rules);
     yr_compiler_destroy(compiler);
     yr_finalize();
