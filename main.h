@@ -2,8 +2,8 @@
 
 #include <getopt.h>
 #include <iostream>
-#include "process.h"
-#include "print.h"
+#include "usage_collector.h"
+#include "options_info.h"
 #include "antidbg.h"
 #include "scan.h"
 #include "log_manager.h"
@@ -15,7 +15,7 @@ struct option options[]={
     {"info", no_argument, 0, 'i'},
     {"detect", no_argument, 0, 'd'},
     {"scan", no_argument, 0,'s'}, //인자값 필요로 한다면 no_argument -> required_argument
-    {"ps", no_argument, 0, 'p'},
+    {"usage", no_argument, 0, 'u'},
     {"log", no_argument, 0, 'l'},
     {0,0,0,0}
 };
