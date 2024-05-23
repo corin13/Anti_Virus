@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include <memory>
 
+#include "error_codes.h"
+
 // /proc/[pid]/stat 파일을 읽어오는 함수 (/proc/[pid] 까지의 경로를 받아옴))
 std::string GetStatInfo(const std::string& path);
 
