@@ -1,6 +1,10 @@
 #pragma once
 
 #include <string>
+#include "error_codes.h"
 
-bool isDirectory(const std::string& path);
-void printError(const std::string& message);
+bool IsDirectory(const std::string& path);
+void PrintError(const std::string& message);
+void PrintErrorMessage(int code);
+bool IsExtension(const std::string& filePath, const std::string& extension);
+bool IsELFFile(const std::string& filePath);
