@@ -6,13 +6,15 @@
 #include "options_info.h"
 
 // 유효하지 않은 옵션을 선택했을 때 호출되어, 오류 메시지를 출력하고 '--help' 옵션의 사용을 안내
-void CUdkdAgentOptions::DisplayErrorOption() {
+int CUdkdAgentOptions::DisplayErrorOption() {
     std::cout << "Error: Invalid option\n"
               << "For usage information, type 'UdkdAgent --help'\n";
+
+    return ERROR_INVALID_OPTION;
 }
 
 // '-h' 또는 '--help' 옵션을 선택했을 때 호출되어, 사용 가능한 모든 옵션과 그 설명을 출력
-void CUdkdAgentOptions::DisplayHelpOption() { 
+int CUdkdAgentOptions::DisplayHelpOption() { 
     std::cout << "Usage: ./UdkdAgent [OPTIONS]\n"
               << " \n"
               << "Options: \n"
@@ -21,10 +23,12 @@ void CUdkdAgentOptions::DisplayHelpOption() {
               << "  -s, --scan               Scan files in the specified directory.\n"
               << "  -u, --usage              Collects and stores CPU, disk, and network usage data.\n"
               << "  -l, --log                Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n";
+           
+    return SUCCESS_CODE;
 }
 
 // '-i' 또는 '--info' 옵션을 선택했을 때 호출되어, 프로그램에 대한 상세 정보를 출력
-void CUdkdAgentOptions::DisplayInfoOption() {
+int CUdkdAgentOptions::DisplayInfoOption() {
     std::cout << "Program Information\n"
               << "=====================================================================\n"
               << "Name: UdkdAgent\n";
@@ -33,8 +37,7 @@ void CUdkdAgentOptions::DisplayInfoOption() {
     std::string strLine;
 
     if (!osReleaseFile) {
-        std::cerr << "Failed to open /etc/os-release. Error: " << strerror(errno) << std::endl;
-        return;
+        return ERROR_CANNOT_OPEN_FILE;
     }
 
     try {
@@ -46,7 +49,7 @@ void CUdkdAgentOptions::DisplayInfoOption() {
                 size_t siEndPosition = strLine.length() - 1;
 
                 if (siStartPosition > siEndPosition) {
-                    throw std::out_of_range("Invalid range for substr extraction");
+                    return ERROR_INVALID_RANGE;
                 }
 
                 std::string strUbuntuVersion = strLine.substr(siStartPosition, siEndPosition - siStartPosition);
@@ -58,10 +61,10 @@ void CUdkdAgentOptions::DisplayInfoOption() {
         }
 
         if (!bFindPrettyName) {
-            std::cerr << "PRETTY_NAME not found in /etc/os-release" << std::endl;
+            return ERROR_FILE_NOT_FOUND;
         }
     } catch (const std::exception& fileException) {
-        std::cerr << "An error occurred while parsing /etc/os-release: " << fileException.what() << std::endl;
+        return ERROR_UNKNOWN;
     }
 
     osReleaseFile.close();
@@ -75,4 +78,6 @@ void CUdkdAgentOptions::DisplayInfoOption() {
               << "    - Inspect Process: Focuses on overseeing processes that use excessive resources or act unpredictably, and terminates then as needed to maintain system stability and security.\n"
               << " \n"
               << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities.\n";
+              
+    return SUCCESS_CODE;          
 }

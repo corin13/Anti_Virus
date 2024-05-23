@@ -1,10 +1,10 @@
 #pragma once
 
-#define ERROR_CANNOT_OPEN_FILE 4
+#include "error_codes.h"
 
 class CUdkdAgentOptions {
 public:
-    void DisplayErrorOption();
-    void DisplayHelpOption();
-    void DisplayInfoOption();
+    int DisplayErrorOption();
+    int DisplayHelpOption();
+    int DisplayInfoOption();
 };

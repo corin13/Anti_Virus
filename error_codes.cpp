@@ -27,6 +27,10 @@ std::string GetErrorMessage(int code) {
         case 11:
             return "Failed to compute hash for file";
         case 12:
+            return "Invalid range for substring extraction";
+        case 13:
+            return "Failed to write data to file";
+        case 14:
         default:
             return "Unknown error";
     }
