@@ -67,7 +67,8 @@ int CUdkdAgentOptions::DisplayInfoOption() {
               << "Key Features include: \n"
               << "    - Malware Scanning: Eliminates potential threats before they can cause harm.\n"
               << "    - Anti-Debugging: Protects sensitive code from being analyzed or manipulated by unauthorized debuggers.\n"
-              << "    - Inspect Process: Focuses on overseeing processes that use excessive resources or act unpredictably, and terminates then as needed to maintain system stability and security.\n"
+              << "    - Collect System Resource: Collects CPU usage, disk I/O, and network usage, saving the data to a file for performance analysis and optimization.\n"
+              << "    - Log File Management: Manages log levels, rotation, formatting, multi-sync, and asynchronous settings to ensure log integrity."
               << " \n"
               << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities.\n";
               
