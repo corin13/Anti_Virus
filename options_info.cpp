@@ -36,21 +36,16 @@ int CUdkdAgentOptions::DisplayInfoOption() {
     std::ifstream osReleaseFile("/etc/os-release");
     std::string strLine;
 
-    if (!osReleaseFile) {
-        return ERROR_CANNOT_OPEN_FILE;
-    }
+    if (!osReleaseFile) return ERROR_CANNOT_OPEN_FILE;
 
     try {
         bool bFindPrettyName = false;
-
         while (getline(osReleaseFile, strLine)) {
             if (strLine.substr(0, 11) == "PRETTY_NAME") {
                 size_t siStartPosition = strLine.find('=') + 2;
                 size_t siEndPosition = strLine.length() - 1;
 
-                if (siStartPosition > siEndPosition) {
-                    return ERROR_INVALID_RANGE;
-                }
+                if (siStartPosition > siEndPosition) return ERROR_INVALID_RANGE;
 
                 std::string strUbuntuVersion = strLine.substr(siStartPosition, siEndPosition - siStartPosition);
                 std::cout << "Ubuntu Version: " << strUbuntuVersion << std::endl;
@@ -59,11 +54,8 @@ int CUdkdAgentOptions::DisplayInfoOption() {
                 break;
             }
         }
-
-        if (!bFindPrettyName) {
-            return ERROR_FILE_NOT_FOUND;
-        }
-    } catch (const std::exception& fileException) {
+        if (!bFindPrettyName) return ERROR_FILE_NOT_FOUND;
+    } catch (const std::exception& ex) {
         return ERROR_UNKNOWN;
     }
 

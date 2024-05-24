@@ -6,7 +6,7 @@
 #include "options_info.h"
 #include "antidbg.h"
 #include "scan.h"
-#include "log_manager.h"
+#include "logfile_manager.h"
 
 using namespace std;
 

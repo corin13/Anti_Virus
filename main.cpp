@@ -2,6 +2,7 @@
 
 CUdkdAgentOptions IAgentOptions;
 CUsageCollector IUsageOption;
+CLoggingManager ILoggingOption;
 
 void CheckOption(int &argc, char** &argv){
     int optionIndex= 0;
@@ -27,7 +28,7 @@ void CheckOption(int &argc, char** &argv){
                 break;
 
             case 'l':
-                logging();
+                ILoggingOption.TestLogging();
                 break;
 
             case 'u':
