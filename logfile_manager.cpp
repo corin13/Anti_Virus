@@ -148,7 +148,6 @@ int CLoggingManager::TestMultiThreadedLogging() {
                     logger->error("Thread {} - Error message {}", i, j);
                     logger->critical("Thread {} - Critical message {}", i, j);
                 }
-
             });
         }
         for (auto& thread : vecThreads) {
@@ -170,7 +169,6 @@ int CLoggingManager::MeasureAsyncLogPerformance() {
             spdlog::error("Logger not found");
             return ERROR_UNKNOWN;
         }
-
         const int nLogs = 10000;
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -214,7 +212,6 @@ int CLoggingManager::MeasureSyncLogPerformance() {
             spdlog::error("Logger not found");
             return ERROR_UNKNOWN;
         }
-
         const int nLogs = 10000;
 
         auto start = std::chrono::high_resolution_clock::now();

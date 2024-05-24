@@ -15,7 +15,6 @@ int CUsageCollector::RunCommand(const char* pCommand, std::string& strResult) {
     char chOutputBuffer[128];
     strResult = "";
     FILE* pPipe = nullptr;
-
     try {
         pPipe = popen(pCommand, "r");
         if (!pPipe) return ERROR_CANNOT_OPEN_FILE;
@@ -35,7 +34,6 @@ int CUsageCollector::RunCommand(const char* pCommand, std::string& strResult) {
 // 데이터를 파일에 저장하는 함수
 int CUsageCollector::SaveDataToFile(const std::string& strData, const std::string& strFileName) {
     std::ofstream outputFile;
-
     try {
         outputFile.open(strFileName, std::ios::out | std::ios::app);
         if (!outputFile) return ERROR_CANNOT_OPEN_FILE;
@@ -47,7 +45,6 @@ int CUsageCollector::SaveDataToFile(const std::string& strData, const std::strin
         if (outputFile.is_open()) outputFile.close();
         return ERROR_UNKNOWN;
     }
-
     if (outputFile.is_open()) outputFile.close();
     return SUCCESS_CODE;
 }
