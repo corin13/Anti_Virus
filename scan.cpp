@@ -92,6 +92,7 @@ int ScanDirectory(ScanData& scanData, int scanTypeOption, int fileTypeOption, st
     std::vector<std::string> hashes;
     int result = LoadHashes("hashes.txt", hashes); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
     if (result != SUCCESS_CODE) {
+        fts_close(fileSystem);
         return result;
     }
 
@@ -115,9 +116,13 @@ int ScanDirectory(ScanData& scanData, int scanTypeOption, int fileTypeOption, st
                 scanData.totalSize += node->fts_statp->st_size;
                 std::cout << node->fts_path << "\n";
                 if (scanTypeOption == 1) {
-                    CheckYaraRule(node->fts_path, scanData.detectedMalware);
+                    result = CheckYaraRule(node->fts_path, scanData.detectedMalware);
                 } else {
-                    CompareByHash(node, scanData.detectedMalware, hashes);
+                    result = CompareByHash(node, scanData.detectedMalware, hashes);
+                }
+                if (result != SUCCESS_CODE) {
+                    fts_close(fileSystem);
+                    return result;
                 }
             }
         }
