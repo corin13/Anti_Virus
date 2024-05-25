@@ -9,10 +9,12 @@ int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageDat
         auto* data = static_cast<UserData*>(userData);        
         std::vector<std::string>* detectedMalware = data->detectedMalware;
         const std::string* filePath = data->filePath; // 파일 경로 가져오기
+        YR_RULE* rule = (YR_RULE*)messageData; // 탐지된 룰 정보 가져오기
         // 중복 검사
         if (std::find(detectedMalware->begin(), detectedMalware->end(), *filePath) == detectedMalware->end()) {
             detectedMalware->push_back(*filePath);
-            std::cout << "\n\033[31m[+] Malware detected: [" << *filePath << "]\033[0m\n\n";
+            std::cout << "\n\033[31m[+] Malware detected: [" << *filePath << "]\033[0m\n";
+            std::cout << "\033[31m[+] Detected by rule: [" << rule->identifier << "]\033[0m\n\n";
         }
     }
     return CALLBACK_CONTINUE;
