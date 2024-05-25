@@ -33,9 +33,9 @@ int PerformFileScan() {
     std::cout << "\n[-] Scan Path : " << path << "\n\n";
 
         std::cout << "Select a file type to scan:\n\n"
-            << "1. Specific file extension\n"
+            << "1. All files (Default)\n"
             << "2. Only ELF files\n"
-            << "3. All files (Default)\n\n"
+            << "3. Specific file extension\n\n"
             << "Please enter the option: ";
     std::string fileTypeInput;
     getline(std::cin, fileTypeInput);
