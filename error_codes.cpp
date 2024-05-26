@@ -31,6 +31,8 @@ std::string GetErrorMessage(int code) {
         case 13:
             return "Failed to write data to file";
         case 14:
+            return "YARA rule error";
+        case 15:
         default:
             return "Unknown error";
     }
