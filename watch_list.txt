@@ -1,0 +1,5 @@
+/home/chlqls/Anti_Virus/monitor-list/hello.c
+/home/chlqls/Anti_Virus/monitor-list/whs2.cpp
+/home/chlqls/Anti_Virus/monitor-list/whs2
+/home/chlqls/Anti_Virus/monitor-list/apple.py
+/home/chlqls/Anti_Virus/monitor-list/banana.txt

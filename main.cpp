@@ -8,7 +8,7 @@ CLoggingManager ILoggingOption;
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
-    const char* pOption="dhilsu";
+    const char* pOption="dhilmsu";
 
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
@@ -26,6 +26,10 @@ void CheckOption(int &argc, char** &argv){
             
             case 'l':
                 ILoggingOption.TestLogging();
+                break;
+
+            case 'm':
+                StartMonitoring();
                 break;
 
             case 's':

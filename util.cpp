@@ -21,6 +21,18 @@ void PrintErrorMessage(int code) {
     std::cerr << "\n\033[31mError: " << GetErrorMessage(code) << "\033[0m\n";
 }
 
+// 에러 처리를 담당하는 함수
+void HandleError(int code, const std::string& context) {
+    if (code != SUCCESS_CODE) {
+        std::cerr << "\n\033[31m[Error] " << GetErrorMessage(code) << "\033[0m";
+        if (!context.empty()) {
+            std::cerr << "\n\033[31m : " << context << "\033[0m";
+        }
+        std::cerr << "\n";
+        exit(code);
+    }
+}
+
 
 // 특정 확장자 파일 필터 함수
 bool IsExtension(const std::string& filePath, const std::string& extension) {
