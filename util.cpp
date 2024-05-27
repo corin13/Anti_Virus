@@ -1,7 +1,10 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <openssl/sha.h>
+#include <iomanip>
 #include "util.h"
 
 // 경로 유효성 검사 함수
@@ -52,4 +55,30 @@ bool IsELFFile(const std::string& filePath) {
         return (magic[0] == 0x7f && magic[1] == 0x45 && magic[2] == 0x4c && magic[3] == 0x46);
     }
     return false;
+}
+
+// SHA256 해시알고리즘을 사용해서 파일의 해시값을 계산
+int ComputeSHA256(const std::string& fileName, std::string& fileHash) {
+    std::ifstream file(fileName, std::ifstream::binary);
+    if (!file) {
+        return ERROR_CANNOT_OPEN_FILE;
+    }
+
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    char buffer[1024];
+    while (file.read(buffer, sizeof(buffer))) {
+        SHA256_Update(&sha256, buffer, file.gcount());
+    }
+    SHA256_Update(&sha256, buffer, file.gcount());
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_Final(hash, &sha256);
+
+    std::stringstream ss;
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    }
+
+    fileHash = ss.str();
+    return SUCCESS_CODE;
 }
