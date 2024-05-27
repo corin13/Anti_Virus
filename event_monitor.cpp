@@ -1,7 +1,10 @@
+#include <ctime>
 #include <iostream>
 #include <dirent.h>
 #include <fstream>
+#include <iomanip>
 #include <vector>
+#include <sstream>
 #include <string>
 #include <sys/inotify.h>
 #include <sys/stat.h>
@@ -137,16 +140,22 @@ void ProcessEvent(struct inotify_event *event, const std::unordered_map<int, std
 
     std::string fullPath = it->second;
 
+    // 현재 시간 얻기
+    std::time_t now = std::time(nullptr);
+    std::tm* now_tm = std::localtime(&now);
+    std::stringstream timeStream;
+    timeStream << std::put_time(now_tm, "%Y-%m-%d %H:%M:%S");
+
     if (event->mask & IN_CREATE) {
-        std::cout << "\nFile created: " << fullPath;
+        std::cout << "\n[" << timeStream.str() << "] File created: " << fullPath;
         // 생성된 파일의 해시 값을 저장
         SaveFileHash(fullPath);
     } else if (event->mask & IN_MODIFY) {
-        std::cout << "\nFile modified: " << fullPath;
+        std::cout << "\n[" << timeStream.str() << "] File modified: " << fullPath;
         // 파일 무결성 검사 수행
         VerifyFileIntegrity(fullPath);
     } else if (event->mask & IN_DELETE) {
-        std::cout << "\nFile deleted: " << fullPath;
+        std::cout << "\n[" << timeStream.str() << "] File deleted: " << fullPath;
         // 파일 삭제 시 처리 (필요한 경우 추가 로직 구현)
     }
 }
