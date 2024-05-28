@@ -24,6 +24,20 @@ int CUdkdAgentOptions::DisplayHelpOption() {
               << "  -u, --usage              Collects and stores CPU, disk, and network usage data.\n"
               << "  -l, --log                Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n";
            
+    std::string hints = "\n./UdkdAgent [-h] [-a aggr-key] [-s sort-key] [-l limit] [-f filter-expression] file\n\n";
+                hints += "-h Prints out help and terminates the program.\n\n";
+                hints += "-a aggr-key Turn on aggregation by aggr-key, which can be srcmac for source MAC\n";
+                hints += "   address or dstmac for destination MAC address, srcip for source IP, dstip for\n";
+                hints += "   destination IP address, srcport or dstport for aggregation by port number.\n\n";
+                hints += "-s sort-key Sorting by sort-key, which can be packets (number of packets) or bytes\n";
+                hints += "   (number of bytes of packets). Sorting can be applied also to aggregated items.\n\n";
+                hints += "-l limit Decimal positive number of packets printed to stdout.\n\n";
+                hints += "-f filter-expression Analyse only packets suitable for this filter. More info in\n";
+                hints += "   manual page of pcap-filter.\n\n";
+                hints += "file Path to file in pcap format (readable by libpcap library). One or more files can \n";
+                hints += "     be provided at once, separated by space.\n";
+    
+    std::cout << hints;       
     return SUCCESS_CODE;
 }
 
@@ -68,7 +82,8 @@ int CUdkdAgentOptions::DisplayInfoOption() {
               << "    - Malware Scanning: Eliminates potential threats before they can cause harm.\n"
               << "    - Anti-Debugging: Protects sensitive code from being analyzed or manipulated by unauthorized debuggers.\n"
               << "    - Collect System Resource: Collects CPU usage, disk I/O, and network usage, saving the data to a file for performance analysis and optimization.\n"
-              << "    - Log File Management: Manages log levels, rotation, formatting, multi-sync, and asynchronous settings to ensure log integrity."
+              << "    - Log File Management: Manages log levels, rotation, formatting, multi-sync, and asynchronous settings to ensure log integrity.\n"
+              << "    - Network Malicious Packet Analysis: captures and processes network packets, extracting and displaying the source and destination IP addresses from each IP packet transmitted over the network.\n"
               << " \n"
               << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities.\n";
               
