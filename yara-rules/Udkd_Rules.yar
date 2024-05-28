@@ -1,4 +1,4 @@
-rule AdKdtest
+rule UdKdtest
 {
     meta:
         description = "This is just an example"
