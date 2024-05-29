@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <fstream>
 #include <iomanip>
+#include <jsoncpp/json/json.h>
 #include <vector>
 #include <sstream>
 #include <string>
@@ -206,21 +207,36 @@ void VerifyFileIntegrity(const std::string &filePath) {
     }
 }
 
+// 파일 이벤트를 날짜별로 로그에 기록
 void LogEvent(std::stringstream &timeStream, const std::string &eventDescription, const std::string &filePath, const std::string &oldHash, const std::string &newHash) {
-    std::ofstream logFile("./logs/file_event_monitor.log", std::ios::out | std::ios_base::app);
+    // JSON 객체 생성
+    Json::Value logEntry;
+    logEntry["timestamp"] = timeStream.str();
+    logEntry["event"] = eventDescription;
+    logEntry["target_file"] = filePath;
+    logEntry["old_hash"] = oldHash.empty() ? "N/A" : oldHash;
+    logEntry["new_hash"] = newHash.empty() ? "N/A" : newHash;
+    logEntry["pid"] = Json::Int(getpid());
+
+    // JSON 객체를 문자열로 변환
+    Json::StreamWriterBuilder writer;
+    std::string logString = Json::writeString(writer, logEntry);
+
+    // 로그 파일에 기록
+    std::string logFileName = GetLogFileName();
+    std::ofstream logFile(logFileName, std::ios::out | std::ios_base::app);
     if (!logFile.is_open()) {
-        HandleError(ERROR_CANNOT_OPEN_FILE, "file-event.log");
+        HandleError(ERROR_CANNOT_OPEN_FILE, logFileName);
     }
-    
-    pid_t pid = getpid();
-
-    // 로그 기록
-    logFile << "[" << timeStream.str() << "] "
-            << "Event: " << eventDescription << ", "
-            << "File: " << filePath << ", "
-            << "Old Hash: " << oldHash << ", "
-            << "New Hash: " << newHash << ", "
-            << "PID: " << pid << "\n";
-
+    logFile << logString << "\n";
     logFile.close();
+}
+
+// 로그 파일 이름 생성 함수(날짜별로)
+std::string GetLogFileName() {
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    std::stringstream ss;
+    ss << "./logs/file_event_monitor_" << std::put_time(std::localtime(&in_time_t), "%Y%m%d") << ".log";
+    return ss.str();
 }

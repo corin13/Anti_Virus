@@ -12,3 +12,4 @@ void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::stri
 void PrintEventsInfo(std::string eventDescription, const std::string &filePath);
 void VerifyFileIntegrity(const std::string &filePath);
 void LogEvent(std::stringstream &timeStream, const std::string &eventDescription, const std::string &filePath, const std::string &oldHash, const std::string &newHash);
+std::string GetLogFileName();
