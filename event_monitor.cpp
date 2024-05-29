@@ -91,25 +91,57 @@ int CreateInotifyInstance() {
 // 파일 목록을 기반으로 inotify에 감시 대상 추가 함수
 void AddWatchListToInotify(int inotifyFd, const std::vector<std::string>& watchList, std::unordered_map<int, std::string>& watchDescriptors) {
     for (const auto& filePath : watchList) {
-        char buffer[PATH_MAX];
-        if (realpath(filePath.c_str(), buffer) != nullptr) {
-            std::string fullPath = std::string(buffer);
-            int wd = inotify_add_watch(inotifyFd, fullPath.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE);
-            if (wd == -1) {
-                HandleError(ERROR_CANNOT_OPEN_DIRECTORY, fullPath);
-            } else {
-                watchDescriptors[wd] = fullPath; // 전체 경로를 매핑에 추가
-                std::cout << "Watching " << fullPath << "\n";
-            }
-        } else {
+        struct stat pathStat;
+        if (stat(filePath.c_str(), &pathStat) != 0) {
             HandleError(ERROR_CANNOT_OPEN_DIRECTORY, filePath);
+            continue;
+        }
+        if (S_ISDIR(pathStat.st_mode)) {
+            // 디렉토리인 경우, 디렉토리 내 모든 파일을 탐지
+            AddDirectoryToInotify(inotifyFd, filePath, watchDescriptors);
+        } else if (S_ISREG(pathStat.st_mode)) {
+            // 파일인 경우, 해당 파일을 탐지
+            AddFileToInotify(inotifyFd, filePath, watchDescriptors);
         }
     }
     std::cout << "\n";
 }
 
+void AddDirectoryToInotify(int inotifyFd, const std::string& dirPath, std::unordered_map<int, std::string>& watchDescriptors) {
+    AddFileToInotify(inotifyFd, dirPath, watchDescriptors);
+    DIR* dir = opendir(dirPath.c_str());
+    if (dir) {
+        struct dirent* entry;
+        while ((entry = readdir(dir)) != nullptr) {
+            if (entry->d_type == DT_REG) {
+                std::string filePath = dirPath + "/" + entry->d_name;
+                AddFileToInotify(inotifyFd, filePath, watchDescriptors);
+            }
+        }
+        closedir(dir);
+    } else {
+        HandleError(ERROR_CANNOT_OPEN_DIRECTORY, dirPath);
+    }
+}
+
+void AddFileToInotify(int inotifyFd, const std::string& filePath, std::unordered_map<int, std::string>& watchDescriptors) {
+    char buffer[PATH_MAX];
+    if (realpath(filePath.c_str(), buffer) != nullptr) {
+        std::string fullPath = std::string(buffer);
+        int wd = inotify_add_watch(inotifyFd, fullPath.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE);
+        if (wd == -1) {
+            HandleError(ERROR_CANNOT_OPEN_DIRECTORY, fullPath);
+        } else {
+            watchDescriptors[wd] = fullPath; // 전체 경로를 매핑에 추가
+            std::cout << "Watching " << fullPath << "\n";
+        }
+    } else {
+        HandleError(ERROR_CANNOT_OPEN_DIRECTORY, filePath);
+    }
+}
+
 // 이벤트 대기 루프 구현
-void RunEventLoop(int inotifyFd, const std::unordered_map<int, std::string>& watchDescriptors) {
+void RunEventLoop(int inotifyFd, std::unordered_map<int, std::string>& watchDescriptors) {
     const size_t eventSize = sizeof(struct inotify_event);
     const size_t bufferSize = 1024 * (eventSize + 16);
     char buffer[bufferSize];
@@ -131,7 +163,7 @@ void RunEventLoop(int inotifyFd, const std::unordered_map<int, std::string>& wat
 
 
 // 이벤트 처리 함수 구현
-void ProcessEvent(struct inotify_event *event, const std::unordered_map<int, std::string>& watchDescriptors) {
+void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::string>& watchDescriptors) {
     auto it = watchDescriptors.find(event->wd);
     if (it == watchDescriptors.end()) {
         std::cerr << "Unknown watch descriptor: " << event->wd << "\n";
@@ -148,7 +180,6 @@ void ProcessEvent(struct inotify_event *event, const std::unordered_map<int, std
 
     if (event->mask & IN_CREATE) {
         std::cout << "\n[" << timeStream.str() << "] File created: " << fullPath;
-        // 생성된 파일의 해시 값을 저장
         SaveFileHash(fullPath);
     } else if (event->mask & IN_MODIFY) {
         std::cout << "\n[" << timeStream.str() << "] File modified: " << fullPath;

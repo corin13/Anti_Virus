@@ -1,6 +1,3 @@
 ./monitor-list/hello.c
 ./monitor-list/whs2.cpp
-./monitor-list/whs2
-./monitor-list/apple.py
-./monitor-list/banana.txt
 

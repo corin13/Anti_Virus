@@ -15,7 +15,7 @@ std::string CalculateFileHash(const std::string &filePath) {
 // 파일의 해시 값을 저장
 void SaveFileHash(const std::string &filePath) {
     // 해시 파일을 저장할 디렉토리
-    std::string hashDirectory = "file_hashes";
+    std::string hashDirectory = "integrity-check-hashes";
 
     // 디렉토리가 없으면 생성
     if (!IsDirectory(hashDirectory)) {
@@ -46,7 +46,7 @@ void SaveFileHash(const std::string &filePath) {
 
 // 기존에 저장된 해시 값을 불러오는 함수
 std::string RetrieveStoredHash(const std::string &filePath) {
-    std::ifstream hashFile("file_hashes/" + filePath.substr(filePath.find_last_of("/\\") + 1) + ".hash");
+    std::ifstream hashFile("integrity-check-hashes/" + filePath.substr(filePath.find_last_of("/\\") + 1) + ".hash");
     if (!hashFile.is_open()) {
         HandleError(ERROR_CANNOT_OPEN_FILE, filePath + ".hash");
     }
