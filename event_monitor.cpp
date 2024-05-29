@@ -1,3 +1,4 @@
+#include <chrono>
 #include <ctime>
 #include <iostream>
 #include <dirent.h>
@@ -61,19 +62,7 @@ void InitializeWatchList(const std::vector<std::string>& watchList) {
     for (const auto& path : watchList) {
         struct stat pathStat;
         stat(path.c_str(), &pathStat);
-        if (S_ISDIR(pathStat.st_mode)) {
-            DIR* dir = opendir(path.c_str());
-            if (dir) {
-                struct dirent* entry;
-                while ((entry = readdir(dir)) != nullptr) {
-                    if (entry->d_type == DT_REG) {
-                        std::string filePath = path + "/" + entry->d_name;
-                        SaveFileHash(filePath);
-                    }
-                }
-                closedir(dir);
-            }
-        } else if (S_ISREG(pathStat.st_mode)) {
+        if (stat(path.c_str(), &pathStat) == 0 && S_ISREG(pathStat.st_mode)) {
             SaveFileHash(path);
         }
     }
@@ -96,48 +85,24 @@ void AddWatchListToInotify(int inotifyFd, const std::vector<std::string>& watchL
             HandleError(ERROR_CANNOT_OPEN_DIRECTORY, filePath);
             continue;
         }
-        if (S_ISDIR(pathStat.st_mode)) {
-            // 디렉토리인 경우, 디렉토리 내 모든 파일을 탐지
-            AddDirectoryToInotify(inotifyFd, filePath, watchDescriptors);
-        } else if (S_ISREG(pathStat.st_mode)) {
-            // 파일인 경우, 해당 파일을 탐지
-            AddFileToInotify(inotifyFd, filePath, watchDescriptors);
+        char buffer[PATH_MAX];
+        if (realpath(filePath.c_str(), buffer) == nullptr) {
+            HandleError(ERROR_CANNOT_OPEN_DIRECTORY, filePath);
+            continue;
+        }
+
+        if (S_ISREG(pathStat.st_mode) || S_ISDIR(pathStat.st_mode)) {
+            std::string fullPath = std::string(buffer);
+            int wd = inotify_add_watch(inotifyFd, fullPath.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM);
+            if (wd == -1) {
+                HandleError(ERROR_CANNOT_OPEN_DIRECTORY, fullPath);
+            } else {
+                watchDescriptors[wd] = fullPath; // 전체 경로를 매핑에 추가
+                std::cout << "[+] Watching " << fullPath << "\n";
+            }
         }
     }
     std::cout << "\n";
-}
-
-void AddDirectoryToInotify(int inotifyFd, const std::string& dirPath, std::unordered_map<int, std::string>& watchDescriptors) {
-    AddFileToInotify(inotifyFd, dirPath, watchDescriptors);
-    DIR* dir = opendir(dirPath.c_str());
-    if (dir) {
-        struct dirent* entry;
-        while ((entry = readdir(dir)) != nullptr) {
-            if (entry->d_type == DT_REG) {
-                std::string filePath = dirPath + "/" + entry->d_name;
-                AddFileToInotify(inotifyFd, filePath, watchDescriptors);
-            }
-        }
-        closedir(dir);
-    } else {
-        HandleError(ERROR_CANNOT_OPEN_DIRECTORY, dirPath);
-    }
-}
-
-void AddFileToInotify(int inotifyFd, const std::string& filePath, std::unordered_map<int, std::string>& watchDescriptors) {
-    char buffer[PATH_MAX];
-    if (realpath(filePath.c_str(), buffer) != nullptr) {
-        std::string fullPath = std::string(buffer);
-        int wd = inotify_add_watch(inotifyFd, fullPath.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE);
-        if (wd == -1) {
-            HandleError(ERROR_CANNOT_OPEN_DIRECTORY, fullPath);
-        } else {
-            watchDescriptors[wd] = fullPath; // 전체 경로를 매핑에 추가
-            std::cout << "Watching " << fullPath << "\n";
-        }
-    } else {
-        HandleError(ERROR_CANNOT_OPEN_DIRECTORY, filePath);
-    }
 }
 
 // 이벤트 대기 루프 구현
@@ -149,7 +114,7 @@ void RunEventLoop(int inotifyFd, std::unordered_map<int, std::string>& watchDesc
     while (true) {
         int length = read(inotifyFd, buffer, bufferSize);
         if (length < 0) {
-            perror("read");
+            perror("Read error: ");
         }
 
         int i = 0;
@@ -166,31 +131,59 @@ void RunEventLoop(int inotifyFd, std::unordered_map<int, std::string>& watchDesc
 void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::string>& watchDescriptors) {
     auto it = watchDescriptors.find(event->wd);
     if (it == watchDescriptors.end()) {
-        std::cerr << "Unknown watch descriptor: " << event->wd << "\n";
+        PrintError("Unknown watch descriptor: " + event->wd);
         return;
     }
 
     std::string fullPath = it->second;
+    struct stat pathStat;
+    if (stat(fullPath.c_str(), &pathStat) == 0 && S_ISDIR(pathStat.st_mode)) {
+        if (event->len > 0) {
+            fullPath += "/" + std::string(event->name);
+        }
+    }
 
     // 현재 시간 얻기
-    std::time_t now = std::time(nullptr);
-    std::tm* now_tm = std::localtime(&now);
-    std::stringstream timeStream;
-    timeStream << std::put_time(now_tm, "%Y-%m-%d %H:%M:%S");
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
 
+    std::stringstream timeStream;
+    timeStream << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %H:%M:%S");
+    timeStream << '.' << std::setfill('0') << std::setw(3) << milliseconds.count();
+
+    std::string eventDescription;
+
+    std::cout << "\n[" << timeStream.str() << "] ";
     if (event->mask & IN_CREATE) {
-        std::cout << "\n[" << timeStream.str() << "] File created: " << fullPath;
+        eventDescription = "File created";
+        PrintEventsInfo(eventDescription, fullPath);
         SaveFileHash(fullPath);
     } else if (event->mask & IN_MODIFY) {
-        std::cout << "\n[" << timeStream.str() << "] File modified: " << fullPath;
+        eventDescription = "File modified";
+        PrintEventsInfo(eventDescription, fullPath);
         // 파일 무결성 검사 수행
         VerifyFileIntegrity(fullPath);
+    } else if (event->mask & IN_MOVED_TO) {
+        eventDescription = "File moved to";
+        PrintEventsInfo(eventDescription, fullPath);
+        // 파일 이동 경로도 명시
+    } else if (event->mask & IN_MOVED_FROM) {
+        eventDescription = "File moved from";
+        PrintEventsInfo(eventDescription, fullPath);
     } else if (event->mask & IN_DELETE) {
-        std::cout << "\n[" << timeStream.str() << "] File deleted: " << fullPath;
+        eventDescription = "File deleted";
+        PrintEventsInfo(eventDescription, fullPath);
         // 파일 삭제 시 처리 (필요한 경우 추가 로직 구현)
-    }
+        // 해시값도 삭제
+    } 
+
 }
 
+void PrintEventsInfo(std::string eventDescription, const std::string &filePath) {
+    std::cout << eventDescription << "\n";
+    std::cout << "Monitor target: " << filePath << "\n";
+}
 
 // 무결성 검사 함수 구현
 void VerifyFileIntegrity(const std::string &filePath) {
@@ -198,9 +191,9 @@ void VerifyFileIntegrity(const std::string &filePath) {
     std::string storedHash = RetrieveStoredHash(filePath);
 
     if (currentHash != storedHash) {
-        PrintError("Integrity check failed for file: " + filePath);
+        PrintError("Integrity check failed for target: " + filePath);
         // 추가적인 알림이나 로그 기록을 수행
     } else {
-        std::cout << "\n\033[32mIntegrity check passed for file: " << filePath << "\033[0m\n";
+        std::cout << "\n\033[32mIntegrity check passed for target: " << filePath << "\033[0m\n";
     }
 }
