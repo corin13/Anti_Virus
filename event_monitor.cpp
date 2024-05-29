@@ -16,6 +16,8 @@
 
 
 int StartMonitoring() {
+    std::cout << "\n### File Event Monitoring Start ! ###\n\n";
+
     std::string watchListFile = "watch_list.txt";
     
     // 감시할 파일 목록 읽기
@@ -153,31 +155,37 @@ void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::stri
     timeStream << '.' << std::setfill('0') << std::setw(3) << milliseconds.count();
 
     std::string eventDescription;
+    std::string newHash;    
+    std::string oldHash;    
 
     std::cout << "\n[" << timeStream.str() << "] ";
     if (event->mask & IN_CREATE) {
         eventDescription = "File created";
-        PrintEventsInfo(eventDescription, fullPath);
         SaveFileHash(fullPath);
+        newHash = RetrieveStoredHash(fullPath);
     } else if (event->mask & IN_MODIFY) {
         eventDescription = "File modified";
-        PrintEventsInfo(eventDescription, fullPath);
-        // 파일 무결성 검사 수행
+        oldHash = RetrieveStoredHash(fullPath);
         VerifyFileIntegrity(fullPath);
+        newHash = CalculateFileHash(fullPath);
     } else if (event->mask & IN_MOVED_TO) {
         eventDescription = "File moved to";
-        PrintEventsInfo(eventDescription, fullPath);
+        SaveFileHash(fullPath);
+        newHash = CalculateFileHash(fullPath);
         // 파일 이동 경로도 명시
     } else if (event->mask & IN_MOVED_FROM) {
         eventDescription = "File moved from";
-        PrintEventsInfo(eventDescription, fullPath);
+        oldHash = RetrieveStoredHash(fullPath);
+        RemoveFileHash(fullPath);
     } else if (event->mask & IN_DELETE) {
         eventDescription = "File deleted";
-        PrintEventsInfo(eventDescription, fullPath);
-        // 파일 삭제 시 처리 (필요한 경우 추가 로직 구현)
-        // 해시값도 삭제
-    } 
-
+        oldHash = RetrieveStoredHash(fullPath);
+        RemoveFileHash(fullPath);
+    } else {
+        eventDescription = "Other event occurred";
+    }
+    LogEvent(timeStream, eventDescription, fullPath, newHash, oldHash);
+    PrintEventsInfo(eventDescription, fullPath);
 }
 
 void PrintEventsInfo(std::string eventDescription, const std::string &filePath) {
@@ -196,4 +204,23 @@ void VerifyFileIntegrity(const std::string &filePath) {
     } else {
         std::cout << "\n\033[32mIntegrity check passed for target: " << filePath << "\033[0m\n";
     }
+}
+
+void LogEvent(std::stringstream &timeStream, const std::string &eventDescription, const std::string &filePath, const std::string &oldHash, const std::string &newHash) {
+    std::ofstream logFile("./logs/file_event_monitor.log", std::ios::out | std::ios_base::app);
+    if (!logFile.is_open()) {
+        HandleError(ERROR_CANNOT_OPEN_FILE, "file-event.log");
+    }
+    
+    pid_t pid = getpid();
+
+    // 로그 기록
+    logFile << "[" << timeStream.str() << "] "
+            << "Event: " << eventDescription << ", "
+            << "File: " << filePath << ", "
+            << "Old Hash: " << oldHash << ", "
+            << "New Hash: " << newHash << ", "
+            << "PID: " << pid << "\n";
+
+    logFile.close();
 }

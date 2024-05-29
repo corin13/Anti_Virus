@@ -57,3 +57,10 @@ std::string RetrieveStoredHash(const std::string &filePath) {
     hashFile.close();
     return storedHash;
 }
+
+void RemoveFileHash(const std::string &filePath) {
+    std::string hashFilePath = "integrity-check-hashes/" + filePath.substr(filePath.find_last_of("/\\") + 1) + ".hash";
+    if (remove(hashFilePath.c_str()) != 0) {
+        HandleError(ERROR_CANNOT_REMOVE_FILE, hashFilePath);
+    }
+}
