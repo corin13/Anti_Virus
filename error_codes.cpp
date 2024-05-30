@@ -35,6 +35,8 @@ std::string GetErrorMessage(int code) {
         case 15:
             return "Failed to remove file";
         case 16:
+            return "Failed to send email";
+        case 17:
         default:
             return "Unknown error";
     }

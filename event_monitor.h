@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <vector>
 
 int StartMonitoring();
 std::vector<std::string> ReadWatchList(const std::string& filePath);

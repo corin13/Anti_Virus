@@ -10,34 +10,54 @@
 #include <sys/inotify.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "email_sender.h"
 #include "event_monitor.h"
 #include "integrity_checker.h"
 #include "util.h"
 
 
 int StartMonitoring() {
-    std::cout << "\n- Monitor List -\n\n";
+    std::cout << "\nPlease select the task you'd like to perform:\n\n"
+        << "1. Perform a file event integrity check (Default)\n"
+        << "2. Send today's log file to an email\n\n"
+        << "Please enter the option: ";
+    
+    std::string taskTypeInput;
+    getline(std::cin, taskTypeInput);
+    if (taskTypeInput != "1" && taskTypeInput != "2" && !taskTypeInput.empty()) {
+        return ERROR_INVALID_OPTION;
+    }
 
-    std::string watchListFile = "watch_list.ini";
-    
-    // 감시할 파일 목록 읽기
-    std::vector<std::string> watchList = ReadWatchList(watchListFile);
-    
-    // 초기화 작업 수행: 해시 값 저장
-    InitializeWatchList(watchList);
-    
-    // inotify 인스턴스 생성
-    int inotifyFd = CreateInotifyInstance();
-    
-    // 감시 대상 추가
-    std::unordered_map<int, std::string> watchDescriptors;
-    AddWatchListToInotify(inotifyFd, watchList, watchDescriptors);
+    if(taskTypeInput == "1") {
+        std::cout << "\n- Monitor List -\n\n";
 
-    // 이벤트 대기 루프 시작
-    std::cout << "\n### File Event Monitoring Start ! ###\n\n";
-    RunEventLoop(inotifyFd, watchDescriptors);
+        std::string watchListFile = "watch_list.ini";
+        
+        // 감시할 파일 목록 읽기
+        std::vector<std::string> watchList = ReadWatchList(watchListFile);
+        
+        // 초기화 작업 수행: 해시 값 저장
+        InitializeWatchList(watchList);
+        
+        // inotify 인스턴스 생성
+        int inotifyFd = CreateInotifyInstance();
+        
+        // 감시 대상 추가
+        std::unordered_map<int, std::string> watchDescriptors;
+        AddWatchListToInotify(inotifyFd, watchList, watchDescriptors);
 
-    close(inotifyFd);
+        // 이벤트 대기 루프 시작
+        std::cout << "\n### File Event Monitoring Start ! ###\n\n";
+        RunEventLoop(inotifyFd, watchDescriptors);
+        close(inotifyFd);
+    } else if(taskTypeInput == "2") {
+        if (SendEmailWithAttachment() == 0) {
+            std::cout << "Email sent successfully." << std::endl;
+            return SUCCESS_CODE;
+        } else {
+            return ERROR_CANNOT_SEND_EMAIL; 
+        }
+    }
     return SUCCESS_CODE;
 }
 
