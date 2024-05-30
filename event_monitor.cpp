@@ -28,7 +28,7 @@ int StartMonitoring() {
         return ERROR_INVALID_OPTION;
     }
 
-    if(taskTypeInput == "1") {
+    if(taskTypeInput == "1" || taskTypeInput.empty()) {
         std::cout << "\n- Monitor List -\n\n";
 
         std::string watchListFile = "watch_list.ini";
@@ -285,15 +285,43 @@ void LogEvent(std::stringstream &timeStream, const std::string &eventDescription
     // JSON 객체를 문자열로 변환
     Json::StreamWriterBuilder writer;
     std::string logString = Json::writeString(writer, logEntry);
-
-    // 로그 파일에 기록
     std::string logFileName = GetLogFileName();
-    std::ofstream logFile(logFileName, std::ios::out | std::ios_base::app);
-    if (!logFile.is_open()) {
+
+    // 수정 및 추가: 기존 로그 파일을 읽고 JSON 배열로 변환하는 부분
+    std::ifstream logFileIn(logFileName);
+    std::vector<Json::Value> logEntries;
+
+    if (logFileIn.is_open()) {
+        Json::CharReaderBuilder reader;
+        Json::Value existingLog;
+        std::string errs;
+        if (Json::parseFromStream(reader, logFileIn, &existingLog, &errs)) {
+            if (existingLog.isArray()) {
+                for (const auto &entry : existingLog) {
+                    logEntries.push_back(entry);
+                }
+            }
+        }
+        logFileIn.close();
+    }
+
+    logEntries.push_back(logEntry);
+
+    // 수정 및 추가: JSON 배열 형식으로 로그 파일에 저장하는 부분
+    std::ofstream logFileOut(logFileName, std::ios::out);
+    if (!logFileOut.is_open()) {
         HandleError(ERROR_CANNOT_OPEN_FILE, logFileName);
     }
-    logFile << logString << "\n";
-    logFile.close();
+    logFileOut << "[\n";
+    for (size_t i = 0; i < logEntries.size(); ++i) {
+        logFileOut << Json::writeString(writer, logEntries[i]);
+        if (i != logEntries.size() - 1) {
+            logFileOut << ","; // 수정: 각 JSON 객체 사이에 쉼표 추가
+        }
+        logFileOut << "\n";
+    }
+    logFileOut << "]";
+    logFileOut.close();
 }
 
 // 로그 파일 이름 생성 함수(날짜별로)
