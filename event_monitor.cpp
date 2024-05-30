@@ -18,7 +18,7 @@
 int StartMonitoring() {
     std::cout << "\n### File Event Monitoring Start ! ###\n\n";
 
-    std::string watchListFile = "watch_list.txt";
+    std::string watchListFile = "watch_list.ini";
     
     // 감시할 파일 목록 읽기
     std::vector<std::string> watchList = ReadWatchList(watchListFile);
@@ -40,23 +40,41 @@ int StartMonitoring() {
     return SUCCESS_CODE;
 }
 
-// 감시할 파일 목록을 읽어들이는 함수
+// ini 파일에서 감시할 파일 목록을 읽어들이는 함수
 std::vector<std::string> ReadWatchList(const std::string& filePath) {
     std::vector<std::string> watchList;
     std::ifstream file(filePath);
     std::string line;
+    std::string currentSection;
 
     if (!file.is_open()) {
         HandleError(ERROR_CANNOT_OPEN_FILE, filePath);
     }
 
     while (std::getline(file, line)) {
-        if (!line.empty() && line[0] != '#') {
-            watchList.push_back(line);
+        // 공백 라인 및 주석 라인 무시
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+
+        // 섹션 확인
+        if (line.front() == '[' && line.back() == ']') {
+            currentSection = line.substr(1, line.size() - 2);
+            continue;
+        }
+
+        // 키-값 쌍 처리
+        std::istringstream lineStream(line);
+        std::string key, value;
+        if (std::getline(lineStream, key, '=') && std::getline(lineStream, value)) {
+            key = Trim(key);
+            value = Trim(value);
+            if (key == "path" && !value.empty()) {
+                watchList.push_back(value);
+            }
         }
     }
     file.close();
-
     return watchList;
 }
 
@@ -178,7 +196,8 @@ void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::stri
         eventDescription = "File modified";
         oldHash = RetrieveStoredHash(fullPath);
         VerifyFileIntegrity(fullPath);
-        newHash = CalculateFileHash(fullPath);
+        SaveFileHash(fullPath);
+        newHash = RetrieveStoredHash(fullPath);
     } else if (event->mask & IN_MOVED_TO) {
         eventDescription = "File moved to";
         SaveFileHash(fullPath);

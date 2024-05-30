@@ -89,3 +89,10 @@ std::time_t GetCurrentTime() {
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
     return in_time_t;
 }
+
+// 문자열의 앞뒤 공백 제거 함수
+std::string Trim(const std::string& str) {
+    size_t start = str.find_first_not_of(" \t\r\n");
+    size_t end = str.find_last_not_of(" \t\r\n");
+    return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
+}

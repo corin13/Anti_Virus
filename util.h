@@ -12,3 +12,4 @@ bool IsExtension(const std::string& filePath, const std::string& extension);
 bool IsELFFile(const std::string& filePath);
 int ComputeSHA256(const std::string& fileName, std::string& fileHash);
 std::time_t GetCurrentTime();
+std::string Trim(const std::string& str);
