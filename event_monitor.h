@@ -10,6 +10,6 @@ void AddWatchListToInotify(int inotifyFd, const std::vector<std::string>& watchL
 void RunEventLoop(int inotifyFd, std::unordered_map<int, std::string>& watchDescriptors);
 void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::string>& watchDescriptors);
 void PrintEventsInfo(std::string eventDescription, const std::string &filePath);
-void VerifyFileIntegrity(const std::string &filePath);
-void LogEvent(std::stringstream &timeStream, const std::string &eventDescription, const std::string &filePath, const std::string &oldHash, const std::string &newHash);
+void VerifyFileIntegrity(const std::string &filePath, std::string oldHash, std::string newHash, std::string &integrityResult);
+void LogEvent(std::stringstream &timeStream, const std::string &eventDescription, const std::string &filePath, const std::string &oldHash, const std::string &newHash, const std::string &integrityResult);
 std::string GetLogFileName();

@@ -16,7 +16,7 @@
 
 
 int StartMonitoring() {
-    std::cout << "\n### File Event Monitoring Start ! ###\n\n";
+    std::cout << "\n- Monitor List -\n\n";
 
     std::string watchListFile = "watch_list.ini";
     
@@ -34,6 +34,7 @@ int StartMonitoring() {
     AddWatchListToInotify(inotifyFd, watchList, watchDescriptors);
 
     // 이벤트 대기 루프 시작
+    std::cout << "\n### File Event Monitoring Start ! ###\n\n";
     RunEventLoop(inotifyFd, watchDescriptors);
 
     close(inotifyFd);
@@ -130,7 +131,7 @@ void AddWatchListToInotify(int inotifyFd, const std::vector<std::string>& watchL
                 HandleError(ERROR_CANNOT_OPEN_DIRECTORY, fullPath);
             } else {
                 watchDescriptors[wd] = fullPath; // 전체 경로를 매핑에 추가
-                std::cout << "[+] Watching " << fullPath << "\n";
+                std::cout << "[+] Monitoring " << fullPath << "\n";
             }
         }
     }
@@ -186,8 +187,9 @@ void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::stri
     std::string eventDescription;
     std::string newHash;
     std::string oldHash;
+    std::string integrityResult = "Unchanged";
 
-    std::cout << "\n[" << timeStream.str() << "] ";
+    std::cout << "[" << timeStream.str() << "]\n";
     if (event->mask & IN_CREATE) {
         eventDescription = "File created";
         SaveFileHash(fullPath);
@@ -195,7 +197,6 @@ void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::stri
     } else if (event->mask & IN_MODIFY) {
         eventDescription = "File modified";
         oldHash = RetrieveStoredHash(fullPath);
-        VerifyFileIntegrity(fullPath);
         SaveFileHash(fullPath);
         newHash = RetrieveStoredHash(fullPath);
     } else if (event->mask & IN_MOVED_TO) {
@@ -214,38 +215,52 @@ void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::stri
     } else {
         eventDescription = "Other event occurred";
     }
-    LogEvent(timeStream, eventDescription, fullPath, newHash, oldHash);
+
     PrintEventsInfo(eventDescription, fullPath);
+    VerifyFileIntegrity(fullPath, oldHash, newHash, integrityResult);
+    LogEvent(timeStream, eventDescription, fullPath, oldHash, newHash, integrityResult);
+    std::cout << "\n";
 }
 
 void PrintEventsInfo(std::string eventDescription, const std::string &filePath) {
-    std::cout << eventDescription << "\n";
-    std::cout << "Monitor target: " << filePath << "\n";
+    std::cout << "[+] Event type: " << eventDescription << "\n";
+    std::cout << "[+] Target file: " << filePath;
 }
 
 // 무결성 검사 함수 구현
-void VerifyFileIntegrity(const std::string &filePath) {
-    std::string currentHash = CalculateFileHash(filePath);
-    std::string storedHash = RetrieveStoredHash(filePath);
-
-    if (currentHash != storedHash) {
-        PrintError("Integrity check failed for target: " + filePath);
-        // 추가적인 알림이나 로그 기록을 수행
+void VerifyFileIntegrity(const std::string &filePath, std::string oldHash, std::string newHash, std::string &integrityResult) {
+    if (oldHash.empty() || newHash.empty() || newHash != oldHash) {
+        std::cout << "\n[+] Integrity check: \033[31mDetected changes\033[0m\n";
+        integrityResult = "Changed";
     } else {
-        std::cout << "\n\033[32mIntegrity check passed for target: " << filePath << "\033[0m\n";
+        std::cout << "\n[+] Integrity check: \033[32mNo changes found\033[0m\n";
     }
 }
 
 // 파일 이벤트를 날짜별로 로그에 기록
-void LogEvent(std::stringstream &timeStream, const std::string &eventDescription, const std::string &filePath, const std::string &oldHash, const std::string &newHash) {
+void LogEvent(std::stringstream &timeStream, const std::string &eventDescription, const std::string &filePath, const std::string &oldHash, const std::string &newHash, const std::string &integrityResult) {
     // JSON 객체 생성
     Json::Value logEntry;
     logEntry["timestamp"] = timeStream.str();
-    logEntry["event"] = eventDescription;
+    logEntry["event_type"] = eventDescription;
     logEntry["target_file"] = filePath;
     logEntry["old_hash"] = oldHash.empty() ? "N/A" : oldHash;
     logEntry["new_hash"] = newHash.empty() ? "N/A" : newHash;
+    logEntry["integrity_result"] = integrityResult;
     logEntry["pid"] = Json::Int(getpid());
+
+    struct stat fileStat;
+    if (stat(filePath.c_str(), &fileStat) == 0) {
+        logEntry["file_size"] = Json::UInt64(fileStat.st_size);
+        //logEntry["user_id"] = Json::UInt(fileStat.st_uid);
+        //logEntry["group_id"] = Json::UInt(fileStat.st_gid);
+        //logEntry["file_permissions"] = std::to_string(fileStat.st_mode & 0777);
+    } else {
+        logEntry["file_size"] = "N/A";
+        //logEntry["user_id"] = "N/A";
+        //logEntry["group_id"] = "N/A";
+        //logEntry["file_permissions"] = "N/A";
+    }
 
     // JSON 객체를 문자열로 변환
     Json::StreamWriterBuilder writer;
