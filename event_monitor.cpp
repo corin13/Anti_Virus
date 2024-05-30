@@ -6,7 +6,6 @@
 #include <iomanip>
 #include <jsoncpp/json/json.h>
 #include <vector>
-#include <sstream>
 #include <string>
 #include <sys/inotify.h>
 #include <sys/stat.h>
@@ -23,7 +22,7 @@ int StartMonitoring() {
     
     // 감시할 파일 목록 읽기
     std::vector<std::string> watchList = ReadWatchList(watchListFile);
-
+    
     // 초기화 작업 수행: 해시 값 저장
     InitializeWatchList(watchList);
     
@@ -65,7 +64,19 @@ void InitializeWatchList(const std::vector<std::string>& watchList) {
     for (const auto& path : watchList) {
         struct stat pathStat;
         stat(path.c_str(), &pathStat);
-        if (stat(path.c_str(), &pathStat) == 0 && S_ISREG(pathStat.st_mode)) {
+        if (S_ISDIR(pathStat.st_mode)) {
+            DIR* dir = opendir(path.c_str());
+            if (dir) {
+                struct dirent* entry;
+                while ((entry = readdir(dir)) != nullptr) {
+                    if (entry->d_type == DT_REG) {
+                        std::string filePath = path + "/" + entry->d_name;
+                        SaveFileHash(filePath);
+                    }
+                }
+                closedir(dir);
+            }
+        } else if (S_ISREG(pathStat.st_mode)) {
             SaveFileHash(path);
         }
     }
@@ -147,17 +158,16 @@ void ProcessEvent(struct inotify_event *event, std::unordered_map<int, std::stri
     }
 
     // 현재 시간 얻기
-    auto now = std::chrono::system_clock::now();
-    auto in_time_t = std::chrono::system_clock::to_time_t(now);
-    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    auto in_time_t = GetCurrentTime();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::system_clock::now().time_since_epoch()) % 1000;
 
     std::stringstream timeStream;
     timeStream << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %H:%M:%S");
     timeStream << '.' << std::setfill('0') << std::setw(3) << milliseconds.count();
 
     std::string eventDescription;
-    std::string newHash;    
-    std::string oldHash;    
+    std::string newHash;
+    std::string oldHash;
 
     std::cout << "\n[" << timeStream.str() << "] ";
     if (event->mask & IN_CREATE) {
@@ -234,8 +244,7 @@ void LogEvent(std::stringstream &timeStream, const std::string &eventDescription
 
 // 로그 파일 이름 생성 함수(날짜별로)
 std::string GetLogFileName() {
-    auto now = std::chrono::system_clock::now();
-    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    auto in_time_t = GetCurrentTime();
     std::stringstream ss;
     ss << "./logs/file_event_monitor_" << std::put_time(std::localtime(&in_time_t), "%Y%m%d") << ".log";
     return ss.str();

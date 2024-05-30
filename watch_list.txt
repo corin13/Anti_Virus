@@ -1,3 +1,1 @@
-./monitor-list/hello.c
-./monitor-list/whs2.cpp
-./integrity-test
+./monitor-list

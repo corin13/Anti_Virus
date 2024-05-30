@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <ctime>
 #include "error_codes.h"
 
 bool IsDirectory(const std::string& path);
@@ -10,3 +11,4 @@ void HandleError(int code, const std::string& context = "");
 bool IsExtension(const std::string& filePath, const std::string& extension);
 bool IsELFFile(const std::string& filePath);
 int ComputeSHA256(const std::string& fileName, std::string& fileHash);
+std::time_t GetCurrentTime();

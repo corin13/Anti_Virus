@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -81,4 +82,10 @@ int ComputeSHA256(const std::string& fileName, std::string& fileHash) {
 
     fileHash = ss.str();
     return SUCCESS_CODE;
+}
+
+std::time_t GetCurrentTime() {
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    return in_time_t;
 }
