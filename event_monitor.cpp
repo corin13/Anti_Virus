@@ -52,10 +52,11 @@ int StartMonitoring() {
         close(inotifyFd);
 
     } else if(taskTypeInput == "2") {
-        if (SendEmailWithAttachment() == 0) {
+        EmailSender emailSender("smtps://smtp.gmail.com", 465, "udangtang02@gmail.com");
+        if (emailSender.SendEmailWithAttachment() == 0) {
             std::cout << "\n\033[32mEmail sent successfully.\033[0m\n";
         } else {
-            return ERROR_CANNOT_SEND_EMAIL; 
+            HandleError(ERROR_CANNOT_SEND_EMAIL);
         }
     }
     return SUCCESS_CODE;
