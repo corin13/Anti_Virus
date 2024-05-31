@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <curl/curl.h>
 #include <string>
 #include <fstream>
@@ -18,22 +19,29 @@ int SendEmailWithAttachment() {
     std::cout << "Enter recipient's email address: ";
     std::getline(std::cin, toEmail);
 
+    const char* EMAIL_PASSWORD = std::getenv("EMAIL_PASSWORD");
+    if (!EMAIL_PASSWORD) {
+        PrintError("Email password is not set in the environment variables.");
+        return -1;
+    }
+
     // libcurl 초기화
     CURL *curl = curl_easy_init();
     if (!curl) {
-        std::cerr << "Failed to initialize libcurl." << std::endl;
+        PrintError("Failed to initialize libcurl.");
         return -1;
     }
 
     std::string subject = "Test Email with Log File";
-    std::string body = "This email contains a log file as attachment.";
+    std::string body = "This email contains today's log file as attachment.";
 
-    const std::string logFilePath = GetLogFileName();
+    const std::string logFilePath = GetLogFilePath();
     FILE *logFile = fopen(logFilePath.c_str(), "rb");
     if (!logFile) {
-        std::cerr << "Failed to open log file." << std::endl;
-        return -1;
+        HandleError(ERROR_CANNOT_OPEN_FILE, logFilePath);
     }
+
+    std::string logFileName = logFilePath.substr(logFilePath.find_last_of("/") + 1);
 
     // 수신자 설정
     struct curl_slist* recipients = NULL;
@@ -41,6 +49,8 @@ int SendEmailWithAttachment() {
 
     // 이메일 헤더에 Subject 추가
     struct curl_slist* headers = NULL;
+    headers = curl_slist_append(headers, ("To: " + toEmail).c_str());
+    headers = curl_slist_append(headers, ("From: " + std::string(EMAIL_ADDRESS) + " <" + std::string(EMAIL_ADDRESS) + ">").c_str());
     headers = curl_slist_append(headers, ("Subject: " + subject).c_str());
 
 
@@ -59,7 +69,7 @@ int SendEmailWithAttachment() {
     curl_mime_filedata(part, logFilePath.c_str());
     curl_mime_type(part, "application/octet-stream");
     curl_mime_encoder(part, "base64");
-    curl_mime_filename(part, "logfile.log");
+    curl_mime_filename(part, logFileName.c_str());
 
     // libcurl 옵션 설정
     curl_easy_setopt(curl, CURLOPT_URL, SMTP_SERVER);
@@ -82,8 +92,8 @@ int SendEmailWithAttachment() {
     curl_easy_cleanup(curl);
 
     if (res != CURLE_OK) {
-        std::cerr << "Failed to send email: " << curl_easy_strerror(res) << std::endl;
-        return -1;
+        PrintError("Failed to send email: " + std::string(curl_easy_strerror(res)));
+        return ERROR_CANNOT_SEND_EMAIL;
     }
 
     return SUCCESS_CODE;

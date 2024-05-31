@@ -25,7 +25,7 @@ int StartMonitoring() {
     std::string taskTypeInput;
     getline(std::cin, taskTypeInput);
     if (taskTypeInput != "1" && taskTypeInput != "2" && !taskTypeInput.empty()) {
-        return ERROR_INVALID_OPTION;
+        HandleError(ERROR_INVALID_OPTION);
     }
 
     if(taskTypeInput == "1" || taskTypeInput.empty()) {
@@ -50,10 +50,10 @@ int StartMonitoring() {
         std::cout << "\n### File Event Monitoring Start ! ###\n\n";
         RunEventLoop(inotifyFd, watchDescriptors);
         close(inotifyFd);
+
     } else if(taskTypeInput == "2") {
         if (SendEmailWithAttachment() == 0) {
-            std::cout << "Email sent successfully." << std::endl;
-            return SUCCESS_CODE;
+            std::cout << "\n\033[32mEmail sent successfully.\033[0m\n";
         } else {
             return ERROR_CANNOT_SEND_EMAIL; 
         }
@@ -285,10 +285,10 @@ void LogEvent(std::stringstream &timeStream, const std::string &eventDescription
     // JSON 객체를 문자열로 변환
     Json::StreamWriterBuilder writer;
     std::string logString = Json::writeString(writer, logEntry);
-    std::string logFileName = GetLogFileName();
+    std::string logFilePath = GetLogFilePath();
 
     // 수정 및 추가: 기존 로그 파일을 읽고 JSON 배열로 변환하는 부분
-    std::ifstream logFileIn(logFileName);
+    std::ifstream logFileIn(logFilePath);
     std::vector<Json::Value> logEntries;
 
     if (logFileIn.is_open()) {
@@ -308,9 +308,9 @@ void LogEvent(std::stringstream &timeStream, const std::string &eventDescription
     logEntries.push_back(logEntry);
 
     // 수정 및 추가: JSON 배열 형식으로 로그 파일에 저장하는 부분
-    std::ofstream logFileOut(logFileName, std::ios::out);
+    std::ofstream logFileOut(logFilePath, std::ios::out);
     if (!logFileOut.is_open()) {
-        HandleError(ERROR_CANNOT_OPEN_FILE, logFileName);
+        HandleError(ERROR_CANNOT_OPEN_FILE, logFilePath);
     }
     logFileOut << "[\n";
     for (size_t i = 0; i < logEntries.size(); ++i) {
@@ -325,7 +325,7 @@ void LogEvent(std::stringstream &timeStream, const std::string &eventDescription
 }
 
 // 로그 파일 이름 생성 함수(날짜별로)
-std::string GetLogFileName() {
+std::string GetLogFilePath() {
     auto in_time_t = GetCurrentTime();
     std::stringstream ss;
     ss << "./logs/file_event_monitor_" << std::put_time(std::localtime(&in_time_t), "%Y%m%d") << ".log";
