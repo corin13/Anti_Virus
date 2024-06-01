@@ -18,6 +18,7 @@ struct ScanData {
 };
 
 int StartScan();
+int StartIniScan();
 int PerformFileScan();
 int ScanDirectory(ScanData& scanData, int scanTypeOption, int fileTypeOption, std::string& extension);
 int MoveDetectedMalware(const std::vector<std::string>& detectedMalware);

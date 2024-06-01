@@ -63,9 +63,10 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
 // 메일 보내는 함수
 int EmailSender::SendEmailWithAttachment() {
     // 수신자 이메일 받기
-    std::string toEmail;
+    /*std::string toEmail;
     std::cout << "Enter recipient's email address: ";
-    std::getline(std::cin, toEmail);
+    std::getline(std::cin, toEmail);*/
+    std::string toEmail = emailAddress; 
 
     // 환경변수에서 이메일 비밀번호 가져오기
     const char* emailPassword = GetEmailPassword();
