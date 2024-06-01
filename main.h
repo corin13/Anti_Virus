@@ -7,6 +7,7 @@
 #include "options_info.h"
 #include "scan.h"
 #include "usage_collector.h"
+#include "event_monitor.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ struct option options[]={
     {"scan", no_argument, 0,'s'}, 
     {"usage", no_argument, 0, 'u'},
     {"log", no_argument, 0, 'l'},
+    {"monitor", no_argument, 0, 'm'},
     {0,0,0,0}
 };
 
