@@ -52,20 +52,11 @@ int StartMonitoring() {
         RunEventLoop(inotifyFd, watchDescriptors);
         close(inotifyFd);
 
-    } /*else if(taskTypeInput == "2") {
-        EmailSender emailSender("smtps://smtp.gmail.com", 465, "udangtang02@gmail.com");
-        if (emailSender.SendEmailWithAttachment() == 0) {
-            std::cout << "\n\033[32mEmail sent successfully.\033[0m\n";
-        } else {
-            HandleError(ERROR_CANNOT_SEND_EMAIL);
-        }
-    }*/
-    // 변경해본 부분
-    else if (taskTypeInput == "2") {
-        std::string emailAddress = Config::Instance().GetEmailAddress();
-        std::cout << "Email address to use: " << emailAddress << "\n"; // 디버깅 메시지 추가
-        if (!emailAddress.empty()) {
-            EmailSender emailSender("smtps://smtp.gmail.com", 465, emailAddress);
+    } else if (taskTypeInput == "2") {
+        std::string recipientEmailAddress = Config::Instance().GetEmailAddress();
+        std::cout << "Recipient email address read from config: " << recipientEmailAddress << "\n";
+        if (!recipientEmailAddress.empty()) {
+            EmailSender emailSender("smtps://smtp.gmail.com", 465, recipientEmailAddress);
             if (emailSender.SendEmailWithAttachment() == 0) {
                 std::cout << "\n\033[32mEmail sent successfully.\033[0m\n";
             } else {
@@ -75,7 +66,6 @@ int StartMonitoring() {
             std::cerr << "Email address is not configured.\n";
         }
     }
-
     return SUCCESS_CODE;
 }
 
