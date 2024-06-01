@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sudo fuser -v /run/xtables.lock
 
 while IFS= read -r ip; do
