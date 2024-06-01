@@ -1,7 +1,11 @@
+#include <chrono>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <openssl/sha.h>
+#include <iomanip>
 #include "util.h"
 
 // 경로 유효성 검사 함수
@@ -19,6 +23,18 @@ void PrintError(const std::string& message) {
 
 void PrintErrorMessage(int code) {
     std::cerr << "\n\033[31mError: " << GetErrorMessage(code) << "\033[0m\n";
+}
+
+// 에러 처리를 담당하는 함수
+void HandleError(int code, const std::string& context) {
+    if (code != SUCCESS_CODE) {
+        std::cerr << "\n\033[31m[Error] " << GetErrorMessage(code) << "\033[0m";
+        if (!context.empty()) {
+            std::cerr << "\n\033[31m : " << context << "\033[0m";
+        }
+        std::cerr << "\n";
+        exit(code);
+    }
 }
 
 
@@ -40,4 +56,43 @@ bool IsELFFile(const std::string& filePath) {
         return (magic[0] == 0x7f && magic[1] == 0x45 && magic[2] == 0x4c && magic[3] == 0x46);
     }
     return false;
+}
+
+// SHA256 해시알고리즘을 사용해서 파일의 해시값을 계산
+int ComputeSHA256(const std::string& fileName, std::string& fileHash) {
+    std::ifstream file(fileName, std::ifstream::binary);
+    if (!file) {
+        return ERROR_CANNOT_OPEN_FILE;
+    }
+
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    char buffer[1024];
+    while (file.read(buffer, sizeof(buffer))) {
+        SHA256_Update(&sha256, buffer, file.gcount());
+    }
+    SHA256_Update(&sha256, buffer, file.gcount());
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_Final(hash, &sha256);
+
+    std::stringstream ss;
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    }
+
+    fileHash = ss.str();
+    return SUCCESS_CODE;
+}
+
+std::time_t GetCurrentTime() {
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    return in_time_t;
+}
+
+// 문자열의 앞뒤 공백 제거 함수
+std::string Trim(const std::string& str) {
+    size_t start = str.find_first_not_of(" \t\r\n");
+    size_t end = str.find_last_not_of(" \t\r\n");
+    return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
 }
