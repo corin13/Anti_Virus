@@ -3,12 +3,13 @@
 CUdkdAgentOptions IAgentOptions;
 CUsageCollector IUsageOption;
 CLoggingManager ILoggingOption;
+CPacketHandler INetworkingOption;
 
 // 인자값 필요로 한다면 :붙이기 ex) hib:s:
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
-    const char* pOption="dhilsu";
+    const char* pOption="dhilsun:";
 
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
@@ -34,6 +35,10 @@ void CheckOption(int &argc, char** &argv){
 
             case 'u':
                 IUsageOption.CollectAndSaveUsage();
+                break;
+            
+            case 'n':
+                INetworkingOption.AnalyzeNetworkTraffic(optarg);
                 break;
 
             case '?':

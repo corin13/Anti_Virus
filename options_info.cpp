@@ -22,22 +22,8 @@ int CUdkdAgentOptions::DisplayHelpOption() {
               << "  -d, --detect             Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging.\n"
               << "  -s, --scan               Scan files in the specified directory.\n"
               << "  -u, --usage              Collects and stores CPU, disk, and network usage data.\n"
-              << "  -l, --log                Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n";
-           
-    std::string hints = "\n./UdkdAgent [-h] [-a aggr-key] [-s sort-key] [-l limit] [-f filter-expression] file\n\n";
-                hints += "-h Prints out help and terminates the program.\n\n";
-                hints += "-a aggr-key Turn on aggregation by aggr-key, which can be srcmac for source MAC\n";
-                hints += "   address or dstmac for destination MAC address, srcip for source IP, dstip for\n";
-                hints += "   destination IP address, srcport or dstport for aggregation by port number.\n\n";
-                hints += "-s sort-key Sorting by sort-key, which can be packets (number of packets) or bytes\n";
-                hints += "   (number of bytes of packets). Sorting can be applied also to aggregated items.\n\n";
-                hints += "-l limit Decimal positive number of packets printed to stdout.\n\n";
-                hints += "-f filter-expression Analyse only packets suitable for this filter. More info in\n";
-                hints += "   manual page of pcap-filter.\n\n";
-                hints += "file Path to file in pcap format (readable by libpcap library). One or more files can \n";
-                hints += "     be provided at once, separated by space.\n";
-    
-    std::cout << hints;       
+              << "  -l, --log                Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n\n";
+   
     return SUCCESS_CODE;
 }
 
