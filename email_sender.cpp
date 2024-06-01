@@ -62,26 +62,31 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
 
 // 메일 보내는 함수
 int EmailSender::SendEmailWithAttachment() {
+    // 환경변수에서 이메일 비밀번호 가져오기
+    const char* emailPassword = GetEmailPassword();
+
     // 수신자 이메일 받기
     std::string toEmail;
     std::cout << "Enter recipient's email address: ";
     std::getline(std::cin, toEmail);
 
-    // 환경변수에서 이메일 비밀번호 가져오기
-    const char* emailPassword = GetEmailPassword();
+    // 수신자가 원하는 날짜 받기
+    std::string date;
+    std::cout << "Enter the date for the log file (YYMMDD): ";
+    std::getline(std::cin, date);
+
+    const std::string logFilePath = "./logs/file_event_monitor_" + date + ".log";
+    FILE *logFile = fopen(logFilePath.c_str(), "rb");
+    if (!logFile) {
+        HandleError(ERROR_CANNOT_OPEN_FILE, logFilePath);
+    }
 
     // curl 초기화
     CURL *curl = InitializeCurl();
 
     // 메일 제목과 내용 설정
-    std::string subject = "Test Email with Log File";
-    std::string body = "This email contains today's log file as attachment.";
-
-    const std::string logFilePath = GetLogFilePath();
-    FILE *logFile = fopen(logFilePath.c_str(), "rb");
-    if (!logFile) {
-        HandleError(ERROR_CANNOT_OPEN_FILE, logFilePath);
-    }
+    std::string subject = "Log File for " + date;
+    std::string body =  "This email contains the log file for " + date + " as attachment.";
 
     std::string logFileName = logFilePath.substr(logFilePath.find_last_of("/") + 1);
 

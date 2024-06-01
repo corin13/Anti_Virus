@@ -329,6 +329,6 @@ void LogEvent(std::stringstream &timeStream, const std::string &eventDescription
 std::string GetLogFilePath() {
     auto in_time_t = GetCurrentTime();
     std::stringstream ss;
-    ss << "./logs/file_event_monitor_" << std::put_time(std::localtime(&in_time_t), "%Y%m%d") << ".log";
+    ss << "./logs/file_event_monitor_" << std::put_time(std::localtime(&in_time_t), "%y%m%d") << ".log";
     return ss.str();
 }
