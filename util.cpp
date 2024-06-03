@@ -90,6 +90,16 @@ std::time_t GetCurrentTime() {
     return in_time_t;
 }
 
+std::string GetCurrentTimeWithMilliseconds() {
+    auto in_time_t = GetCurrentTime();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::system_clock::now().time_since_epoch()) % 1000;
+
+    std::stringstream timeStream;
+    timeStream << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %H:%M:%S");
+    timeStream << '.' << std::setfill('0') << std::setw(3) << milliseconds.count();
+    return timeStream.str();
+}
+
 // 문자열의 앞뒤 공백 제거 함수
 std::string Trim(const std::string& str) {
     size_t start = str.find_first_not_of(" \t\r\n");

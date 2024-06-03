@@ -3,6 +3,7 @@
 CUdkdAgentOptions IAgentOptions;
 CUsageCollector IUsageOption;
 CLoggingManager ILoggingOption;
+CEventMonitor IEventMonitor;
 
 // 인자값 필요로 한다면 :붙이기 ex) hib:s:
 void CheckOption(int &argc, char** &argv){
@@ -29,7 +30,7 @@ void CheckOption(int &argc, char** &argv){
                 break;
 
             case 'm':
-                StartMonitoring();
+                IEventMonitor.StartMonitoring();
                 break;
 
             case 's':
