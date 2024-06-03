@@ -110,13 +110,15 @@ void CEventMonitor::initializeWatchList() {
                 while ((entry = readdir(dir)) != nullptr) {
                     if (entry->d_type == DT_REG) {
                         std::string filePath = path + "/" + entry->d_name;
-                        SaveFileHash(filePath);
+                        CIntegrityChecker checker(filePath);
+                        checker.SaveFileHash();
                     }
                 }
                 closedir(dir);
             }
         } else if (S_ISREG(pathStat.st_mode)) {
-            SaveFileHash(path);
+            CIntegrityChecker checker(path);
+            checker.SaveFileHash();
         }
     }
 }
@@ -204,29 +206,31 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
         }
     }
 
+    CIntegrityChecker checker(data.filePath);
     std::cout << "[" << data.timestamp << "]\n";
+
     if (event->mask & IN_CREATE) {
         data.eventDescription = "File created";
-        SaveFileHash(data.filePath);
-        data.newHash = RetrieveStoredHash(data.filePath);
+        checker.SaveFileHash();
+        data.newHash = checker.RetrieveStoredHash();
     } else if (event->mask & IN_MODIFY) {
         data.eventDescription = "File modified";
-        data.oldHash = RetrieveStoredHash(data.filePath);
-        SaveFileHash(data.filePath);
-        data.newHash = RetrieveStoredHash(data.filePath);
+        data.oldHash = checker.RetrieveStoredHash();
+        checker.SaveFileHash();
+        data.newHash = checker.RetrieveStoredHash();
     } else if (event->mask & IN_MOVED_TO) {
         data.eventDescription = "File moved to";
-        SaveFileHash(data.filePath);
-        data.newHash = CalculateFileHash(data.filePath);
+        checker.SaveFileHash();
+        data.newHash = checker.RetrieveStoredHash();
         // 파일 이동 경로도 명시
     } else if (event->mask & IN_MOVED_FROM) {
         data.eventDescription = "File moved from";
-        data.oldHash = RetrieveStoredHash(data.filePath);
-        RemoveFileHash(data.filePath);
+        data.oldHash = checker.RetrieveStoredHash();
+        checker.RemoveFileHash();
     } else if (event->mask & IN_DELETE) {
         data.eventDescription = "File deleted";
-        data.oldHash = RetrieveStoredHash(data.filePath);
-        RemoveFileHash(data.filePath);
+        data.oldHash = checker.RetrieveStoredHash();
+        checker.RemoveFileHash();
     } else {
         data.eventDescription = "Other event occurred";
     }

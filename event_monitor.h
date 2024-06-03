@@ -23,7 +23,7 @@ public:
 private:
     int m_inotifyFd;
     std::unordered_map<int, std::string> m_watchDescriptors;
-    std::vector<std::string>& m_watchList;
+    std::vector<std::string> m_watchList;
 
     std::vector<std::string> readWatchList(const std::string& watchListfilePath);
     void initializeWatchList();
