@@ -8,7 +8,7 @@ CLoggingManager ILoggingOption;
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
-    const char* pOption="dhilmsu";
+    const char* pOption="dhilmsuf";
 
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
@@ -38,6 +38,10 @@ void CheckOption(int &argc, char** &argv){
 
             case 'u':
                 IUsageOption.CollectAndSaveUsage();
+                break;
+
+            case 'f':
+                Firewall();
                 break;
 
             case '?':
