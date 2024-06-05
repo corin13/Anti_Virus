@@ -28,7 +28,13 @@ int GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFil
     if ((dir = opendir(directory.c_str())) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
             if (ent->d_type == DT_REG) { // regular file
-                ruleFiles.push_back(directory + "/" + ent->d_name);
+                std::string strFilePath = directory + "/" + ent->d_name;
+                char realPath[PATH_MAX];
+                if (realpath(strFilePath.c_str(), realPath) != nullptr) {
+                    ruleFiles.push_back(std::string(realPath)); //절대경로
+                } else {
+                    ruleFiles.push_back(strFilePath);
+                }
             }
         }
         closedir(dir);
@@ -43,6 +49,18 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
     YR_COMPILER* compiler = nullptr;
     YR_RULES* rules = nullptr;
 
+    // YARA 룰 파일 리스트
+    std::vector<std::string> ruleFiles;
+    int result = GetRuleFiles("./yara-rules", ruleFiles);
+    if(result != SUCCESS_CODE) {
+        return result;
+    }
+    // filePath가 ruleFiles에 있는지 확인
+    if (std::find(ruleFiles.begin(), ruleFiles.end(), filePath) != ruleFiles.end()) {
+        std::cout << "\n\033[33m[+] Skipping YARA rule check for file : " << filePath << "\033[0m\n\n";
+        return SUCCESS_CODE;
+    }
+
     // yara 라이브러리 초기화
     if (yr_initialize() != ERROR_SUCCESS) {
         PrintError("Failed to initialize YARA.");
@@ -55,15 +73,6 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
         return ERROR_YARA_LIBRARY;
     }
 
-    // YARA 룰 파일 리스트
-    std::vector<std::string> ruleFiles;
-    int result = GetRuleFiles("./yara-rules", ruleFiles);
-    if(result != SUCCESS_CODE) {
-        yr_compiler_destroy(compiler);
-        yr_finalize();
-        return result;
-    }
-    
     // YARA 룰 파일들 추가
     for (const auto& ruleFile : ruleFiles) {
         FILE* ruleFilePtr = fopen(ruleFile.c_str(), "r");
