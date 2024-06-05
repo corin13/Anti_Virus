@@ -4,11 +4,6 @@
 #include <vector>
 #include "util.h"
 
-struct ST_YaraData  {
-    std::vector<std::string>* DetectedMalware;
-    const std::string* FilePath;
-};
-
 class CFileScanner {
     public:
         int StartScan(); 

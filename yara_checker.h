@@ -3,7 +3,11 @@
 #include <string>
 #include <vector>
 #include <yara.h>
-#include "file_scanner.h"
+
+struct ST_YaraData  {
+    std::vector<std::string>* DetectedMalware;
+    const std::string* FilePath;
+};
 
 int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* userData);
 int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware);

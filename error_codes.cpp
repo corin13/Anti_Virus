@@ -30,8 +30,8 @@ std::string GetErrorMessage(int code) {
             return "Invalid range for substring extraction";
         case ERROR_CANNOT_WRITE_FILE:
             return "Failed to write data to file";
-        case ERROR_YARA_RULE:
-            return "YARA rule error";
+        case ERROR_YARA_LIBRARY:
+            return "YARA library error";
         case ERROR_CANNOT_REMOVE_FILE:
             return "Failed to remove file";
         case ERROR_CANNOT_SEND_EMAIL:

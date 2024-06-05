@@ -6,7 +6,7 @@
 #include <iomanip>
 #include "file_scanner.h"
 #include "malware_hash.h"
-#include "yara_rule.h"
+#include "yara_checker.h"
 
 //-s 혹은 --scan 옵션 입력 시 실행되는 함수
 int CFileScanner::StartScan(){

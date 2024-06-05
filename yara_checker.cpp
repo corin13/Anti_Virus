@@ -1,7 +1,8 @@
 #include <algorithm>
 #include <dirent.h>
 #include <iostream>
-#include "yara_rule.h"
+#include "util.h"
+#include "yara_checker.h"
 
 // YARA 룰 매칭 콜백 함수
 int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* yaraData) {
@@ -45,13 +46,13 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
     // yara 라이브러리 초기화
     if (yr_initialize() != ERROR_SUCCESS) {
         PrintError("Failed to initialize YARA.");
-        return ERROR_YARA_RULE;
+        return ERROR_YARA_LIBRARY;
     }
     // yara 컴파일러 객체 생성
     if (yr_compiler_create(&compiler) != ERROR_SUCCESS) {
         PrintError("Failed to create YARA compiler.");
         yr_finalize();
-        return ERROR_YARA_RULE;
+        return ERROR_YARA_LIBRARY;
     }
 
     // YARA 룰 파일 리스트
@@ -75,7 +76,7 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
         if (yr_compiler_add_file(compiler, ruleFilePtr, nullptr, ruleFile.c_str()) != 0) {
             PrintError("Failed to compile YARA rules.");
             fclose(ruleFilePtr);
-            result = ERROR_YARA_RULE;
+            result = ERROR_YARA_LIBRARY;
             break;
         }
         fclose(ruleFilePtr);
@@ -85,7 +86,7 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
         // 컴파일된 룰 가져오기
         if (yr_compiler_get_rules(compiler, &rules) != ERROR_SUCCESS) {
             PrintError("Failed to get compiled YARA rules.");
-            result =  ERROR_YARA_RULE;
+            result =  ERROR_YARA_LIBRARY;
         } else {
             ST_YaraData yaraData { &detectedMalware, &filePath };
 
@@ -93,7 +94,7 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
             int scanResult = yr_rules_scan_file(rules, filePath.c_str(), 0, YaraCallbackFunction, &yaraData, 0);
             if (scanResult != ERROR_SUCCESS && scanResult != CALLBACK_MSG_RULE_NOT_MATCHING) {
                 PrintError("Error scanning file " + filePath);
-                result = ERROR_YARA_RULE;
+                result = ERROR_YARA_LIBRARY;
             }
         }
     }
