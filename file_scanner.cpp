@@ -5,7 +5,7 @@
 #include <chrono>
 #include <iomanip>
 #include "file_scanner.h"
-#include "malware_hash.h"
+#include "malware_hash_checker.h"
 #include "yara_checker.h"
 
 //-s 혹은 --scan 옵션 입력 시 실행되는 함수
@@ -109,13 +109,14 @@ int CFileScanner::ScanDirectory() {
                 if (m_scanTypeOption == 1) {
                     nResult = CheckYaraRule(node->fts_path, m_detectedMalware);
                 } else {
-                    std::vector<std::string> vecHashes;
-                    nResult = LoadHashes("hashes.txt", vecHashes); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
+                    CMalwareHashChecker IMalwareHashChecker;
+                    std::string hashListPath = "./hashes.txt";
+                    nResult = IMalwareHashChecker.LoadHashes(hashListPath); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
                     if (nResult != SUCCESS_CODE) {
                         fts_close(fileSystem);
                         return nResult;
                     }
-                    nResult = CompareByHash(node, m_detectedMalware, vecHashes);
+                    nResult = IMalwareHashChecker.CompareByHash(node, m_detectedMalware);
                 }
             }
         }
