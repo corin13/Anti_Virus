@@ -4,6 +4,7 @@ CUdkdAgentOptions IAgentOptions;
 CUsageCollector IUsageOption;
 CLoggingManager ILoggingOption;
 CEventMonitor IEventMonitor;
+CFileScanner IFileScanner;
 
 // 인자값 필요로 한다면 :붙이기 ex) hib:s:
 void CheckOption(int &argc, char** &argv){
@@ -34,7 +35,7 @@ void CheckOption(int &argc, char** &argv){
                 break;
 
             case 's':
-                StartScan();
+                IFileScanner.StartScan();
                 break;
 
             case 'u':

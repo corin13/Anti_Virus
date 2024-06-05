@@ -2,41 +2,41 @@
 
 std::string GetErrorMessage(int code) {
     switch (code) {
-        case 0:
+        case SUCCESS_CODE:
             return "Success";
-        case 1:
+        case ERROR_INVALID_FUNCTION:
             return "Invalid function";
-        case 2:
+        case ERROR_FILE_NOT_FOUND:
             return "File not found";
-        case 3:
+        case ERROR_ACCESS_DENIED:
             return "Access denied";
-        case 4:
+        case ERROR_CANNOT_OPEN_FILE:
             return "Cannot open file";
-        case 5:
+        case ERROR_PATH_NOT_FOUND:
             return "Path not found";
-        case 6:
+        case ERROR_INVALID_OPTION:
             return "Invalid option";
-        case 7:
+        case ERROR_CANNOT_CLOSE_FILE_SYSTEM:
             return "Failed to close file system";
-        case 8:
+        case ERROR_CANNOT_MOVE_FILE:
             return "Failed to move file";
-        case 9:
+        case ERROR_CANNOT_CHANGE_PERMISSIONS:
             return "Failed to change file permissions";
-        case 10:
+        case ERROR_CANNOT_OPEN_DIRECTORY:
             return "Failed to open directory";
-        case 11:
+        case ERROR_CANNOT_COMPUTE_HASH:
             return "Failed to compute hash for file";
-        case 12:
+        case ERROR_INVALID_RANGE:
             return "Invalid range for substring extraction";
-        case 13:
+        case ERROR_CANNOT_WRITE_FILE:
             return "Failed to write data to file";
-        case 14:
+        case ERROR_YARA_RULE:
             return "YARA rule error";
-        case 15:
+        case ERROR_CANNOT_REMOVE_FILE:
             return "Failed to remove file";
-        case 16:
+        case ERROR_CANNOT_SEND_EMAIL:
             return "Failed to send email";
-        case 17:
+        case ERROR_UNKNOWN:
         default:
             return "Unknown error";
     }

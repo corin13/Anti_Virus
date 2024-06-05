@@ -4,11 +4,11 @@
 #include "yara_rule.h"
 
 // YARA 룰 매칭 콜백 함수
-int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* userData) {
+int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* yaraData) {
     if (message == CALLBACK_MSG_RULE_MATCHING) {
-        auto* data = static_cast<UserData*>(userData);        
-        std::vector<std::string>* detectedMalware = data->detectedMalware;
-        const std::string* filePath = data->filePath; // 파일 경로 가져오기
+        auto* data = static_cast<ST_YaraData*>(yaraData);        
+        std::vector<std::string>* detectedMalware = data->DetectedMalware;
+        const std::string* filePath = data->FilePath; // 파일 경로 가져오기
         YR_RULE* rule = (YR_RULE*)messageData; // 탐지된 룰 정보 가져오기
         // 중복 검사
         if (std::find(detectedMalware->begin(), detectedMalware->end(), *filePath) == detectedMalware->end()) {
@@ -87,11 +87,10 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
             PrintError("Failed to get compiled YARA rules.");
             result =  ERROR_YARA_RULE;
         } else {
-            // 사용자 데이터 구조체 생성
-            UserData userData { &detectedMalware, &filePath };
+            ST_YaraData yaraData { &detectedMalware, &filePath };
 
             // 스캔
-            int scanResult = yr_rules_scan_file(rules, filePath.c_str(), 0, YaraCallbackFunction, &userData, 0);
+            int scanResult = yr_rules_scan_file(rules, filePath.c_str(), 0, YaraCallbackFunction, &yaraData, 0);
             if (scanResult != ERROR_SUCCESS && scanResult != CALLBACK_MSG_RULE_NOT_MATCHING) {
                 PrintError("Error scanning file " + filePath);
                 result = ERROR_YARA_RULE;
