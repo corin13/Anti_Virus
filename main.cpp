@@ -8,7 +8,7 @@ CLoggingManager ILoggingOption;
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
-    const char* pOption="c:dhilmsu"; 
+    const char* pOption="c:dhilmsuf";  // 'f' 옵션 추가
     std::string configPath;
 
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
@@ -45,16 +45,18 @@ void CheckOption(int &argc, char** &argv){
                 IUsageOption.CollectAndSaveUsage();
                 break;
 
-
             case 'c':
                 LoadConfig(optarg);
-                StartIniScan(); 
+                StartIniScan();
+                break; 
+                 
+            case 'f':
+                Firewall();
                 break;
 
             case '?':
                 IAgentOptions.DisplayErrorOption();
                 break;
-            
             
             default:
                 abort();

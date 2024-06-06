@@ -53,6 +53,13 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "map": "cpp"
-    }
+        "map": "cpp",
+        "bitset": "cpp",
+        "csignal": "cpp",
+        "unordered_set": "cpp",
+        "regex": "cpp",
+        "shared_mutex": "cpp",
+        "set": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

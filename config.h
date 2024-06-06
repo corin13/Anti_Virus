@@ -3,6 +3,8 @@
 #include "ini.h"
 #include <string>
 
+// defualt define 
+
 class Config {
 public:
     static Config& Instance();

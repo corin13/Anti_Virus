@@ -39,6 +39,21 @@ bool INIReader::GetBoolean(const string& section, const string& name, bool defau
         return default_value;
 }
 
+vector<string> INIReader::GetSections() const {
+    return vector<string>(_sections.begin(), _sections.end());
+}
+
+vector<string> INIReader::GetKeys(const string& section) const {
+    vector<string> keys;
+    string prefix = section + ".";
+    for (const auto& kv : _values) {
+        if (kv.first.find(prefix) == 0) {
+            keys.push_back(kv.first.substr(prefix.length()));
+        }
+    }
+    return keys;
+}
+
 string INIReader::_make_key(const string& section, const string& name) {
     string key = section + "." + name;
     transform(key.begin(), key.end(), key.begin(), ::tolower);
@@ -68,4 +83,64 @@ int INIReader::_parse(const string& filename) {
         }
     }
     return 0;
+}
+
+INIWriter::INIWriter(const string& filename) : _filename(filename) {}
+
+bool INIWriter::Write(const map<string, map<string, string>>& data) const {
+    ofstream file(_filename);
+    if (!file.is_open()) {
+        return false;
+    }
+
+    for (const auto& section : data) {
+        file << "[" << section.first << "]\n";
+        for (const auto& key : section.second) {
+            file << key.first << "=" << key.second << "\n";
+        }
+        file << "\n";
+    }
+
+    file.close();
+    return true;
+}
+
+bool INIWriter::DeleteSection(const string& section) {
+    INIReader reader(_filename);
+    if (reader.ParseError() != 0) {
+        return false;
+    }
+
+    map<string, map<string, string>> data;
+    for (const auto& sec : reader.GetSections()) {
+        if (sec != section) {
+            map<string, string> sectionData;
+            for (const auto& key : reader.GetKeys(sec)) {
+                sectionData[key] = reader.Get(sec, key, "");
+            }
+            data[sec] = sectionData;
+        }
+    }
+
+    return Write(data);
+}
+
+bool INIWriter::DeleteKey(const string& section, const string& key) {
+    INIReader reader(_filename);
+    if (reader.ParseError() != 0) {
+        return false;
+    }
+
+    map<string, map<string, string>> data;
+    for (const auto& sec : reader.GetSections()) {
+        map<string, string> sectionData;
+        for (const auto& k : reader.GetKeys(sec)) {
+            if (!(sec == section && k == key)) {
+                sectionData[k] = reader.Get(sec, k, "");
+            }
+        }
+        data[sec] = sectionData;
+    }
+
+    return Write(data);
 }
