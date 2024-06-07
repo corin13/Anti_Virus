@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <openssl/sha.h>
 #include <iomanip>
+#include "ansi_color.h"
 #include "util.h"
 
 // 경로 유효성 검사 함수
@@ -20,19 +21,19 @@ bool IsDirectory(const std::string& path) {
 }
 
 void PrintError(const std::string& message) {
-    std::cerr << "\n\033[31m" << message << "\033[0m\n";
+    std::cerr << "\n" << COLOR_RED << message << COLOR_RESET << "\n";
 }
 
 void PrintErrorMessage(int code) {
-    std::cerr << "\n\033[31mError: " << GetErrorMessage(code) << "\033[0m\n";
+    std::cerr << "\n" << COLOR_RED << "Error: " << GetErrorMessage(code) << COLOR_RESET << "\n";
 }
 
 // 에러 처리를 담당하는 함수
 void HandleError(int code, const std::string& context) {
     if (code != SUCCESS_CODE) {
-        std::cerr << "\n\033[31m[Error] " << GetErrorMessage(code) << "\033[0m";
+        std::cerr << "\n" << COLOR_RED << "[Error] " << GetErrorMessage(code) << COLOR_RESET;
         if (!context.empty()) {
-            std::cerr << "\n\033[31m : " << context << "\033[0m";
+            std::cerr << "\n" << COLOR_RED << ": " << context << COLOR_RESET;
         }
         std::cerr << "\n";
         exit(code);

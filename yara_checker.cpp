@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <dirent.h>
 #include <iostream>
+#include "ansi_color.h"
 #include "util.h"
 #include "yara_checker.h"
 
@@ -18,8 +19,8 @@ int CYaraChecker::YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, vo
         // 중복 검사
         if (std::find(detectedMalware->begin(), detectedMalware->end(), *filePath) == detectedMalware->end()) {
             detectedMalware->push_back(*filePath);
-            std::cout << "\n\033[31m[+] Malware detected: [" << *filePath << "]\033[0m\n";
-            std::cout << "\033[31m[+] Detected by rule: [" << rule->identifier << "]\033[0m\n\n";
+            std::cout << "\n" << COLOR_RED << "[+] Malware detected: [" << *filePath << "]" << COLOR_RESET << "\n";
+            std::cout << COLOR_RED << "[+] Detected by rule: [" << rule->identifier << "]" << COLOR_RESET << "\n\n";
             data->NameOfYaraRule = rule->identifier;
         }
     }
@@ -56,7 +57,7 @@ int CYaraChecker::CheckYaraRule(const std::string& filePath, std::vector<std::st
     
     // filePath가 ruleFiles에 있는지 확인
     if (std::find(ruleFiles.begin(), ruleFiles.end(), GetAbsolutePath(filePath)) != ruleFiles.end()) {
-        std::cout << "\n\033[33m[+] Skipping YARA rule check for file : " << filePath << "\033[0m\n\n";
+        std::cout << "\n" << COLOR_YELLOW << "[+] Skipping YARA rule check for file : " << filePath << COLOR_RESET << "\n\n";
         return SUCCESS_CODE;
     }
 

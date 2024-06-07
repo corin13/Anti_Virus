@@ -6,10 +6,17 @@
 #include <chrono>
 #include <iomanip>
 #include <jsoncpp/json/json.h>
+#include "ansi_color.h"
 #include "file_scanner.h"
 #include "malware_hash_checker.h"
 #include "yara_checker.h"
 
+#define ALL_FILES 1
+#define ELF_FILES 2
+#define SPECIFIC_EXTENSION 3
+
+#define YARA_RULE 1
+#define HASH_COMPARISON 2
 
 // 전역 변수 추가
 bool CFileScanner::g_stopScanning = false;
@@ -53,9 +60,9 @@ int CFileScanner::PerformFileScan() {
     std::string strFileTypeInput;
     getline(std::cin, strFileTypeInput);
 
-    m_fileTypeOption = 1; // 기본값으로 모든 파일 검사
+    m_fileTypeOption = ALL_FILES; // 기본값으로 모든 파일 검사
     if (strFileTypeInput == "3") {
-        m_fileTypeOption = 3;
+        m_fileTypeOption = SPECIFIC_EXTENSION;
         std::cout << "Enter the file extension to scan (Default is 'exe'): ";
         getline(std::cin, m_extension);
     } else if (strFileTypeInput == "1" || strFileTypeInput == "2") {
@@ -74,7 +81,7 @@ int CFileScanner::PerformFileScan() {
     if (strScanTypeInput != "1" && strScanTypeInput != "2" && !strScanTypeInput.empty()) {
         return ERROR_INVALID_OPTION;
     }
-    m_scanTypeOption = (strScanTypeInput.empty() || strScanTypeInput == "1") ? 1 : 2;
+    m_scanTypeOption = (strScanTypeInput.empty() || strScanTypeInput == "1") ? YARA_RULE : HASH_COMPARISON;
 
     std::cout << "\n### File Scan Start ! (Path : " << m_scanTargetPath << " , FileTypeOption : " << m_fileTypeOption << " , ScanTypeOption : " << m_scanTypeOption << ") ###\n\n";
 
@@ -106,12 +113,12 @@ int CFileScanner::ScanDirectory() {
         if (node->fts_info == FTS_F) {
             bool shouldScan = false;
 
-            if (m_fileTypeOption == 3) {
+            if (m_fileTypeOption == SPECIFIC_EXTENSION) {
                 if(m_extension.empty()) {
                     m_extension = "exe";
                 }
                 shouldScan = IsExtension(node->fts_path, m_extension);
-            } else if (m_fileTypeOption == 2) {
+            } else if (m_fileTypeOption == ELF_FILES) {
                 shouldScan = IsELFFile(node->fts_path);
             } else {
                 shouldScan = true;
@@ -122,7 +129,7 @@ int CFileScanner::ScanDirectory() {
                 m_totalSize += node->fts_statp->st_size;
                 std::cout << node->fts_path << "\n";
                 std::string strDetectionCause;
-                if (m_scanTypeOption == 1) {
+                if (m_scanTypeOption == YARA_RULE) {
                     CYaraChecker IYaraChecker("./yara-rules");
                     nResult = IYaraChecker.CheckYaraRule(node->fts_path, m_detectedMalware, strDetectionCause);
                 } else {
@@ -138,9 +145,9 @@ int CFileScanner::ScanDirectory() {
                 if(!strDetectionCause.empty()) {
                     ST_ScanData data = {
                     .DetectedFile = GetAbsolutePath(node->fts_path),
-                    .ScanType = m_scanTypeOption == 1 ? "Yara" : "Hash",
-                    .YaraRule = m_scanTypeOption == 1 ? strDetectionCause : "N/A",
-                    .HashValue = m_scanTypeOption == 2 ? strDetectionCause : "N/A",
+                    .ScanType = m_scanTypeOption == YARA_RULE ? "Yara" : "Hash",
+                    .YaraRule = m_scanTypeOption == YARA_RULE ? strDetectionCause : "N/A",
+                    .HashValue = m_scanTypeOption == HASH_COMPARISON ? strDetectionCause : "N/A",
                     .FileSize = "",
                     .Timestamp = GetCurrentTimeWithMilliseconds(),
                     .IsMoved = false,
@@ -185,9 +192,9 @@ int CFileScanner::ScanDirectory() {
 int CFileScanner::PrintScanResult() {
         
     std::cout << "\n- File Scan Result -\n\n"
-            << "\033[31m[+] Total Malware File : " << m_detectedMalware.size() << " files\033[0m\n";
+            << COLOR_RED << "[+] Total Malware File : " << m_detectedMalware.size() << " files" << COLOR_RESET << "\n";
     for (int i = 0; i < m_detectedMalware.size(); ++i) {
-        std::cout << "\033[31m[" << i + 1 << "] : " << m_detectedMalware[i] << "\033[0m\n";
+        std::cout << COLOR_RED << "[" << i + 1 << "] : " << m_detectedMalware[i] << COLOR_RESET << "\n";
     }
     std::cout << "\n[+] Total Scan File : " << m_fileCount << " files " << m_totalSize << " bytes\n";
     std::cout << "\n[+] File scan time :  " << std::fixed << std::setprecision(3) << m_scanTime << " sec\n";

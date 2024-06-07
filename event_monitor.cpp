@@ -10,6 +10,7 @@
 #include <sys/inotify.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "ansi_color.h"
 #include "email_sender.h"
 #include "event_monitor.h"
 #include "integrity_checker.h"
@@ -54,7 +55,7 @@ int CEventMonitor::StartMonitoring() {
     } else if(taskTypeInput == "2") {
         EmailSender emailSender("smtps://smtp.gmail.com", 465, "udangtang02@gmail.com");
         if (emailSender.SendEmailWithAttachment() == 0) {
-            std::cout << "\n\033[32mEmail sent successfully.\033[0m\n";
+            std::cout << "\n" << COLOR_GREEN << "Email sent successfully." << COLOR_RESET << "\n";
         } else {
             HandleError(ERROR_CANNOT_SEND_EMAIL);
         }
@@ -242,17 +243,17 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
 }
 
 void CEventMonitor::printEventsInfo(MonitorData& data) {
-    std::cout << "[+] Event type: " << data.eventDescription << "\n";
+    std::cout << "[+] Event type: " << COLOR_YELLOW << data.eventDescription << COLOR_RESET << "\n";
     std::cout << "[+] Target file: " << data.filePath;
 }
 
 // 무결성 검사 함수 구현
 void CEventMonitor::verifyFileIntegrity(MonitorData& data) {
     if (data.oldHash.empty() || data.newHash.empty() || data.newHash != data.oldHash) {
-        std::cout << "\n[+] Integrity check: \033[31mDetected changes\033[0m\n";
+        std::cout << "\n[+] Integrity check: " << COLOR_RED << "Detected changes" << COLOR_RESET << "\n";
         data.integrityResult = "Changed";
     } else {
-        std::cout << "\n[+] Integrity check: \033[32mNo changes found\033[0m\n";
+        std::cout << "\n[+] Integrity check: " << COLOR_GREEN << "No changes found" << COLOR_RESET << "\n";
     }
 }
 
