@@ -1,3 +1,4 @@
+#include <csignal>
 #include <iostream>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -8,6 +9,18 @@
 #include "file_scanner.h"
 #include "malware_hash_checker.h"
 #include "yara_checker.h"
+
+
+// 전역 변수 추가
+bool CFileScanner::g_stopScanning = false;
+
+// 신호 처리기 함수 추가
+void signalHandler(int signal) {
+    if (signal == SIGINT) {
+        std::cout << "\nSignal SIGINT received, stopping the scan...\n";
+        CFileScanner::g_stopScanning = true;
+    }
+}
 
 //-s 혹은 --scan 옵션 입력 시 실행되는 함수
 int CFileScanner::StartScan(){
@@ -88,7 +101,8 @@ int CFileScanner::ScanDirectory() {
 
     FTSENT *node;
     int nResult;
-    while ((node = fts_read(fileSystem)) != nullptr) {
+    signal(SIGINT, signalHandler);  // 신호 처리기 등록
+    while ((node = fts_read(fileSystem)) != nullptr && !g_stopScanning) {
         if (node->fts_info == FTS_F) {
             bool shouldScan = false;
 
@@ -136,6 +150,8 @@ int CFileScanner::ScanDirectory() {
             }
         }
     }
+
+    signal(SIGINT, SIG_DFL);  // 신호 처리기 기본으로 되돌림
 
     if (fts_close(fileSystem) < 0) {
         return ERROR_CANNOT_CLOSE_FILE_SYSTEM;
