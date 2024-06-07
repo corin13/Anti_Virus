@@ -13,7 +13,7 @@ private:
     int smtpPort;
     std::string emailAddress;
 
-    const char* GetEmailPassword();
+    std::string GetEmailPassword();
     CURL* InitializeCurl() const;
     curl_mime* SetupMimeAndCurl(CURL* curl, const std::string& emailPassword, const std::string& toEmail, const std::string& body, const std::string& logFilePath, curl_slist* recipients, curl_slist* headers) const;
 };

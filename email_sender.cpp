@@ -4,18 +4,22 @@
 #include <iostream>
 #include "email_sender.h"
 #include "event_monitor.h"
+#include "secure_config.h"
 #include "util.h"
 
 EmailSender::EmailSender(const std::string& smtpServer, int smtpPort, const std::string& emailAddress)
     : smtpServer(smtpServer), smtpPort(smtpPort), emailAddress(emailAddress) {}
 
 // 환경변수에서 이메일 비밀번호 가져오기
-const char* EmailSender::GetEmailPassword() {
-    const char* emailPassword = std::getenv("EMAIL_PASSWORD");
-    if (!emailPassword) {
-        HandleError(ERROR_INVALID_FUNCTION, "Email password is not set in the environment variables.");
+std::string EmailSender::GetEmailPassword() {
+    try {
+        CSecureConfig ISecurityconfig("settings.ini", "private_key.pem");
+        std::string decrypted_password = ISecurityconfig.getDecryptedPassword("security", "encrypted_password");
+        return decrypted_password;
+    } catch (const std::exception& e) {
+        PrintError(e.what());
+        return "";
     }
-    return emailPassword;
 }
 
 // curl 초기화
@@ -63,7 +67,12 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
 // 메일 보내는 함수
 int EmailSender::SendEmailWithAttachment() {
     // 환경변수에서 이메일 비밀번호 가져오기
-    const char* emailPassword = GetEmailPassword();
+
+    std::string emailPassword = GetEmailPassword();
+    if (emailPassword.empty()) {
+        PrintError("Failed to retrieve email password.");
+        return ERROR_CANNOT_SEND_EMAIL;
+    }
 
     // 수신자 이메일 받기
     std::string toEmail;
