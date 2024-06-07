@@ -40,12 +40,12 @@ int CFileScanner::PerformFileScan() {
     std::string strFileTypeInput;
     getline(std::cin, strFileTypeInput);
 
-    m_fileTypeOption = 3; // 기본값으로 모든 파일 검사
-    if (strFileTypeInput == "1") {
-        m_fileTypeOption = 1;
+    m_fileTypeOption = 1; // 기본값으로 모든 파일 검사
+    if (strFileTypeInput == "3") {
+        m_fileTypeOption = 3;
         std::cout << "Enter the file extension to scan (Default is 'exe'): ";
         getline(std::cin, m_extension);
-    } else if (strFileTypeInput == "2" || strFileTypeInput == "3") {
+    } else if (strFileTypeInput == "1" || strFileTypeInput == "2") {
         m_fileTypeOption = std::stoi(strFileTypeInput);
     } else if (!strFileTypeInput.empty()) {
         return ERROR_INVALID_OPTION;
@@ -92,7 +92,7 @@ int CFileScanner::ScanDirectory() {
         if (node->fts_info == FTS_F) {
             bool shouldScan = false;
 
-            if (m_fileTypeOption == 1) {
+            if (m_fileTypeOption == 3) {
                 if(m_extension.empty()) {
                     m_extension = "exe";
                 }

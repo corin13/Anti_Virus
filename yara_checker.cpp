@@ -52,7 +52,7 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
         return nResult;
     }
     // filePath가 ruleFiles에 있는지 확인
-    if (std::find(ruleFiles.begin(), ruleFiles.end(), filePath) != ruleFiles.end()) {
+    if (std::find(ruleFiles.begin(), ruleFiles.end(), GetAbsolutePath(filePath)) != ruleFiles.end()) {
         std::cout << "\n\033[33m[+] Skipping YARA rule check for file : " << filePath << "\033[0m\n\n";
         return SUCCESS_CODE;
     }
