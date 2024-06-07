@@ -4,8 +4,12 @@
 #include "util.h"
 #include "yara_checker.h"
 
+CYaraChecker::CYaraChecker(const std::string& rulesDirectory) : rulesDirectory(rulesDirectory) {
+    GetRuleFiles(rulesDirectory, ruleFiles);
+}
+
 // YARA 룰 매칭 콜백 함수
-int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* yaraData) {
+int CYaraChecker::YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* yaraData) {
     if (message == CALLBACK_MSG_RULE_MATCHING) {
         auto* data = static_cast<ST_YaraData*>(yaraData);        
         std::vector<std::string>* detectedMalware = data->DetectedMalware;
@@ -23,7 +27,7 @@ int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageDat
 }
 
 // 디렉토리 내 YARA 룰 파일들을 가져오는 함수
-int GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFiles) {
+int CYaraChecker::GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFiles) {
     DIR* dir;
     struct dirent* ent;
     if ((dir = opendir(directory.c_str())) != nullptr) {
@@ -41,16 +45,15 @@ int GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFil
     }
 }
 
-int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& strDetectionCause) {
+int CYaraChecker::CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& strDetectionCause) {
     YR_COMPILER* compiler = nullptr;
     YR_RULES* rules = nullptr;
 
     // YARA 룰 파일 리스트
-    std::vector<std::string> ruleFiles;
-    int nResult = GetRuleFiles("./yara-rules", ruleFiles);
-    if(nResult != SUCCESS_CODE) {
-        return nResult;
+    if (ruleFiles.empty()) {
+        PrintError("No YARA rules files found.");
     }
+    
     // filePath가 ruleFiles에 있는지 확인
     if (std::find(ruleFiles.begin(), ruleFiles.end(), GetAbsolutePath(filePath)) != ruleFiles.end()) {
         std::cout << "\n\033[33m[+] Skipping YARA rule check for file : " << filePath << "\033[0m\n\n";
@@ -68,6 +71,8 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
         yr_finalize();
         return ERROR_YARA_LIBRARY;
     }
+
+    int nResult = SUCCESS_CODE;
 
     // YARA 룰 파일들 추가
     for (const auto& ruleFile : ruleFiles) {

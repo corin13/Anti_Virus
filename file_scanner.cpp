@@ -17,7 +17,7 @@ bool CFileScanner::g_stopScanning = false;
 // 신호 처리기 함수 추가
 void signalHandler(int signal) {
     if (signal == SIGINT) {
-        std::cout << "\nSignal SIGINT received, stopping the scan...\n";
+        std::cout << "\nScan interrupted. Stopping the scan...\n";
         CFileScanner::g_stopScanning = true;
     }
 }
@@ -123,7 +123,8 @@ int CFileScanner::ScanDirectory() {
                 std::cout << node->fts_path << "\n";
                 std::string strDetectionCause;
                 if (m_scanTypeOption == 1) {
-                    nResult = CheckYaraRule(node->fts_path, m_detectedMalware, strDetectionCause);
+                    CYaraChecker IYaraChecker("./yara-rules");
+                    nResult = IYaraChecker.CheckYaraRule(node->fts_path, m_detectedMalware, strDetectionCause);
                 } else {
                     CMalwareHashChecker IMalwareHashChecker;
                     std::string hashListPath = "./hashes.txt";

@@ -4,12 +4,20 @@
 #include <vector>
 #include <yara.h>
 
-struct ST_YaraData  {
-    std::vector<std::string>* DetectedMalware;
-    const std::string* FilePath;
-    std::string NameOfYaraRule;
-};
+class CYaraChecker {
+public:
+    CYaraChecker(const std::string& rulesDirectory);
+    int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& strDetectionCause);
 
-int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* userData);
-int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& strDetectionCause);
-int GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFiles);
+private:
+    struct ST_YaraData {
+        std::vector<std::string>* DetectedMalware;
+        const std::string* FilePath;
+        std::string NameOfYaraRule;
+    };
+
+    std::string rulesDirectory;
+    std::vector<std::string> ruleFiles;
+    static int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* yaraData);
+    int GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFiles);    
+};

@@ -16,24 +16,24 @@ struct ST_ScanData {
 };
 
 class CFileScanner {
-    public:
-        int StartScan();
-        static bool g_stopScanning;
-    private:
-        std::vector<std::string> m_detectedMalware; // 악성파일로 판별된 파일의 경로를 저장
-        std::string m_scanTargetPath;
-        int m_scanTypeOption;
-        int m_fileTypeOption;
-        int m_fileCount;
-        long long m_totalSize;
-        double m_scanTime;
-        std::string m_extension;
-        std::vector<ST_ScanData> m_vecScanData;
+public:
+    int StartScan();
+    static bool g_stopScanning;
+private:
+    std::vector<std::string> m_detectedMalware; // 악성파일로 판별된 파일의 경로를 저장
+    std::string m_scanTargetPath;
+    int m_scanTypeOption;
+    int m_fileTypeOption;
+    int m_fileCount;
+    long long m_totalSize;
+    double m_scanTime;
+    std::string m_extension;
+    std::vector<ST_ScanData> m_vecScanData;
 
-        int PerformFileScan();
-        int ScanDirectory();
-        int MoveDetectedMalware();
-        int MoveFile(ST_ScanData& data, const std::string& quarantineDir);
-        int PrintScanResult();
-        void LogResult(ST_ScanData& data);
+    int PerformFileScan();
+    int ScanDirectory();
+    int MoveDetectedMalware();
+    int MoveFile(ST_ScanData& data, const std::string& quarantineDir);
+    int PrintScanResult();
+    void LogResult(ST_ScanData& data);
 };
