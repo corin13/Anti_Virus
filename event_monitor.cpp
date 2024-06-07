@@ -281,52 +281,13 @@ void CEventMonitor::logEvent(MonitorData& data) {
         //logEntry["file_permissions"] = "N/A";
     }
 
-    // JSON 객체를 문자열로 변환
-    Json::StreamWriterBuilder writer;
-    std::string logString = Json::writeString(writer, logEntry);
-    std::string logFilePath = getLogFilePath();
-
-    // 수정 및 추가: 기존 로그 파일을 읽고 JSON 배열로 변환하는 부분
-    std::ifstream logFileIn(logFilePath);
-    std::vector<Json::Value> logEntries;
-
-    if (logFileIn.is_open()) {
-        Json::CharReaderBuilder reader;
-        Json::Value existingLog;
-        std::string errs;
-        if (Json::parseFromStream(reader, logFileIn, &existingLog, &errs)) {
-            if (existingLog.isArray()) {
-                for (const auto &entry : existingLog) {
-                    logEntries.push_back(entry);
-                }
-            }
-        }
-        logFileIn.close();
-    }
-
-    logEntries.push_back(logEntry);
-
-    // 수정 및 추가: JSON 배열 형식으로 로그 파일에 저장하는 부분
-    std::ofstream logFileOut(logFilePath, std::ios::out);
-    if (!logFileOut.is_open()) {
-        HandleError(ERROR_CANNOT_OPEN_FILE, logFilePath);
-    }
-    logFileOut << "[\n";
-    for (size_t i = 0; i < logEntries.size(); ++i) {
-        logFileOut << Json::writeString(writer, logEntries[i]);
-        if (i != logEntries.size() - 1) {
-            logFileOut << ","; // 수정: 각 JSON 객체 사이에 쉼표 추가
-        }
-        logFileOut << "\n";
-    }
-    logFileOut << "]";
-    logFileOut.close();
+    SaveLogInJson(logEntry, getLogFilePath());
 }
 
 // 로그 파일 이름 생성 함수(날짜별로)
 std::string CEventMonitor::getLogFilePath() {
-    auto in_time_t = GetCurrentTime();
+    auto currentTime = GetCurrentTime();
     std::stringstream ss;
-    ss << "./logs/file_event_monitor_" << std::put_time(std::localtime(&in_time_t), "%y%m%d") << ".log";
+    ss << "./logs/file_event_monitor_" << std::put_time(std::localtime(&currentTime), "%y%m%d") << ".log";
     return ss.str();
 }

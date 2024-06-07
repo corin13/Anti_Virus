@@ -4,6 +4,7 @@
 #include <fstream>
 #include <chrono>
 #include <iomanip>
+#include <jsoncpp/json/json.h>
 #include "file_scanner.h"
 #include "malware_hash_checker.h"
 #include "yara_checker.h"
@@ -106,8 +107,9 @@ int CFileScanner::ScanDirectory() {
                 m_fileCount++;
                 m_totalSize += node->fts_statp->st_size;
                 std::cout << node->fts_path << "\n";
+                std::string strDetectionCause;
                 if (m_scanTypeOption == 1) {
-                    nResult = CheckYaraRule(node->fts_path, m_detectedMalware);
+                    nResult = CheckYaraRule(node->fts_path, m_detectedMalware, strDetectionCause);
                 } else {
                     CMalwareHashChecker IMalwareHashChecker;
                     std::string hashListPath = "./hashes.txt";
@@ -116,7 +118,20 @@ int CFileScanner::ScanDirectory() {
                         fts_close(fileSystem);
                         return nResult;
                     }
-                    nResult = IMalwareHashChecker.CompareByHash(node, m_detectedMalware);
+                    nResult = IMalwareHashChecker.CompareByHash(node, m_detectedMalware, strDetectionCause);
+                }
+                if(!strDetectionCause.empty()) {
+                    ST_ScanData data = {
+                    .DetectedFile = GetAbsolutePath(node->fts_path),
+                    .ScanType = m_scanTypeOption == 1 ? "Yara" : "Hash",
+                    .YaraRule = m_scanTypeOption == 1 ? strDetectionCause : "N/A",
+                    .HashValue = m_scanTypeOption == 2 ? strDetectionCause : "N/A",
+                    .FileSize = "",
+                    .Timestamp = GetCurrentTimeWithMilliseconds(),
+                    .IsMoved = false,
+                    .PathAfterMoving = "N/A"
+                    };
+                    m_vecScanData.push_back(data);
                 }
             }
         }
@@ -143,6 +158,9 @@ int CFileScanner::ScanDirectory() {
     // 악성 파일 이동
     nResult = MoveDetectedMalware();
 
+    for(ST_ScanData& data : m_vecScanData) {
+        LogResult(data);
+    }
     return SUCCESS_CODE;
 }
 
@@ -177,12 +195,11 @@ int CFileScanner::MoveDetectedMalware() {
             }
 
             // 발견된 모든 악성 파일을 이동
-            for (const auto& malwareFilePath : m_detectedMalware) {
-                int nResult = MoveFile(malwareFilePath, strDestinationDir);
+            for(ST_ScanData& data : m_vecScanData) {
+                int nResult = MoveFile(data, strDestinationDir);
                 if(nResult != SUCCESS_CODE) {
                     PrintErrorMessage(nResult);
                 }
-                std::cout << "[+] Moved: " << malwareFilePath << "\n";
             }
         }
     }
@@ -190,13 +207,13 @@ int CFileScanner::MoveDetectedMalware() {
 }
 
 // 특정 파일을 이동시키고 로그에 기록
-int CFileScanner::MoveFile(const std::string& filePath, const std::string& destinationDir) {
+int CFileScanner::MoveFile(ST_ScanData& data, const std::string& destinationDir) {
     try {
-        std::string strFileName = filePath.substr(filePath.find_last_of("/") + 1);
+        std::string strFileName = data.DetectedFile.substr(data.DetectedFile.find_last_of("/") + 1);
         std::string strDestination = destinationDir + "/" + strFileName;
 
         // 파일 이동
-        if (rename(filePath.c_str(), strDestination.c_str()) != 0) {
+        if (rename(data.DetectedFile.c_str(), strDestination.c_str()) != 0) {
             return ERROR_CANNOT_MOVE_FILE;
         }
 
@@ -205,17 +222,36 @@ int CFileScanner::MoveFile(const std::string& filePath, const std::string& desti
             return ERROR_CANNOT_CHANGE_PERMISSIONS;
         }
 
-        // 파일 이동 로그 기록 (로그 파일이 없으면 생성)
-        std::ofstream logFile(destinationDir + "/detected-malware.log", std::ios::out | std::ios::app);
-        if (!logFile) {
-            return ERROR_CANNOT_OPEN_FILE;
-        }
-        logFile << filePath << " -> " << strDestination << "\n";
-        logFile.close();
+        std::cout << "[+] Moved: " << data.DetectedFile << " -> " << GetAbsolutePath(strDestination) << "\n";
+        data.IsMoved = true;
+        data.PathAfterMoving = GetAbsolutePath(strDestination);
 
         return SUCCESS_CODE;
     } catch (const std::exception& e) {
         PrintError("Exception occurred while moving file: " + std::string(e.what()));
         return ERROR_UNKNOWN;
     }
+}
+
+// 파일 이벤트를 날짜별로 로그에 기록
+void CFileScanner::LogResult(ST_ScanData& data) {
+    // JSON 객체 생성
+    Json::Value logEntry;
+    logEntry["timestamp"] = data.Timestamp;
+    logEntry["scan_type"] = data.ScanType;
+    logEntry["detected_file"] = data.DetectedFile;
+    logEntry["hash_value"] = data.HashValue;
+    logEntry["yara_rule"] = data.YaraRule;
+    logEntry["is_moved"] = data.IsMoved ? "True" : "False";
+    logEntry["path_after_moving"] = data.PathAfterMoving;
+
+//시간, 원래 경로, 이동 경로, 해시인지 야라인지, 해시값, 룰 이름, 이동여부, 
+    struct stat fileStat;
+    const std::string& path = data.IsMoved ? data.PathAfterMoving : data.DetectedFile;
+    if (stat(path.c_str(), &fileStat) == 0) {
+        logEntry["file_size"] = Json::UInt64(fileStat.st_size);
+    } else {
+        logEntry["file_size"] = "N/A";
+    }
+    SaveLogInJson(logEntry, "./logs/file_scanner.log");
 }

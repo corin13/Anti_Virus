@@ -16,6 +16,7 @@ int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageDat
             detectedMalware->push_back(*filePath);
             std::cout << "\n\033[31m[+] Malware detected: [" << *filePath << "]\033[0m\n";
             std::cout << "\033[31m[+] Detected by rule: [" << rule->identifier << "]\033[0m\n\n";
+            data->NameOfYaraRule = rule->identifier;
         }
     }
     return CALLBACK_CONTINUE;
@@ -29,12 +30,7 @@ int GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFil
         while ((ent = readdir(dir)) != nullptr) {
             if (ent->d_type == DT_REG) { // regular file
                 std::string strFilePath = directory + "/" + ent->d_name;
-                char realPath[PATH_MAX];
-                if (realpath(strFilePath.c_str(), realPath) != nullptr) {
-                    ruleFiles.push_back(std::string(realPath)); //절대경로
-                } else {
-                    ruleFiles.push_back(strFilePath);
-                }
+                ruleFiles.push_back(GetAbsolutePath(strFilePath));
             }
         }
         closedir(dir);
@@ -45,15 +41,15 @@ int GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFil
     }
 }
 
-int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware) {
+int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& strDetectionCause) {
     YR_COMPILER* compiler = nullptr;
     YR_RULES* rules = nullptr;
 
     // YARA 룰 파일 리스트
     std::vector<std::string> ruleFiles;
-    int result = GetRuleFiles("./yara-rules", ruleFiles);
-    if(result != SUCCESS_CODE) {
-        return result;
+    int nResult = GetRuleFiles("./yara-rules", ruleFiles);
+    if(nResult != SUCCESS_CODE) {
+        return nResult;
     }
     // filePath가 ruleFiles에 있는지 확인
     if (std::find(ruleFiles.begin(), ruleFiles.end(), filePath) != ruleFiles.end()) {
@@ -78,33 +74,34 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
         FILE* ruleFilePtr = fopen(ruleFile.c_str(), "r");
         if (!ruleFilePtr) {
             PrintError("Failed to open YARA rules file.");
-            result = ERROR_CANNOT_OPEN_FILE;
+            nResult = ERROR_CANNOT_OPEN_FILE;
             break;
         }
         // yara rule 컴파일
         if (yr_compiler_add_file(compiler, ruleFilePtr, nullptr, ruleFile.c_str()) != 0) {
             PrintError("Failed to compile YARA rules.");
             fclose(ruleFilePtr);
-            result = ERROR_YARA_LIBRARY;
+            nResult = ERROR_YARA_LIBRARY;
             break;
         }
         fclose(ruleFilePtr);
     }
     
-    if(result == SUCCESS_CODE) {
+    if(nResult == SUCCESS_CODE) {
         // 컴파일된 룰 가져오기
         if (yr_compiler_get_rules(compiler, &rules) != ERROR_SUCCESS) {
             PrintError("Failed to get compiled YARA rules.");
-            result =  ERROR_YARA_LIBRARY;
+            nResult =  ERROR_YARA_LIBRARY;
         } else {
-            ST_YaraData yaraData { &detectedMalware, &filePath };
+            ST_YaraData yaraData { &detectedMalware, &filePath, "" };
 
             // 스캔
             int scanResult = yr_rules_scan_file(rules, filePath.c_str(), 0, YaraCallbackFunction, &yaraData, 0);
             if (scanResult != ERROR_SUCCESS && scanResult != CALLBACK_MSG_RULE_NOT_MATCHING) {
                 PrintError("Error scanning file " + filePath);
-                result = ERROR_YARA_LIBRARY;
+                nResult = ERROR_YARA_LIBRARY;
             }
+            strDetectionCause = yaraData.NameOfYaraRule;
         }
     }
 
@@ -115,5 +112,5 @@ int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detecte
         yr_compiler_destroy(compiler);
     }
     yr_finalize();
-    return result;
+    return nResult;
 }
