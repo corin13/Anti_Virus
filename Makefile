@@ -30,7 +30,7 @@ $(TARGET): $(OBJECTS)
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ || (echo "Compilation failed on $<"; exit 1)
 
-# 'make clean'을 실행할 때 오브젝트 파일과 실행 파일 제거
+# 'make clean'을 실행할 때 오브젝트 파일 제거
 clean:
 	rm -f $(OBJECTS)
 
