@@ -11,6 +11,8 @@ void CheckOption(int &argc, char** &argv){
     int nOpt;
     const char* pOption="dhilmsun:";
 
+    bool networkOption = false;
+
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
             case 'd':
@@ -40,9 +42,10 @@ void CheckOption(int &argc, char** &argv){
             case 'u':
                 IUsageOption.CollectAndSaveUsage();
                 break;
-            
+
             case 'n':
-                INetworkingOption.AnalyzeNetworkTraffic(optarg);
+                INetworkingOption.RunSystem(optarg);
+                networkOption = true;
                 break;
 
             case '?':
