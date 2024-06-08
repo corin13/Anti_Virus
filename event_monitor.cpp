@@ -13,6 +13,7 @@
 #include "ansi_color.h"
 #include "email_sender.h"
 #include "event_monitor.h"
+#include "ini.h"
 #include "integrity_checker.h"
 #include "util.h"
 
@@ -33,7 +34,7 @@ int CEventMonitor::StartMonitoring() {
     if(taskTypeInput == "1" || taskTypeInput.empty()) {
         std::cout << "\n- Monitor List -\n\n";
 
-        std::string watchListFile = "watch_list.ini";
+        std::string watchListFile = "settings.ini";
         
         // 감시할 파일 목록 읽기
         m_watchList = readWatchList(watchListFile);
@@ -65,38 +66,24 @@ int CEventMonitor::StartMonitoring() {
 
 // ini 파일에서 감시할 파일 목록을 읽어들이는 함수
 std::vector<std::string> CEventMonitor::readWatchList(const std::string& watchListfilePath) {
-    std::ifstream file(watchListfilePath);
-    std::string line;
-    std::string currentSection;
+    INIReader reader(watchListfilePath);
 
-    if (!file.is_open()) {
-        HandleError(ERROR_CANNOT_OPEN_FILE, watchListfilePath);
+    if (reader.ParseError() != 0) {
+        HandleError(reader.ParseError(), watchListfilePath);
+        return m_watchList;
     }
 
-    while (std::getline(file, line)) {
-        // 공백 라인 및 주석 라인 무시
-        if (line.empty() || line[0] == '#') {
-            continue;
-        }
-
-        // 섹션 확인
-        if (line.front() == '[' && line.back() == ']') {
-            currentSection = line.substr(1, line.size() - 2);
-            continue;
-        }
-
-        // 키-값 쌍 처리
-        std::istringstream lineStream(line);
-        std::string key, value;
-        if (std::getline(lineStream, key, '=') && std::getline(lineStream, value)) {
-            key = Trim(key);
-            value = Trim(value);
-            if (key == "path" && !value.empty()) {
-                m_watchList.push_back(value);
+    // monitor 섹션에서 모든 키를 가져옴
+    std::vector<std::string> keys = reader.GetKeys("monitor");
+    for (const std::string& key : keys) {
+        // 키가 "path"로 시작하는지 확인
+        if (key.find("path") == 0) {
+            std::string path = reader.Get("monitor", key, "");
+            if (!path.empty()) {
+                m_watchList.push_back(path);
             }
         }
     }
-    file.close();
     return m_watchList;
 }
 

@@ -4,16 +4,27 @@
 #include <iostream>
 #include "email_sender.h"
 #include "event_monitor.h"
+#include "ini.h"
 #include "secure_config.h"
 #include "util.h"
 
 EmailSender::EmailSender(const std::string& smtpServer, int smtpPort, const std::string& emailAddress)
     : smtpServer(smtpServer), smtpPort(smtpPort), emailAddress(emailAddress) {}
 
-// 환경변수에서 이메일 비밀번호 가져오기
+// 암호화된 이메일 비밀번호를 복호화해서 가져오기
 std::string EmailSender::GetEmailPassword() {
     try {
-        CSecureConfig ISecurityconfig("settings.ini", "private_key.pem");
+        INIReader reader("settings.ini");
+        if (reader.ParseError() != 0) {
+            throw std::runtime_error("Failed to load settings.ini");
+        }
+
+        std::string strPrivateKeyPath = reader.Get("security", "private_key_path", "");
+        if (strPrivateKeyPath.empty()) {
+            throw std::runtime_error("Private key path not found in settings.ini");
+        }
+
+        CSecureConfig ISecurityconfig("settings.ini", strPrivateKeyPath);
         std::string decrypted_password = ISecurityconfig.getDecryptedPassword("security", "encrypted_password");
         return decrypted_password;
     } catch (const std::exception& e) {
