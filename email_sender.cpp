@@ -61,7 +61,7 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
     curl_mime_filename(part, logFilePath.substr(logFilePath.find_last_of("/") + 1).c_str());
 
     // curl 옵션 설정
-    curl_easy_setopt(curl, CURLOPT_URL, smtpServer.c_str());
+     curl_easy_setopt(curl, CURLOPT_URL, smtpServer.c_str());
     curl_easy_setopt(curl, CURLOPT_PORT, smtpPort);
     curl_easy_setopt(curl, CURLOPT_USERNAME, senderEmail.c_str());
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword.c_str());
