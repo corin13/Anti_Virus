@@ -8,6 +8,8 @@
 #include "scan.h"
 #include "usage_collector.h"
 #include "event_monitor.h"
+#include "config.h"
+#include "firewall.h"
 
 using namespace std;
 
@@ -20,7 +22,10 @@ struct option options[]={
     {"usage", no_argument, 0, 'u'},
     {"log", no_argument, 0, 'l'},
     {"monitor", no_argument, 0, 'm'},
+    {"config", required_argument, 0, 'c'},
+    {"firewall", no_argument, 0, 'f'},
     {0,0,0,0}
 };
 
 void CheckOpt(int argc, char** argv);
+void LoadConfig(const std::string& configPath);

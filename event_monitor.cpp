@@ -14,6 +14,7 @@
 #include "event_monitor.h"
 #include "integrity_checker.h"
 #include "util.h"
+#include "config.h"
 
 
 int StartMonitoring() {
@@ -51,12 +52,18 @@ int StartMonitoring() {
         RunEventLoop(inotifyFd, watchDescriptors);
         close(inotifyFd);
 
-    } else if(taskTypeInput == "2") {
-        EmailSender emailSender("smtps://smtp.gmail.com", 465, "udangtang02@gmail.com");
-        if (emailSender.SendEmailWithAttachment() == 0) {
-            std::cout << "\n\033[32mEmail sent successfully.\033[0m\n";
+    } else if (taskTypeInput == "2") {
+        std::string recipientEmailAddress = Config::Instance().GetEmailAddress();
+        std::cout << "Recipient email address read from config: " << recipientEmailAddress << "\n";
+        if (!recipientEmailAddress.empty()) {
+            EmailSender emailSender("smtps://smtp.gmail.com", 465, recipientEmailAddress);
+            if (emailSender.SendEmailWithAttachment() == 0) {
+                std::cout << "\n\033[32mEmail sent successfully.\033[0m\n";
+            } else {
+                HandleError(ERROR_CANNOT_SEND_EMAIL);
+            }
         } else {
-            HandleError(ERROR_CANNOT_SEND_EMAIL);
+            std::cerr << "Email address is not configured.\n";
         }
     }
     return SUCCESS_CODE;

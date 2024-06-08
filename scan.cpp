@@ -4,13 +4,34 @@
 #include <fstream>
 #include <chrono>
 #include <iomanip>
+#include "config.h"
 #include "scan.h"
 #include "malware_hash.h"
 #include "yara_rule.h"
+#include "util.h"
 
 //-s 혹은 --scan 옵션 입력 시 실행되는 함수
-int StartScan(){
+int StartScan() {
     int result = PerformFileScan();
+    if (result != SUCCESS_CODE) {
+        PrintErrorMessage(result);
+        return result;
+    }
+    return SUCCESS_CODE;
+}
+
+int StartIniScan(){
+    //INI 파일에서 설정 값을 읽어옵니다.
+    std::string path = Config::Instance().GetScanPath();
+    int scanType = Config::Instance().GetScanType();
+    std::string extension = Config::Instance().GetFileExtension(); // 설정 파일에서 확장자 값을 읽어옴
+    
+    std::cout << "Starting scan on path: " << path << " with scan type: " << scanType << " and extension: " << extension << "\n";
+
+    // 스캔을 수행하는 함수 호출
+    ScanData scanData = {{}, path, 0, 0, 0.0};
+    int result = ScanDirectory(scanData, scanType, 3, extension);
+
     if (result != SUCCESS_CODE) {
         PrintErrorMessage(result);
         return result;
