@@ -44,64 +44,7 @@ int Firewall() {
     return SUCCESS_CODE;
 }
 
-/*int StartFirewall() {
-    if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
-        return ERROR_INVALID_FUNCTION;
-    }
 
-    signal(SIGINT, handle_exit);
-    signal(SIGTERM, handle_exit);
-
-    std::vector<std::string> cmdlist;
-    auto rulesList = FirewallConfig::Instance().GetRulesList();
-    std::istringstream iss(rulesList);
-    std::string line;
-
-    while (std::getline(iss, line)) {
-        if (line.empty()) continue;
-
-        if (line[0] == '[' && line.back() == ']') {
-            std::string sectionName = line.substr(1, line.length() - 2);
-            auto sectionData = FirewallConfig::Instance().GetSectionData(sectionName);
-
-            std::deque<std::string> optionList = { " -p tcp --dport ", " -j " };
-            std::string command = "iptables -A ";
-
-            int i = 0;
-            for (const auto& item : sectionData) {
-                auto& value = item.second;
-
-                if (value == "in") {
-                    command += "INPUT";
-                    optionList.push_front(" -s ");
-                } else if (value == "out") {
-                    command += "OUTPUT";
-                    optionList.push_front(" -d ");
-                } else if (value == "any") {
-                    i++;
-                    continue;
-                } else {
-                    std::string v = (value == "permit") ? "ACCEPT" : (value == "deny") ? "DROP" : value;
-                    command += optionList[i] + v;
-                    i++;
-                }
-            }
-            cmdlist.push_back(command);
-        }
-    }
-
-    for (const std::string& c : cmdlist) {
-        std::cout << c << std::endl << std::endl;
-        system(c.c_str());
-    }
-
-    while (true) {
-        std::cout << "Running" << std::endl;
-        sleep(2);
-    }
-
-    return SUCCESS_CODE;
-}*/
 int StartFirewall() {
     if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
         std::cerr << "Failed to load firewall rules in StartFirewall\n";
@@ -169,6 +112,7 @@ int ConfigureFirewall() {
         std::cerr << "Failed to load firewall rules in ConfigureFirewall\n";
         return ERROR_INVALID_FUNCTION;
     }
+
     std::unordered_map<std::string, std::function<int(std::vector<std::string>&)>> command_map = {
         {"a", AddRule},
         {"add", AddRule},
@@ -293,25 +237,22 @@ int DeleteRule(std::vector<std::string>& words) {
         return ERROR_INVALID_INPUT;
     }
 
-    if (words[1] == "all") {
-        if (FirewallConfig::Instance().DeleteRule(words[1])) {
+    const std::string& ruleNumber = words[1];
+
+    if (FirewallConfig::Instance().DeleteRule(ruleNumber)) {
+        if (ruleNumber == "all") {
             std::cout << "All rules successfully deleted\n" << std::endl;
-            return SUCCESS_CODE;
-        }
-        else {
-            std::cout << "Failed to delete all rules\n" << std::endl;
-            return ERROR_INVALID_FUNCTION;
-        }
-    }
-    else {
-        if (FirewallConfig::Instance().DeleteRule(words[1])) {
+        } else {
             std::cout << "Rule successfully deleted\n" << std::endl;
-            return SUCCESS_CODE;
         }
-        else {
+        return SUCCESS_CODE;
+    } else {
+        if (ruleNumber == "all") {
+            std::cout << "Failed to delete all rules\n" << std::endl;
+        } else {
             std::cout << "Failed to delete rule\n" << std::endl;
-            return ERROR_INVALID_FUNCTION;
         }
+        return ERROR_INVALID_FUNCTION;
     }
 }
 

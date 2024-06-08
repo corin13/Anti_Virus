@@ -33,6 +33,7 @@ void CheckOption(int &argc, char** &argv){
                 if (configPath.empty()) {
                     configPath = "./config.ini"; // 기본 설정 파일 경로
                 }
+                std::cout << "Configuration path for -m: " << configPath << std::endl;
                 LoadConfig(configPath);
                 StartMonitoring();
                 break;
@@ -73,9 +74,12 @@ int main(int argc, char **argv){
 }
 
 void LoadConfig(const std::string& configPath) {
-    if (Config::Instance().Load(configPath)) {
+    try {
+        Config::Instance().Load(configPath);
         std::cout << "Configuration loaded successfully from " << configPath << ".\n";
-    } else {
-        std::cerr << "Failed to load configuration from " << configPath << ".\n";
+        std::cout << "----------------------------------------\n";
+    } catch (const std::exception &e) {
+        std::cerr << "Failed to load configuration from " << configPath << ": " << e.what() << "\n";
+        exit(ERROR_CANNOT_OPEN_FILE);
     }
 }
