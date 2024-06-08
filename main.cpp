@@ -9,9 +9,14 @@ CPacketHandler INetworkingOption;
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
+<<<<<<< HEAD
     const char* pOption="dhilmsun:";
 
     bool networkOption = false;
+=======
+    const char* pOption="c:dhilmsuf";  // 'f' 옵션 추가
+    std::string configPath;
+>>>>>>> be0c65ab7e487a61c3021b49f37b0aedc67106b0
 
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
@@ -32,6 +37,11 @@ void CheckOption(int &argc, char** &argv){
                 break;
 
             case 'm':
+                if (configPath.empty()) {
+                    configPath = "./config.ini"; // 기본 설정 파일 경로
+                }
+                std::cout << "Configuration path for -m: " << configPath << std::endl;
+                LoadConfig(configPath);
                 StartMonitoring();
                 break;
 
@@ -46,6 +56,14 @@ void CheckOption(int &argc, char** &argv){
             case 'n':
                 INetworkingOption.RunSystem(optarg);
                 networkOption = true;
+
+            case 'c':
+                LoadConfig(optarg);
+                StartIniScan();
+                break; 
+                 
+            case 'f':
+                Firewall();
                 break;
 
             case '?':
@@ -64,4 +82,15 @@ int main(int argc, char **argv){
     else
         std::cout << "Try 'UdkdAgent --help' for more information." << std::endl;
     return 0;
+}
+
+void LoadConfig(const std::string& configPath) {
+    try {
+        Config::Instance().Load(configPath);
+        std::cout << "Configuration loaded successfully from " << configPath << ".\n";
+        std::cout << "----------------------------------------\n";
+    } catch (const std::exception &e) {
+        std::cerr << "Failed to load configuration from " << configPath << ": " << e.what() << "\n";
+        exit(ERROR_CANNOT_OPEN_FILE);
+    }
 }
