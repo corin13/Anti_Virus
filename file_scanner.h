@@ -18,6 +18,7 @@ struct ST_ScanData {
 class CFileScanner {
 public:
     int StartScan();
+    int StartIniScan();
     static bool g_stopScanning;
 private:
     std::vector<std::string> m_detectedMalware; // 악성파일로 판별된 파일의 경로를 저장

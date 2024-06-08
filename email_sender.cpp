@@ -43,7 +43,7 @@ CURL* EmailSender::InitializeCurl() const {
 }
 
 // MIME 메시지 생성 및 curl 옵션 설정
-curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPassword, const std::string& toEmail, const std::string& body, const std::string& logFilePath, curl_slist* recipients, curl_slist* headers) const {
+curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPassword, const std::string& body, const std::string& logFilePath, curl_slist* recipients, curl_slist* headers) const {
     // MIME 메시지 생성
     curl_mime *mime = curl_mime_init(curl);
     curl_mimepart *part;
@@ -63,14 +63,14 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
     // curl 옵션 설정
     curl_easy_setopt(curl, CURLOPT_URL, smtpServer.c_str());
     curl_easy_setopt(curl, CURLOPT_PORT, smtpPort);
-    curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress.c_str());
+    curl_easy_setopt(curl, CURLOPT_USERNAME, senderEmail.c_str());
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword.c_str());
     curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
-    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, ("<" + emailAddress + ">").c_str());
+    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, ("<" + senderEmail + ">").c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
     curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);    
 
     return mime;
 }
@@ -84,11 +84,6 @@ int EmailSender::SendEmailWithAttachment() {
         PrintError("Failed to retrieve email password.");
         return ERROR_CANNOT_SEND_EMAIL;
     }
-
-    // 수신자 이메일 받기
-    std::string toEmail;
-    std::cout << "Enter recipient's email address: ";
-    std::getline(std::cin, toEmail);
 
     // 수신자가 원하는 날짜 받기
     std::string date;
@@ -112,15 +107,15 @@ int EmailSender::SendEmailWithAttachment() {
 
     // 수신자 수신자 및 헤더 설정
     struct curl_slist* recipients = NULL;
-    recipients = curl_slist_append(recipients, toEmail.c_str());
+    recipients = curl_slist_append(recipients, emailAddress.c_str());
 
     struct curl_slist* headers = NULL;
-    headers = curl_slist_append(headers, ("To: " + toEmail).c_str());
-    headers = curl_slist_append(headers, ("From: " + emailAddress + " <" +emailAddress + ">").c_str());
+    headers = curl_slist_append(headers, ("To: " + emailAddress).c_str());
+    headers = curl_slist_append(headers, ("From: " + senderEmail  + " <" +senderEmail  + ">").c_str());
     headers = curl_slist_append(headers, ("Subject: " + subject).c_str());
 
     // MIME 메시지 생성 및 curl 옵션 설정
-    curl_mime* mime = SetupMimeAndCurl(curl, emailPassword, toEmail, body, logFilePath, recipients, headers);
+    curl_mime* mime = SetupMimeAndCurl(curl, emailPassword, body, logFilePath, recipients, headers);
 
     // 이메일 전송
     CURLcode res = curl_easy_perform(curl);

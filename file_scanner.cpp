@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <jsoncpp/json/json.h>
 #include "ansi_color.h"
+#include "config.h"
 #include "file_scanner.h"
 #include "malware_hash_checker.h"
 #include "yara_checker.h"
@@ -38,6 +39,27 @@ int CFileScanner::StartScan(){
     }
     return SUCCESS_CODE;
 }
+
+
+int CFileScanner::StartIniScan(){
+    //INI 파일에서 설정 값을 읽어옵니다.
+    m_scanTargetPath = Config::Instance().GetScanPath();
+    m_scanTypeOption = Config::Instance().GetScanType();
+    m_extension = Config::Instance().GetFileExtension(); // 설정 파일에서 확장자 값을 읽어옴
+    m_fileTypeOption = m_extension.empty() ? 1 : 3;
+    
+    std::cout << "Starting scan on path: " << m_scanTargetPath << " with scan type: " << m_scanTypeOption << " and extension: " << m_extension << "\n";
+
+    // 스캔을 수행하는 함수 호출
+    int result = ScanDirectory();
+
+    if (result != SUCCESS_CODE) {
+        PrintErrorMessage(result);
+        return result;
+    }
+    return SUCCESS_CODE;
+}
+
 
 int CFileScanner::PerformFileScan() {
     std::cout << "Please enter the path (Default is '/') : ";
