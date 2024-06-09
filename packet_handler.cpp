@@ -25,12 +25,12 @@
 
 // 패킷 페이로드에 악성 패턴 포함 여부 확인
 bool CPacketHandler::CheckPayload(const u_char *pPayload, int nSize) {
-    for (int i = 0; i <= nSize - 4; i++) { 
-        if (memcmp(pPayload + i, PAYLOAD_PATTERN, 4) == 0) { 
+    for (int i = 0; i <= nSize - 4; i++) {
+        if (memcmp(pPayload + i, PAYLOAD_PATTERN, 4) == 0) {
             return true; 
         }
     }
-    return false; 
+    return false;
 }
 
 // IP 주소의 변화가 빈번한지 확인
@@ -77,7 +77,7 @@ unsigned short CheckSum(void *b, int len) {
 int CPacketHandler::AnalyzePacket(const struct ip*  pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP) {
     bool bIsMalicious = false; 
 
-    std::ofstream logFile("detailed_logs.log", std::ios_base::app); 
+    std::ofstream logFile("logs/detailed_logs.log", std::ios_base::app); 
 
     if (CheckIPFlooding(strSrcIP)) {
         bIsMalicious = true;
@@ -151,7 +151,7 @@ int CPacketHandler::AnalyzePacket(const struct ip*  pIpHeader, const u_char* pPa
 
         if (strLoggedIPs.find(strSrcIP) == strLoggedIPs.end()) {
             std::ofstream outfile;
-            outfile.open("malicious_ips.log", std::ios_base::app);
+            outfile.open("logs/malicious_ips.log", std::ios_base::app);
 
             if (!outfile.is_open()) {
                 return ERROR_CANNOT_OPEN_FILE;
@@ -285,7 +285,7 @@ void CPacketHandler::GenerateMaliciousPackets() {
     const int malicious_packet_count = normal_packet_count * 2;
 
     while (true) {
-        std::ofstream logFile("packet_transmission.log", std::ios_base::app);
+        std::ofstream logFile("logs/packet_transmission.log", std::ios_base::app);
         logFile << "sending packets.." << std::endl;
         for (int i = 0; i < malicious_packet_count; i++) {
             const char* src_ip = src_ips[i % src_ip_count];
@@ -347,7 +347,7 @@ int CPacketHandler::RunSystem(const char* interfaceName) {
     CPacketHandler handler;
 
     // 로그 파일 초기화
-    std::ofstream logFile("malicious_packets.log", std::ios_base::trunc);
+    std::ofstream logFile("logs/malicious_packets.log", std::ios_base::trunc);
     logFile.close();
 
     // 패킷 생성 스레드 시작

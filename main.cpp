@@ -9,14 +9,10 @@ CPacketHandler INetworkingOption;
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
-<<<<<<< HEAD
-    const char* pOption="dhilmsun:";
+    const char* pOption="dhilmsun:f"; //f 옵션 추가
+    std::string configPath;
 
     bool networkOption = false;
-=======
-    const char* pOption="c:dhilmsuf";  // 'f' 옵션 추가
-    std::string configPath;
->>>>>>> be0c65ab7e487a61c3021b49f37b0aedc67106b0
 
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
