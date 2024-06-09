@@ -52,6 +52,7 @@ void CheckOption(int &argc, char** &argv){
             case 'n':
                 INetworkingOption.RunSystem(optarg);
                 networkOption = true;
+                break;
 
             case 'c':
                 LoadConfig(optarg);

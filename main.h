@@ -29,5 +29,5 @@ struct option options[]={
     {0,0,0,0}
 };
 
-void CheckOpt(int argc, char** argv);
+void CheckOption(int &argc, char** &argv);
 void LoadConfig(const std::string& configPath);
