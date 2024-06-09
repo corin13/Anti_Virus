@@ -51,7 +51,7 @@ int Config::GetNetworkPort() const {
 }
 
 std::string Config::GetFileExtension() const {
-    return m_reader.Get("SCAN", "extension", "all");
+    return m_reader.Get("SCAN", "extension", "");
 }
 
 

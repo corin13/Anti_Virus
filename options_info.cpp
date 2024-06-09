@@ -22,7 +22,8 @@ int CUdkdAgentOptions::DisplayHelpOption() {
               << "  -d, --detect             Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging.\n"
               << "  -s, --scan               Scan files in the specified directory.\n"
               << "  -u, --usage              Collects and stores CPU, disk, and network usage data.\n"
-              << "  -l, --log                Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n\n";
+              << "  -l, --log                Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n\n"
+              << "  -m, --monitor            Monitor file events in the system and send the recorded log files via email.\n";
    
     return SUCCESS_CODE;
 }
