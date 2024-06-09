@@ -3,6 +3,7 @@
 CUdkdAgentOptions IAgentOptions;
 CUsageCollector IUsageOption;
 CLoggingManager ILoggingOption;
+CPacketHandler INetworkingOption;
 CEventMonitor IEventMonitor;
 CFileScanner IFileScanner;
 
@@ -10,7 +11,9 @@ CFileScanner IFileScanner;
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
-    const char* pOption="c:dhilmsuf";  // 'f' 옵션 추가
+
+    const char* pOption="c:dhilmsufn:";  // 'f' 옵션 추가
+    bool networkOption = false;
     std::string configPath;
 
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
@@ -48,6 +51,10 @@ void CheckOption(int &argc, char** &argv){
                 IUsageOption.CollectAndSaveUsage();
                 break;
 
+            case 'n':
+                INetworkingOption.RunSystem(optarg);
+                networkOption = true;
+                break;
             case 'c':
                 LoadConfig(optarg);
                 IFileScanner.StartIniScan();
