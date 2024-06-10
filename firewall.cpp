@@ -11,6 +11,7 @@ int Firewall() {
             "3. View Logs \n\n"
             "Please enter the option : ";
 
+
         std::cin >> option;
         std::cin.ignore();
         std::cout << std::endl;
@@ -39,94 +40,54 @@ int Firewall() {
     return SUCCESS_CODE;
 }
 
-int RunIptables(std::string direction, std::string ip, std::string port, std::string action){
-    std::string iptablesCmd="iptables -A";
-
-    if (direction == "INPUT"){
-        iptablesCmd += " INPUT ";
-        iptablesCmd += ip == "ANY" ? "" : "-s "+ip;
-    }
-    else if (direction == "OUTPUT"){
-        iptablesCmd += " OUTPUT ";
-        iptablesCmd += ip == "ANY" ? "" : "-d "+ip;
-    }
-    else {
-        std::cerr << "Invalid Direction" << std::endl;
-        return ERROR_INVALID_OPTION;
-    }
-
-    iptablesCmd += port == "ANY" ? "" : "--dport "+port;
-
-    if (action =="DROP"){
-        iptablesCmd += "-j DROP";
-    }
-    else if (action == "ACCEPT"){
-        iptablesCmd += "-j ACCEPT";
-    }
-    else {
-        std::cerr << "Invalid Action" << std::endl;
-        return ERROR_INVALID_OPTION;
-    }
-
-    std::cout << iptablesCmd << std::endl;
-
-    ExecCommand(iptablesCmd);
-
-}
-
-void ExecCommand(std::string cmd){
-    FILE* pipe = popen(cmd.c_str(), "r");
-    if (!pipe) {
-        std::cerr << "ERROR : popen() failed" << std::endl;
-        return;
-    }
-    
-    char buffer[128];
-
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-        std::cout << buffer;
-    }
-
-    pclose(pipe);
-}
-
 
 int RunFirewall(){
-    signal(SIGINT, handle_exit);
-    signal(SIGTERM, handle_exit);
-    
     if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
         std::cerr << "Failed to load firewall rules in StartFirewall\n";
         return ERROR_INVALID_FUNCTION;
     }
 
-    auto& iniData=FirewallConfig::Instance().GetIniData();
-    //iniData가 안받아짐
+    std::cout << "Firewall rules loaded successfully in StartFirewall\n";
     
-    ExecCommand("iptables -A INPUT -j LOG --log-prefix \"INPUT packet: \" --log-level 1");
-    ExecCommand("iptables -A OUTPUT -j LOG --log-prefix \"OUTPUT packet: \" --log-level ");
-    for (auto& section : iniData){ 
-        std::vector<std::string> tmpCmd;
-        std::cout << section.first << std::endl;
+    signal(SIGINT, handle_exit);
+    signal(SIGTERM, handle_exit);
+    
+    // 이부분 문제
+    auto rulesList= FirewallConfig::Instance().GetRulesList();
+    std::istringstream iss(rulesList);
+    std::string line;
+    
+    while (std::getline(iss, line)) {
+        if (line.empty()) continue;
 
-        for (auto& key : section.second){
-            tmpCmd.push_back(key.second);
-        }
-
-        std::cout << tmpCmd[DIRECTION] << tmpCmd[IP] << tmpCmd[PORT] << tmpCmd[ACTION] <<std::endl;
-        RunIptables(tmpCmd[DIRECTION], tmpCmd[IP], tmpCmd[PORT],tmpCmd[ACTION]);
-
-    }
-    while (true){
-        ExecCommand("tail -f /var/log/syslog | grep -e \"INPUT packet:\" -e \"OUTPUT packet:\" ");
+        if (line[0] == '[' && line.back() == ']') {
+            std::string sectionName = line.substr(1, line.length() - 2);
+            auto sectionData = FirewallConfig::Instance().GetSectionData(sectionName);
         
-
+            for (const auto& item : sectionData) {
+                auto& value = item.second;
+            }   
+        }
     }
+
+
+    // ExecCommand("iptables -A INPUT -j LOG --log-prefix \"INPUT packet: \" --log-level 1");
+    // ExecCommand("iptables -A OUTPUT -j LOG --log-prefix \"OUTPUT packet: \" --log-level 1");
+    // for (auto& section : iniData){ 
+    //     std::vector<std::string> tmpCmd;
+    //     std::cout << section.first << std::endl;
+
+    //     for (auto& key : section.second){
+    //         tmpCmd.push_back(key.second);
+    //     }
+
+    //     std::cout << tmpCmd[DIRECTION] << tmpCmd[IP] << tmpCmd[PORT] << tmpCmd[ACTION] <<std::endl;
+    //     RunIptables(tmpCmd[DIRECTION], tmpCmd[IP], tmpCmd[PORT],tmpCmd[ACTION]);
+
+    // }
+    // ExecCommand("tail -f /var/log/syslog | grep -e \"INPUT packet:\" -e \"OUTPUT packet:\" ");
+
 }
-
-
-
-
 
 
 
@@ -192,22 +153,79 @@ int ConfigureFirewall(){
     return statusCode;
 }
 
-int AddRule(std::vector<std::string>& words){
-    try{
-        FirewallConfig::Instance().AddRule(
-            words[A_DIRECTION], 
-            words[A_IP], 
-            words[A_PORT], 
-            words[A_ACTION]
-        );
-    std::cout << "Rule successfully added\n" << std::endl;
-    return SUCCESS_CODE;    
+
+
+int RunIptables(std::string direction, std::string ip, std::string port, std::string action){
+    std::string iptablesCmd="iptables -A";
+
+    if (direction == "INPUT"){
+        iptablesCmd += " INPUT ";
+        iptablesCmd += ip == "ANY" ? "" : "-s "+ip;
     }
-    catch(std::exception &e) {
-        std::cout << "ERROR : " << e.what() << std::endl;
+    else if (direction == "OUTPUT"){
+        iptablesCmd += " OUTPUT ";
+        iptablesCmd += ip == "ANY" ? "" : "-d "+ip;
+    }
+    else {
+        std::cerr << "Invalid Direction" << std::endl;
+        return ERROR_INVALID_OPTION;
+    }
+
+    iptablesCmd += port == "ANY" ? "" : " -p tcp --dport "+port;
+
+    if (action =="DROP"){
+        iptablesCmd += " -j DROP";
+    }
+    else if (action == "ACCEPT"){
+        iptablesCmd += " -j ACCEPT";
+    }
+    else {
+        std::cerr << "Invalid Action" << std::endl;
+        return ERROR_INVALID_OPTION;
+    }
+
+    std::cout << iptablesCmd << std::endl;
+
+    FILE* pipe = popen(iptablesCmd.c_str(), "r");
+    if (!pipe) {
+        std::cerr << "ERROR : popen() failed" << std::endl;
         return ERROR_UNKNOWN;
     }
+    
+    char buffer[128];
+
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        std::cout << buffer;
+    }
+
+    pclose(pipe);
+
+    return SUCCESS_CODE;
 }
+
+void ExecCommand(std::string cmd){
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe) {
+        std::cerr << "ERROR : popen() failed" << std::endl;
+        return;
+    }
+    
+    char buffer[128];
+
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        std::cout << buffer;
+    }
+
+    pclose(pipe);
+}
+
+
+
+
+
+
+
+
 
 std::vector<std::string> ConfigureUserInput(std::string& input){
     std::istringstream iss(input);
@@ -228,11 +246,11 @@ std::vector<std::string> ConfigureUserInput(std::string& input){
     
     if (words[COMMAND] =="a"){
         if (words.size() == ADD_MIN_LENGHT){
-            if (isValidIP(words[A_IP])){
-                words.emplace(words.begin()+A_PORT, "ANY");
+            if (isValidIP(words[ADD_IP])){
+                words.emplace(words.begin()+ADD_PORT, "ANY");
             }
-            else if (isValidPort(words[A_IP])){
-                words.emplace(words.begin()+A_IP, "ANY");
+            else if (isValidPort(words[ADD_IP])){
+                words.emplace(words.begin()+ADD_IP, "ANY");
             }
         }
     }
@@ -254,20 +272,20 @@ int isVaildInput(std::vector<std::string>& words){
         }
 
         //입력값 검증
-        if (!(words[A_DIRECTION] == "OUTPUT" || words[A_DIRECTION] =="INPUT")){
-            std::cerr << "Invalid Direction : " << words[A_DIRECTION] << std::endl;
+        if (!(words[ADD_DIRECTION] == "OUTPUT" || words[ADD_DIRECTION] =="INPUT")){
+            std::cerr << "Invalid Direction : " << words[ADD_DIRECTION] << std::endl;
             return ERROR_INVALID_INPUT;
         }
-        if (!(isValidIP(words[A_IP]) || words[A_IP] =="ANY")){
-            std::cerr << "Invalid IP format : " << words[A_IP] << std:: endl;
+        if (!(isValidIP(words[ADD_IP]) || words[ADD_IP] =="ANY")){
+            std::cerr << "Invalid IP format : " << words[ADD_IP] << std:: endl;
             return ERROR_INVALID_INPUT;
         }
-        if (!(isValidPort(words[A_PORT]) || words[A_PORT] =="ANY")){
-            std::cerr << "Invalid PORT format : " << words[A_PORT] << std:: endl;
+        if (!(isValidPort(words[ADD_PORT]) || words[ADD_PORT] =="ANY")){
+            std::cerr << "Invalid PORT format : " << words[ADD_PORT] << std:: endl;
             return ERROR_INVALID_INPUT;
         }
-        if (!(words[A_ACTION] == "DROP" || words[A_ACTION] == "ACCEPT")){
-            std::cerr << "Invalid Action : " << words[A_ACTION] << std:: endl;
+        if (!(words[ADD_ACTION] == "DROP" || words[ADD_ACTION] == "ACCEPT")){
+            std::cerr << "Invalid Action : " << words[ADD_ACTION] << std:: endl;
             return ERROR_INVALID_INPUT;
         }
 
@@ -305,7 +323,23 @@ int isVaildInput(std::vector<std::string>& words){
 }
 
 
-
+int AddRule(std::vector<std::string>& words){
+    try{
+        FirewallConfig::Instance().AddRule(
+            words[ADD_DIRECTION], 
+            words[ADD_IP], 
+            words[ADD_PORT], 
+            words[ADD_ACTION]
+        );
+        
+    std::cout << "Rule successfully added\n" << std::endl;
+    return SUCCESS_CODE;    
+    }
+    catch(std::exception &e) {
+        std::cout << "ERROR : " << e.what() << std::endl;
+        return ERROR_UNKNOWN;
+    }
+}
 
 // 기존 룰 업데이트 함수
 // int UpdateRule(std::vector<std::string>& words){
@@ -352,7 +386,7 @@ int isVaildInput(std::vector<std::string>& words){
 // }
 
 
-// // 현재 설정된 방화벽 룰 확인 함수
+// 현재 설정된 방화벽 룰 확인 함수
 // int RuleList(){
 //     VariadicTable<std::string, std::string, std::string, std::string, std::string> vt({"No", "Direction", "IP Address", "PORT", "Action"}, 10);
     
@@ -405,10 +439,10 @@ bool isValidPort(const std::string& port) {
 // 2번 기능 메뉴얼 출력 함수
 void PrintConfigMenual(){
     std::cout << 
-        "\033[1;34m[ADD]    : \033[0m [A || add] [TO || FROM] [IP] [PORT] [ACCEPT(o) || DROP(x)] \n"
-        "\033[1;32m[UPDATE] : \033[0m [U || update] [Rule Number] [OPTION] [>] [Change Value]\n"
-        "\033[1;31m[DELETE] : \033[0m [D || delete] [Rule Number] \n"
-        "\033[1;33m[LIST]   : \033[0m [L || list] \n\n" 
+        "\033[1;34m[ADD]    : \033[0m [A | add] [TO | FROM] [IP] [PORT] [ACCEPT(o) | DROP(x)] \n"
+        "\033[1;32m[UPDATE] : \033[0m [U | update] [Rule Number] [OPTION] [>] [Change Value]\n"
+        "\033[1;31m[DELETE] : \033[0m [D | delete] [Rule Number] \n"
+        "\033[1;33m[LIST]   : \033[0m [L | list] \n\n" 
         "\033[36m[EXIT]\033[0m "
         "\033[35m[HELP]\033[0m \n" << std::endl;
 }
@@ -439,6 +473,6 @@ int FirewallHelp() {
         "                                   [Change Value]: Value to change\n\n"
         "D, delete  -Rule Delete Command    [Rule Number] : Rule Index Number\n\n" 
         "L, list    -Rule Inquiry Command\n"
-        "EXIT       -End Rule Set Commands" << std::endl;  
+        "EXIT       -End Rule Set Commands\n" << std::endl;  
     return SUCCESS_CODE;
 }

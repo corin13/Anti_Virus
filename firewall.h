@@ -2,29 +2,27 @@
 
 #define EXIT_CONFIG (-1)
 
-
-
 ////////////////////////////////
 #define COMMAND (0)
 ////////////////////////////////
 //ADD
 #define ADD_MAX_LENGTH (5)
 #define ADD_MIN_LENGHT (4)
-#define A_DIRECTION (1)
-#define A_IP (2)
-#define A_PORT (3)
-#define A_ACTION (4)
+#define ADD_DIRECTION (1)
+#define ADD_IP (2)
+#define ADD_PORT (3)
+#define ADD_ACTION (4)
 ////////////////////////////////
 //UPDATE
 #define UPDATE_LENGTH (4)
-#define U_NUMBER (1)
-#define U_OPTION (2)
-#define U_REDIRECTION (3)
-#define U_NEW_VALUE (4)
+#define UPDATE_NUMBER (1)
+#define UPDATE_OPTION (2)
+#define UPDATE_REDIRECTION (3)
+#define UPDATE_NEW_VALUE (4)
 ////////////////////////////////
 //DELETE
 #define DELETE_LENGTH (2)
-#define D_NUMBER (1)
+#define DELETE_NUMBER (1)
 
 enum iniFormat {
     ACTION=0,
@@ -52,33 +50,29 @@ enum iniFormat {
 #include "config_firewall.h"
 
 
-/////////2번 옵션/////////////
+int Firewall();
+
+int RunFirewall();
 int ConfigureFirewall();
+int ViewLogs();
+
 int AddRule(std::vector<std::string>& words);
 int UpdateRule(std::vector<std::string>& words);
 int DeleteRule(std::vector<std::string>& words);
 int RuleList();
-//private//
+
 void PrintConfigMenual();
-bool isValidIP(const std::string& ip);
-bool isValidPort(const std::string& port);
+
 void handle_exit(int signum);
-//////////////////////////
 
-int StartFirewall();
-int RunIptables();
-
+void ExecCommand(std::string cmd);
+int FirewallHelp();
 
 std::vector<std::string> ConfigureUserInput(std::string& input);
 
-int ViewLogs();
-
-int Firewall();
-
+int RunIptables();
 int RunIptables(std::string direction, std::string ip, std::string port, std::string action);
 
-
-int RunFirewall();
 int isVaildInput(std::vector<std::string>& words);
-void ExecCommand(std::string cmd);
-int FirewallHelp();
+bool isValidIP(const std::string& ip);
+bool isValidPort(const std::string& port);
