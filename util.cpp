@@ -24,20 +24,20 @@ void PrintError(const std::string& message) {
     std::cerr << "\n" << COLOR_RED << message << COLOR_RESET << "\n";
 }
 
-void PrintErrorMessage(int code) {
-    std::cerr << "\n" << COLOR_RED << "Error: " << GetErrorMessage(code) << COLOR_RESET << "\n";
-}
-
-// 에러 처리를 담당하는 함수
-void HandleError(int code, const std::string& context) {
+void PrintErrorMessage(int code, const std::string& context) {
     if (code != SUCCESS_CODE) {
         std::cerr << "\n" << COLOR_RED << "[Error] " << GetErrorMessage(code) << COLOR_RESET;
         if (!context.empty()) {
             std::cerr << "\n" << COLOR_RED << ": " << context << COLOR_RESET;
         }
         std::cerr << "\n";
-        exit(code);
     }
+}
+
+// 에러 처리를 담당하는 함수
+void HandleError(int code, const std::string& context) {
+    PrintErrorMessage(code, context);
+    exit(code);
 }
 
 

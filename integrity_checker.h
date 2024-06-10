@@ -13,5 +13,5 @@ public:
     void RemoveFileHash();
 
 private:
-    std::string m_filePath;
+    std::string m_strFilePath;
 };

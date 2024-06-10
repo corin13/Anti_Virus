@@ -22,12 +22,12 @@ public:
 
 private:
     int m_inotifyFd;
-    std::unordered_map<int, std::string> m_watchDescriptors;
-    std::vector<std::string> m_watchList;
+    std::unordered_map<int, std::string> m_mapWatchDescriptors;
+    std::vector<std::string> m_vecWatchList;
 
-    std::vector<std::string> readWatchList(const std::string& watchListfilePath);
+    void readWatchList();
     void initializeWatchList();
-    int createInotifyInstance();
+    void createInotifyInstance();
     void addWatchListToInotify();
     void runEventLoop();
     void processEvent(struct inotify_event *event);

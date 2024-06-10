@@ -8,24 +8,31 @@
 #include "secure_config.h"
 #include "util.h"
 
+#define SETTING_FILE "settings.ini"
+#define LOG_SAVE_PATH "logs/file_event_monitor_"
+
+#define KEY_SECURITY "security"
+#define VALUE_PRIVATE_KEY_PATH "private_key_path"
+#define VALUE_ENCRYPTED_PW "encrypted_password"
+
 EmailSender::EmailSender(const std::string& smtpServer, int smtpPort, const std::string& emailAddress)
     : smtpServer(smtpServer), smtpPort(smtpPort), emailAddress(emailAddress) {}
 
 // 암호화된 이메일 비밀번호를 복호화해서 가져오기
 std::string EmailSender::GetEmailPassword() {
     try {
-        INIReader reader("settings.ini");
+        INIReader reader(SETTING_FILE);
         if (reader.ParseError() != 0) {
-            throw std::runtime_error("Failed to load settings.ini");
+            throw std::runtime_error("Failed to load ini file");
         }
 
-        std::string strPrivateKeyPath = reader.Get("security", "private_key_path", "");
+        std::string strPrivateKeyPath = reader.Get(KEY_SECURITY, VALUE_PRIVATE_KEY_PATH, "");
         if (strPrivateKeyPath.empty()) {
-            throw std::runtime_error("Private key path not found in settings.ini");
+            throw std::runtime_error("Private key path not found in ini file");
         }
 
-        CSecureConfig ISecurityconfig("settings.ini", strPrivateKeyPath);
-        std::string decrypted_password = ISecurityconfig.getDecryptedPassword("security", "encrypted_password");
+        CSecureConfig ISecurityconfig(SETTING_FILE, strPrivateKeyPath);
+        std::string decrypted_password = ISecurityconfig.getDecryptedPassword(KEY_SECURITY, VALUE_ENCRYPTED_PW);
         return decrypted_password;
     } catch (const std::exception& e) {
         PrintError(e.what());
@@ -61,7 +68,7 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
     curl_mime_filename(part, logFilePath.substr(logFilePath.find_last_of("/") + 1).c_str());
 
     // curl 옵션 설정
-     curl_easy_setopt(curl, CURLOPT_URL, smtpServer.c_str());
+    curl_easy_setopt(curl, CURLOPT_URL, smtpServer.c_str());
     curl_easy_setopt(curl, CURLOPT_PORT, smtpPort);
     curl_easy_setopt(curl, CURLOPT_USERNAME, senderEmail.c_str());
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword.c_str());
@@ -90,7 +97,7 @@ int EmailSender::SendEmailWithAttachment() {
     std::cout << "Enter the date for the log file (YYMMDD): ";
     std::getline(std::cin, date);
 
-    const std::string logFilePath = "./logs/file_event_monitor_" + date + ".log";
+    const std::string logFilePath = LOG_SAVE_PATH + date + ".log";
     FILE *logFile = fopen(logFilePath.c_str(), "rb");
     if (!logFile) {
         HandleError(ERROR_CANNOT_OPEN_FILE, logFilePath);
