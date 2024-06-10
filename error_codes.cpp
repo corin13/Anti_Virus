@@ -37,6 +37,8 @@ std::string GetErrorMessage(int code) {
         case 16:
             return "Failed to send email";
         case 17:
+            return "Failed to execute iptables";
+        case 18:
         default:
             return "Unknown error";
     }
