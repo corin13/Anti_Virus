@@ -18,6 +18,7 @@ struct MonitorData {
 class CEventMonitor {
 public:
     CEventMonitor();
+    ~CEventMonitor();
     int StartMonitoring();
 
 private:

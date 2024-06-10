@@ -8,6 +8,8 @@
 
 CIntegrityChecker::CIntegrityChecker(const std::string& filePath) : m_strFilePath(filePath) {}
 
+CIntegrityChecker::~CIntegrityChecker() {}
+
 std::string CIntegrityChecker::CalculateFileHash() {
     std::string fileHash;
     int result = ComputeSHA256(m_strFilePath, fileHash);

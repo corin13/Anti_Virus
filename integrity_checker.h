@@ -5,6 +5,7 @@
 class CIntegrityChecker {
 public:
     CIntegrityChecker(const std::string& filePath);
+    ~CIntegrityChecker();
     std::string CalculateFileHash();
     std::string RetrieveStoredHash();
     bool IsHashFileExists();

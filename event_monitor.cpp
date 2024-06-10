@@ -30,6 +30,12 @@
 
 CEventMonitor::CEventMonitor() : m_inotifyFd(-1), m_vecWatchList(*(new std::vector<std::string>)) {}
 
+CEventMonitor::~CEventMonitor() {
+    if (m_inotifyFd != -1) {
+        close(m_inotifyFd);
+    }
+}
+
 int CEventMonitor::StartMonitoring() {
     std::cout << "\nPlease select the task you'd like to perform:\n\n"
         << "1. Perform a file event integrity check (Default)\n"

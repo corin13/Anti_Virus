@@ -16,7 +16,13 @@
 #define VALUE_ENCRYPTED_PW "encrypted_password"
 
 EmailSender::EmailSender(const std::string& smtpServer, int smtpPort, const std::string& emailAddress)
-    : smtpServer(smtpServer), smtpPort(smtpPort), emailAddress(emailAddress) {}
+    : m_strSmtpServer(smtpServer), m_nSmtpPort(smtpPort), m_strEmailAddress(emailAddress) {}
+
+EmailSender::~EmailSender() {
+    if (m_curl) {
+        curl_easy_cleanup(m_curl);
+    }
+}
 
 // 암호화된 이메일 비밀번호를 복호화해서 가져오기
 std::string EmailSender::GetEmailPassword() {
@@ -41,12 +47,11 @@ std::string EmailSender::GetEmailPassword() {
 }
 
 // curl 초기화
-CURL* EmailSender::InitializeCurl() const {
-    CURL *curl = curl_easy_init();
-    if (!curl) {
+void EmailSender::InitializeCurl() {
+    m_curl = curl_easy_init();
+    if (!m_curl) {
         HandleError(ERROR_INVALID_FUNCTION, "Failed to initialize libcurl.");
     }
-    return curl;
 }
 
 // MIME 메시지 생성 및 curl 옵션 설정
@@ -68,12 +73,12 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
     curl_mime_filename(part, logFilePath.substr(logFilePath.find_last_of("/") + 1).c_str());
 
     // curl 옵션 설정
-    curl_easy_setopt(curl, CURLOPT_URL, smtpServer.c_str());
-    curl_easy_setopt(curl, CURLOPT_PORT, smtpPort);
-    curl_easy_setopt(curl, CURLOPT_USERNAME, senderEmail.c_str());
+    curl_easy_setopt(curl, CURLOPT_URL, m_strSmtpServer.c_str());
+    curl_easy_setopt(curl, CURLOPT_PORT, m_nSmtpPort);
+    curl_easy_setopt(curl, CURLOPT_USERNAME, m_strSenderEmail.c_str());
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword.c_str());
     curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);
-    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, ("<" + senderEmail + ">").c_str());
+    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, ("<" + m_strSenderEmail + ">").c_str());
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
     curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -84,8 +89,7 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
 
 // 메일 보내는 함수
 int EmailSender::SendEmailWithAttachment() {
-    // 환경변수에서 이메일 비밀번호 가져오기
-
+    // 암호화된 비밀번호 복호화해서 가져오기
     std::string emailPassword = GetEmailPassword();
     if (emailPassword.empty()) {
         PrintError("Failed to retrieve email password.");
@@ -104,7 +108,7 @@ int EmailSender::SendEmailWithAttachment() {
     }
 
     // curl 초기화
-    CURL *curl = InitializeCurl();
+    InitializeCurl();
 
     // 메일 제목과 내용 설정
     std::string subject = "Log File for " + date;
@@ -114,24 +118,23 @@ int EmailSender::SendEmailWithAttachment() {
 
     // 수신자 수신자 및 헤더 설정
     struct curl_slist* recipients = NULL;
-    recipients = curl_slist_append(recipients, emailAddress.c_str());
+    recipients = curl_slist_append(recipients, m_strEmailAddress.c_str());
 
     struct curl_slist* headers = NULL;
-    headers = curl_slist_append(headers, ("To: " + emailAddress).c_str());
-    headers = curl_slist_append(headers, ("From: " + senderEmail  + " <" +senderEmail  + ">").c_str());
+    headers = curl_slist_append(headers, ("To: " + m_strEmailAddress).c_str());
+    headers = curl_slist_append(headers, ("From: " + m_strSenderEmail  + " <" +m_strSenderEmail  + ">").c_str());
     headers = curl_slist_append(headers, ("Subject: " + subject).c_str());
 
     // MIME 메시지 생성 및 curl 옵션 설정
-    curl_mime* mime = SetupMimeAndCurl(curl, emailPassword, body, logFilePath, recipients, headers);
+    curl_mime* mime = SetupMimeAndCurl(m_curl, emailPassword, body, logFilePath, recipients, headers);
 
     // 이메일 전송
-    CURLcode res = curl_easy_perform(curl);
+    CURLcode res = curl_easy_perform(m_curl);
 
     // 리소스 정리
     curl_mime_free(mime);
     curl_slist_free_all(recipients);
     curl_slist_free_all(headers);
-    curl_easy_cleanup(curl);
 
     if (res != CURLE_OK) {
         HandleError(ERROR_CANNOT_SEND_EMAIL, "Failed to send email: " + std::string(curl_easy_strerror(res)));
