@@ -105,6 +105,7 @@ void CPacketHandler::MonitorBandwidth() {
 
 // 비정상 패킷을 지속적으로 생성하는 함수
 void CPacketHandler::GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPacketsSent) {
+    
     const char* dst_ip = "192.168.1.1";
 
     // 랜덤 시드 설정
@@ -127,12 +128,12 @@ void CPacketHandler::GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPa
     }
 
     logFile << "Total malicious packets sent: " << totalMaliciousPacketsSent.load() << std::endl;
-    std::cout << "\nTotal malicious packets sent: " << totalMaliciousPacketsSent.load() << std::endl;
     logFile.close();
 }
 
 // 비정상 패킷을 전송하는 함수
 void CPacketHandler::SendMaliciousPacket(const char* src_ip, const char* dst_ip, int packet_count, std::ofstream& logFile) {
+
     int sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if (sock < 0) {
         perror("Socket creation failed");
@@ -429,8 +430,11 @@ void enableOutput() {
 
 int CPacketHandler::RunSystem(const char* interfaceName) {
 
+    int result = CLoggingManager::StartRotation();
+    // 로그 메시지 생성하여 로그 파일 크기 증가시키기
+    result = CLoggingManager::GenerateLogs("packetLogger");
     // 로그 로테이션 수행
-    int result = CLoggingManager::RotateLogs();
+    result = CLoggingManager::RotateLogs();
 
     // 네트워크 인터페이스 가져오기
     pcpp::PcapLiveDevice* dev = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDeviceByName(interfaceName);
@@ -460,7 +464,7 @@ int CPacketHandler::RunSystem(const char* interfaceName) {
     packetThread.join();
 
     char userInput;
-    std::cout << COLOR_RED "Do you want to capture the sent packets? (y/n): " << COLOR_RESET;
+    std::cout << COLOR_RED "\nDo you want to capture the sent packets? (y/n): " << COLOR_RESET;
     std::cin >> userInput;
 
     if (userInput == 'y' || userInput == 'Y') {
