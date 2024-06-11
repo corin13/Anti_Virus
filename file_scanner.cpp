@@ -12,13 +12,6 @@
 #include "malware_hash_checker.h"
 #include "yara_checker.h"
 
-#define ALL_FILES 1
-#define ELF_FILES 2
-#define SPECIFIC_EXTENSION 3
-
-#define YARA_RULE 1
-#define HASH_COMPARISON 2
-
 // 전역 변수 추가
 bool CFileScanner::m_bStopScanning = false;
 
@@ -39,7 +32,6 @@ int CFileScanner::StartScan(){
     }
     return SUCCESS_CODE;
 }
-
 
 int CFileScanner::StartIniScan(){
     //INI 파일에서 설정 값을 읽어옵니다.
@@ -66,7 +58,7 @@ int CFileScanner::PerformFileScan() {
     getline(std::cin, m_strScanTargetPath);
 
     if(m_strScanTargetPath.empty()) {
-        m_strScanTargetPath = "/"; // 경로가 비어있을 경우 디폴트로 '/' 설정
+        m_strScanTargetPath = DEFAULT_PATH; // 경로가 비어있을 경우 디폴트로 '/' 설정
     }
     if (!IsDirectory(m_strScanTargetPath)) { // 경로 유효성 검사
         return ERROR_PATH_NOT_FOUND;
@@ -137,7 +129,7 @@ int CFileScanner::ScanDirectory() {
 
             if (m_nFileTypeOption == SPECIFIC_EXTENSION) {
                 if(m_strExtension.empty()) {
-                    m_strExtension = "exe";
+                    m_strExtension = DEFAULT_EXTENSION;
                 }
                 shouldScan = IsExtension(node->fts_path, m_strExtension);
             } else if (m_nFileTypeOption == ELF_FILES) {
@@ -152,12 +144,11 @@ int CFileScanner::ScanDirectory() {
                 std::cout << node->fts_path << "\n";
                 std::string strDetectionCause;
                 if (m_nScanTypeOption == YARA_RULE) {
-                    CYaraChecker IYaraChecker("./yara-rules");
+                    CYaraChecker IYaraChecker(YARA_RULES_PATH);
                     nResult = IYaraChecker.CheckYaraRule(node->fts_path, m_vecDetectedMalware, strDetectionCause);
                 } else {
                     CMalwareHashChecker IMalwareHashChecker;
-                    std::string hashListPath = "./hashes.txt";
-                    nResult = IMalwareHashChecker.LoadHashes(hashListPath); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
+                    nResult = IMalwareHashChecker.LoadHashes(HASH_LIST_PATH); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
                     if (nResult != SUCCESS_CODE) {
                         fts_close(fileSystem);
                         return nResult;
@@ -233,16 +224,15 @@ int CFileScanner::MoveDetectedMalware() {
 
         if (input == "y" || input.empty()) { // 기본값으로 엔터 입력을 y로 처리
             // 이동할 디렉토리 설정
-            std::string strDestinationDir = "./detected-malware";
-            if (!IsDirectory(strDestinationDir)) {
-                if (mkdir(strDestinationDir.c_str(), 0700) != 0) {  // 관리자만 접근 가능
+            if (!IsDirectory(DESTINATION_PATH)) {
+                if (mkdir(DESTINATION_PATH, 0700) != 0) {  // 관리자만 접근 가능
                     return ERROR_CANNOT_OPEN_DIRECTORY;
                 }
             }
 
             // 발견된 모든 악성 파일을 이동
             for(ST_ScanData& data : m_vecScanData) {
-                int nResult = MoveFile(data, strDestinationDir);
+                int nResult = MoveFile(data, DESTINATION_PATH);
                 if(nResult != SUCCESS_CODE) {
                     PrintErrorMessage(nResult);
                 }
@@ -299,5 +289,5 @@ void CFileScanner::LogResult(ST_ScanData& data) {
     } else {
         logEntry["file_size"] = "N/A";
     }
-    SaveLogInJson(logEntry, "./logs/file_scanner.log");
+    SaveLogInJson(logEntry, LOG_FILE_PATH);
 }

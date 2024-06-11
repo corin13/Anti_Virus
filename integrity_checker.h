@@ -2,6 +2,8 @@
 
 #include <string>
 
+#define HASH_DIRECTORY "integrity-check-hashes"
+
 class CIntegrityChecker {
 public:
     CIntegrityChecker(const std::string& filePath);

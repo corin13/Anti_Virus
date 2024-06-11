@@ -4,8 +4,6 @@
 #include "integrity_checker.h"
 #include "util.h"
 
-#define HASH_DIRECTORY "integrity-check-hashes"
-
 CIntegrityChecker::CIntegrityChecker(const std::string& filePath) : m_strFilePath(filePath) {}
 
 CIntegrityChecker::~CIntegrityChecker() {}

@@ -4,6 +4,21 @@
 #include <vector>
 #include "util.h"
 
+#define ALL_FILES 1
+#define ELF_FILES 2
+#define SPECIFIC_EXTENSION 3
+
+#define YARA_RULE 1
+#define HASH_COMPARISON 2
+
+#define DEFAULT_PATH "/"
+#define DEFAULT_EXTENSION "exe"
+
+#define YARA_RULES_PATH "yara-rules"
+#define HASH_LIST_PATH "hashes.txt"
+#define DESTINATION_PATH "detected-malware"
+#define LOG_FILE_PATH "logs/file_scanner.log"
+
 struct ST_ScanData {
     std::string DetectedFile;
     std::string ScanType;

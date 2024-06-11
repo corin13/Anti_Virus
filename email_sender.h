@@ -3,6 +3,13 @@
 #include <curl/curl.h>
 #include <string>
 
+#define SETTING_FILE "settings.ini"
+#define LOG_SAVE_PATH "logs/file_event_monitor_"
+
+#define KEY_SECURITY "security"
+#define VALUE_PRIVATE_KEY_PATH "private_key_path"
+#define VALUE_ENCRYPTED_PW "encrypted_password"
+
 class EmailSender {
 public:
     EmailSender(const std::string& smtpServer, int smtpPort, const std::string& emailAddress);
