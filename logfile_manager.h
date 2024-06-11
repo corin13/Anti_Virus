@@ -5,7 +5,7 @@
 class CLoggingManager {
 public:
     int ManageLogLevel();
-    int RotateLogs();
+    static int RotateLogs();
     int GenerateLogs();
     int MultiSinkLogger();
     int SetupAsyncLogger();

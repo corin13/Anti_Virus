@@ -47,9 +47,17 @@ int CLoggingManager::RotateLogs() {
         size_t siMaxSize = 1048576 * 5;
         size_t siMaxFiles = 3;
 
-        auto logger = spdlog::rotating_logger_mt("rotatingLogger", "logs/rotating_log.txt", siMaxSize, siMaxFiles);
-        logger->set_level(spdlog::level::debug);
-        logger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
+        auto packetLogger = spdlog::rotating_logger_mt("packetLogger", "logs/packet_transmission.log", siMaxSize, siMaxFiles);
+        packetLogger->set_level(spdlog::level::debug);
+        packetLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
+
+        auto maliciousLogger = spdlog::rotating_logger_mt("maliciousLogger", "logs/malicious_ips.log", siMaxSize, siMaxFiles);
+        maliciousLogger->set_level(spdlog::level::debug);
+        maliciousLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
+
+        auto detailedLogger = spdlog::rotating_logger_mt("detailedLogger", "logs/detailed_logs.log", siMaxSize, siMaxFiles);
+        detailedLogger->set_level(spdlog::level::debug);
+        detailedLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
 
         return SUCCESS_CODE;
     } catch (const std::exception& ex) {

@@ -13,6 +13,7 @@
 #include "ansi_color.h" 
 #include "error_codes.h" 
 #include "VariadicTable.h"
+#include "logfile_manager.h"
 
 #define MAX_PACKET_SIZE 540 
 #define PAYLOAD_PATTERN "AAAAAAAAAA" 

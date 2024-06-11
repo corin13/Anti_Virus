@@ -429,6 +429,9 @@ void enableOutput() {
 
 int CPacketHandler::RunSystem(const char* interfaceName) {
 
+    // 로그 로테이션 수행
+    int result = CLoggingManager::RotateLogs();
+
     // 네트워크 인터페이스 가져오기
     pcpp::PcapLiveDevice* dev = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDeviceByName(interfaceName);
     if (dev == nullptr) {
