@@ -16,14 +16,11 @@ public:
     std::map<std::string, std::string> GetSectionData(const std::string& sectionName) const;
     const std::map<std::string, std::map<std::string, std::string>>& GetIniData() const;
 
-
 private:
-    FirewallConfig() : reader(), writer() {}
-    INIReader reader;
-    INIWriter writer;
-    std::map<std::string, std::map<std::string, std::string>> iniData;
-    bool loaded = false;
-
-    std::string GenerateRuleNumber();
-    bool WriteIniFile();
+    FirewallConfig() = default;
+    INIReader m_reader;
+    INIWriter m_writer;
+    std::map<std::string, std::map<std::string, std::string>> m_iniData;
+    std::string generateRuleNumber();
+    bool writeIniFile();
 };

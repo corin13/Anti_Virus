@@ -1,11 +1,14 @@
 #include <chrono>
 #include <iostream>
 #include <fstream>
+#include <jsoncpp/json/json.h>
+#include <limits.h>
 #include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <openssl/sha.h>
 #include <iomanip>
+#include "ansi_color.h"
 #include "util.h"
 
 // 경로 유효성 검사 함수
@@ -18,19 +21,19 @@ bool IsDirectory(const std::string& path) {
 }
 
 void PrintError(const std::string& message) {
-    std::cerr << "\n\033[31m" << message << "\033[0m\n";
+    std::cerr << "\n" << COLOR_RED << message << COLOR_RESET << "\n";
 }
 
 void PrintErrorMessage(int code) {
-    std::cerr << "\n\033[31mError: " << GetErrorMessage(code) << "\033[0m\n";
+    std::cerr << "\n" << COLOR_RED << "Error: " << GetErrorMessage(code) << COLOR_RESET << "\n";
 }
 
 // 에러 처리를 담당하는 함수
 void HandleError(int code, const std::string& context) {
     if (code != SUCCESS_CODE) {
-        std::cerr << "\n\033[31m[Error] " << GetErrorMessage(code) << "\033[0m";
+        std::cerr << "\n" << COLOR_RED << "[Error] " << GetErrorMessage(code) << COLOR_RESET;
         if (!context.empty()) {
-            std::cerr << "\n\033[31m : " << context << "\033[0m";
+            std::cerr << "\n" << COLOR_RED << ": " << context << COLOR_RESET;
         }
         std::cerr << "\n";
         exit(code);
@@ -86,8 +89,18 @@ int ComputeSHA256(const std::string& fileName, std::string& fileHash) {
 
 std::time_t GetCurrentTime() {
     auto now = std::chrono::system_clock::now();
-    auto in_time_t = std::chrono::system_clock::to_time_t(now);
-    return in_time_t;
+    auto currentTime = std::chrono::system_clock::to_time_t(now);
+    return currentTime;
+}
+
+std::string GetCurrentTimeWithMilliseconds() {
+    auto currentTime = GetCurrentTime();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::system_clock::now().time_since_epoch()) % 1000;
+
+    std::stringstream timeStream;
+    timeStream << std::put_time(std::localtime(&currentTime), "%Y-%m-%d %H:%M:%S");
+    timeStream << '.' << std::setfill('0') << std::setw(3) << milliseconds.count();
+    return timeStream.str();
 }
 
 // 문자열의 앞뒤 공백 제거 함수
@@ -95,4 +108,54 @@ std::string Trim(const std::string& str) {
     size_t start = str.find_first_not_of(" \t\r\n");
     size_t end = str.find_last_not_of(" \t\r\n");
     return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
+}
+
+std::string GetAbsolutePath(std::string path) {
+    char absolutePath[PATH_MAX];
+    if (realpath(path.c_str(), absolutePath) != nullptr) {
+        return absolutePath;
+    } else {
+        return path;
+    }
+}
+
+void SaveLogInJson(Json::Value logEntry, std::string logFilePath) {
+    
+    Json::StreamWriterBuilder writer;
+    
+    // 수정 및 추가: 기존 로그 파일을 읽고 JSON 배열로 변환하는 부분
+    std::ifstream logFileIn(logFilePath);
+    std::vector<Json::Value> logEntries;
+
+    if (logFileIn.is_open()) {
+        Json::CharReaderBuilder reader;
+        Json::Value existingLog;
+        std::string errs;
+        if (Json::parseFromStream(reader, logFileIn, &existingLog, &errs)) {
+            if (existingLog.isArray()) {
+                for (const auto &entry : existingLog) {
+                    logEntries.push_back(entry);
+                }
+            }
+        }
+        logFileIn.close();
+    }
+
+    logEntries.push_back(logEntry);
+
+    // 수정 및 추가: JSON 배열 형식으로 로그 파일에 저장하는 부분
+    std::ofstream logFileOut(logFilePath, std::ios::out);
+    if (!logFileOut.is_open()) {
+        HandleError(ERROR_CANNOT_OPEN_FILE, logFilePath);
+    }
+    logFileOut << "[\n";
+    for (size_t i = 0; i < logEntries.size(); ++i) {
+        logFileOut << Json::writeString(writer, logEntries[i]);
+        if (i != logEntries.size() - 1) {
+            logFileOut << ","; // 수정: 각 JSON 객체 사이에 쉼표 추가
+        }
+        logFileOut << "\n";
+    }
+    logFileOut << "]";
+    logFileOut.close();
 }

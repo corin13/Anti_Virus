@@ -1,9 +1,11 @@
 #include "firewall.h"
+#include "config_firewall.h"
+#include "VariadicTable.h"
 
 int Firewall() {
-    int option=0;
+    int option = 0;
 
-    while (true){
+    while (true) {
         std::cout <<
             "Select Firewall Option \n\n"
             "1. Run Firewall \n"
@@ -17,16 +19,16 @@ int Firewall() {
         std::cout << std::endl;
         int status;
 
-        switch(option){
+        switch (option) {
             case 1:
                 RunFirewall();
                 break;
-            
+
             case 2:
                 status = ConfigureFirewall();
                 std::cout << GetErrorMessage(status) << std::endl;
                 break;
-            
+
             case 3:
                 ViewLogs();
                 break;
@@ -184,6 +186,7 @@ int RunIptables(std::string direction, std::string ip, std::string port, std::st
         return ERROR_INVALID_OPTION;
     }
 
+
     std::cout << iptablesCmd << std::endl;
 
     FILE* pipe = popen(iptablesCmd.c_str(), "r");
@@ -218,13 +221,6 @@ void ExecCommand(std::string cmd){
 
     pclose(pipe);
 }
-
-
-
-
-
-
-
 
 
 std::vector<std::string> ConfigureUserInput(std::string& input){
@@ -322,7 +318,6 @@ int isVaildInput(std::vector<std::string>& words){
     return ERROR_UNKNOWN;
 }
 
-
 int AddRule(std::vector<std::string>& words){
     try{
         FirewallConfig::Instance().AddRule(
@@ -415,10 +410,6 @@ int ViewLogs(){
 
 
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-//private
-
 // IP의 형식이 맞는지 비교하는 함수
 bool isValidIP(const std::string& ip) {
     std::regex ipPattern("^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\."
@@ -428,7 +419,6 @@ bool isValidIP(const std::string& ip) {
     return std::regex_match(ip, ipPattern);
 }
 
-// port의 형식이 맞는지 비교하는 함수
 bool isValidPort(const std::string& port) {
     std::regex portPattern("^(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}|0)$");
     return std::regex_match(port, portPattern);
@@ -439,10 +429,10 @@ bool isValidPort(const std::string& port) {
 // 2번 기능 메뉴얼 출력 함수
 void PrintConfigMenual(){
     std::cout << 
-        "\033[1;34m[ADD]    : \033[0m [A | add] [TO | FROM] [IP] [PORT] [ACCEPT(o) | DROP(x)] \n"
-        "\033[1;32m[UPDATE] : \033[0m [U | update] [Rule Number] [OPTION] [>] [Change Value]\n"
-        "\033[1;31m[DELETE] : \033[0m [D | delete] [Rule Number] \n"
-        "\033[1;33m[LIST]   : \033[0m [L | list] \n\n" 
+        "\033[1;34m[ADD]    : \033[0m [A/add] [TO/FROM] [IP] [PORT] [ACCEPT(o)/DROP(x)] \n"
+        "\033[1;32m[UPDATE] : \033[0m [U/update] [Rule Number] [OPTION] [>] [Change Value]\n"
+        "\033[1;31m[DELETE] : \033[0m [D/delete] [Rule Number] \n"
+        "\033[1;33m[LIST]   : \033[0m [L/list] \n\n" 
         "\033[36m[EXIT]\033[0m "
         "\033[35m[HELP]\033[0m \n" << std::endl;
 }
@@ -451,23 +441,23 @@ void PrintConfigMenual(){
 
 // 프로그램 종료 시 iptables 룰 초기화 함수
 void handle_exit(int signum) {
-    std::cout << "\n program is terminating\n" << std::endl;
-    std::string cmd;
-
-    cmd = "iptables -F";
+    std::cout << "\nProgram is terminating\n" << std::endl;
+    std::string cmd = "iptables -F";
     system(cmd.c_str());
-
     exit(signum);
 }
 
 
 int FirewallHelp() {
     std::cout << 
-        "A, add     -Rule Add Command       [TO]    : Outbound network\n"
-        "                                   [FROM]  : Inbound network\n"
-        "                                   [DROP]  : Blocking the network\n"
-        "                                   [ACCEPT]: Allow the network\n\n"
-        "U, update  -Rule Update Command    [Rule Number] : Rule Index Number\n"
+        "A, add     -Rule Add Command\n"       
+        "[TO]    : Outbound network\n"
+        "[FROM]  : Inbound network\n"
+        "[DROP]  : Blocking the network\n"
+        "[ACCEPT]: Allow the network\n\n"
+
+        "U, update  -Rule Update Command \n"
+        "[Rule Number] : Rule Index Number\n"
         "                                   [OPTION]: The title of the value you want to change\n"
         "                                   [>]     : Must use '>' \n"
         "                                   [Change Value]: Value to change\n\n"
