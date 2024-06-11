@@ -124,8 +124,25 @@ int CFileScanner::ScanDirectory() {
 
     FTSENT *node;
     int nResult;
+
+    CYaraChecker IYaraChecker(YARA_RULES_PATH);
+    CMalwareHashChecker IMalwareHashChecker;
+    nResult = IMalwareHashChecker.LoadHashes(HASH_LIST_PATH);
+    if (nResult != SUCCESS_CODE) {
+        fts_close(fileSystem);
+        return nResult;
+    }
+    
     signal(SIGINT, signalHandler);  // 신호 처리기 등록
     while ((node = fts_read(fileSystem)) != nullptr && !m_bStopScanning) {
+        if (node->fts_info == FTS_D) {
+            // 특정 디렉토리를 건너뛰도록 설정
+            if (strcmp(GetAbsolutePath(node->fts_path).c_str(), GetAbsolutePath(DESTINATION_PATH).c_str()) == 0) {
+                fts_set(fileSystem, node, FTS_SKIP);
+                continue;
+            }
+        }
+
         if (node->fts_info == FTS_F) {
             bool shouldScan = false;
 
@@ -146,15 +163,8 @@ int CFileScanner::ScanDirectory() {
                 std::cout << node->fts_path << "\n";
                 std::string strDetectionCause;
                 if (m_nScanTypeOption == YARA_RULE) {
-                    CYaraChecker IYaraChecker(YARA_RULES_PATH);
                     nResult = IYaraChecker.CheckYaraRule(node->fts_path, m_vecDetectedMalware, strDetectionCause);
                 } else {
-                    CMalwareHashChecker IMalwareHashChecker;
-                    nResult = IMalwareHashChecker.LoadHashes(HASH_LIST_PATH); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
-                    if (nResult != SUCCESS_CODE) {
-                        fts_close(fileSystem);
-                        return nResult;
-                    }
                     nResult = IMalwareHashChecker.CompareByHash(node, m_vecDetectedMalware, strDetectionCause);
                 }
                 if(!strDetectionCause.empty()) {
