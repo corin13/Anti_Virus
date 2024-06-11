@@ -18,12 +18,13 @@
 #include "util.h"
 #include "config.h"
 
-CEventMonitor::CEventMonitor() : m_inotifyFd(-1), m_vecWatchList(*(new std::vector<std::string>)) {}
+CEventMonitor::CEventMonitor() : m_inotifyFd(-1), m_vecWatchList(*(new std::vector<std::string>)), m_dbManager(new CDatabaseManager()) {}
 
 CEventMonitor::~CEventMonitor() {
     if (m_inotifyFd != -1) {
         close(m_inotifyFd);
     }
+    delete m_dbManager;
 }
 
 int CEventMonitor::StartMonitoring() {
@@ -188,13 +189,14 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
         return;
     }
 
-    MonitorData data = {
+    ST_MonitorData data = {
         .eventDescription = "",
         .filePath = it->second,
         .integrityResult = "Unchanged",
         .newHash = "",
         .oldHash = "",
-        .timestamp = GetCurrentTimeWithMilliseconds()
+        .timestamp = GetCurrentTimeWithMilliseconds(),
+        .fileSize = -1
     };
 
     struct stat pathStat;
@@ -232,19 +234,25 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
         data.eventDescription = "Other event occurred";
     }
 
+    // 파일 크기 가져오기
+    if (stat(data.filePath.c_str(), &pathStat) == 0) {
+        data.fileSize = pathStat.st_size;
+    } 
+
     printEventsInfo(data);
     verifyFileIntegrity(data);
     logEvent(data);
+    m_dbManager->LogEventToDatabase(data);
     std::cout << "\n";
 }
 
-void CEventMonitor::printEventsInfo(MonitorData& data) {
+void CEventMonitor::printEventsInfo(ST_MonitorData& data) {
     std::cout << "\n[+] Event type: " << COLOR_YELLOW << data.eventDescription << COLOR_RESET;
     std::cout << "\n[+] Target file: " << data.filePath;
 }
 
 // 무결성 검사 함수 구현
-void CEventMonitor::verifyFileIntegrity(MonitorData& data) {
+void CEventMonitor::verifyFileIntegrity(ST_MonitorData& data) {
     if (data.oldHash.empty() || data.newHash.empty() || data.newHash != data.oldHash) {
         std::cout << "\n[+] Integrity check: " << COLOR_RED << "Detected changes" << COLOR_RESET << "\n";
         data.integrityResult = "Changed";
@@ -254,7 +262,7 @@ void CEventMonitor::verifyFileIntegrity(MonitorData& data) {
 }
 
 // 파일 이벤트를 날짜별로 로그에 기록
-void CEventMonitor::logEvent(MonitorData& data) {
+void CEventMonitor::logEvent(ST_MonitorData& data) {
     // JSON 객체 생성
     Json::Value logEntry;
     logEntry["timestamp"] = data.timestamp;
@@ -265,9 +273,8 @@ void CEventMonitor::logEvent(MonitorData& data) {
     logEntry["integrity_result"] = data.integrityResult;
     logEntry["pid"] = Json::Int(getpid());
 
-    struct stat fileStat;
-    if (stat(data.filePath.c_str(), &fileStat) == 0) {
-        logEntry["file_size"] = Json::UInt64(fileStat.st_size);
+    if (data.fileSize != -1) {
+        logEntry["file_size"] = Json::UInt64(data.fileSize);
     } else {
         logEntry["file_size"] = "N/A";
     }
