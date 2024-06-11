@@ -14,7 +14,7 @@ private:
     std::string emailAddress;
     std::string senderEmail = "udangtang02@gmail.com"; // 고정된 발신자 이메일 주소
 
-    const char* GetEmailPassword();
+    std::string GetEmailPassword();
     CURL* InitializeCurl() const;
     curl_mime* SetupMimeAndCurl(CURL* curl, const std::string& emailPassword, const std::string& body, const std::string& logFilePath, curl_slist* recipients, curl_slist* headers) const;
 };

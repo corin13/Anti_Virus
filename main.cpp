@@ -4,15 +4,16 @@ CUdkdAgentOptions IAgentOptions;
 CUsageCollector IUsageOption;
 CLoggingManager ILoggingOption;
 CPacketHandler INetworkingOption;
+CEventMonitor IEventMonitor;
+CFileScanner IFileScanner;
 
 // 인자값 필요로 한다면 :붙이기 ex) hib:s:
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
-    const char* pOption="dhilmsun:f"; //f 옵션 추가
-    std::string configPath;
-
+    const char* pOption="c:dhilmsun:f"; 
     bool networkOption = false;
+    std::string configPath;
 
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
@@ -38,11 +39,11 @@ void CheckOption(int &argc, char** &argv){
                 }
                 std::cout << "Configuration path for -m: " << configPath << std::endl;
                 LoadConfig(configPath);
-                StartMonitoring();
+                IEventMonitor.StartMonitoring();
                 break;
 
             case 's':
-                StartScan();
+                IFileScanner.StartScan();
                 break;
 
             case 'u':
@@ -56,9 +57,8 @@ void CheckOption(int &argc, char** &argv){
 
             case 'c':
                 LoadConfig(optarg);
-                StartIniScan();
-                break; 
-                 
+                IFileScanner.StartIniScan();
+                break;
             case 'f':
                 Firewall();
                 break;

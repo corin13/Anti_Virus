@@ -505,14 +505,14 @@ void CPacketHandler::BlockDetectedIPs() {
     std::string ip;
     while (std::getline(infile, ip)) {
         disableOutput();
-        int sshInputResult = RunIptables("INPUT", ip, "22", "ACCEPT");
-        int sshOutputResult = RunIptables("OUTPUT", ip, "22", "ACCEPT");
+        int sshInputResult = ::RunIptables("INPUT", ip, "22", "ACCEPT");
+        int sshOutputResult = ::RunIptables("OUTPUT", ip, "22", "ACCEPT");
         enableOutput();
         if (sshInputResult != SUCCESS_CODE || sshOutputResult != SUCCESS_CODE) {
             std::cerr << "Failed to set SSH exception for IP " << ip << "." << std::endl;
             continue;
         }
-        int result = RunIptables("INPUT", ip, "ANY", "DROP");
+        int result = ::RunIptables("INPUT", ip, "ANY", "DROP");
         if (result == SUCCESS_CODE) {
             std::cout << "IP " << ip << " has been blocked successfully.\n" << std::endl;
         } else {
@@ -521,53 +521,4 @@ void CPacketHandler::BlockDetectedIPs() {
     }
 
     infile.close();
-}
-
-int CPacketHandler::RunIptables(std::string direction, std::string ip, std::string port, std::string action){
-    
-    std::string iptablesCmd="iptables -A";
-
-    if (direction == "INPUT"){
-        iptablesCmd += " INPUT ";
-        iptablesCmd += ip == "ANY" ? "" : "-s "+ ip;
-    }
-    else if (direction == "OUTPUT"){
-        iptablesCmd += " OUTPUT ";
-        iptablesCmd += ip == "ANY" ? "" : "-d "+ ip;
-    }
-    else {
-        std::cerr << "Invalid Direction" << std::endl;
-        return ERROR_INVALID_OPTION;
-    }
-
-    iptablesCmd += port == "ANY" ? "" : " -p tcp --dport " + port;
-
-    if (action =="DROP"){
-        iptablesCmd += " -j DROP";
-    }
-    else if (action == "ACCEPT"){
-        iptablesCmd += " -j ACCEPT";
-    }
-    else {
-        std::cerr << "Invalid Action" << std::endl;
-        return ERROR_INVALID_OPTION;
-    }
-
-    std::cout << iptablesCmd << std::endl;
-
-    FILE* pipe = popen(iptablesCmd.c_str(), "r");
-    if (!pipe) {
-        std::cerr << "ERROR : popen() failed" << std::endl;
-        return ERROR_IPTABLES_COMMAND;
-    }
-
-    char buffer[128];
-
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-        std::cout << buffer;
-    }
-
-    pclose(pipe);
-
-    return SUCCESS_CODE;
 }

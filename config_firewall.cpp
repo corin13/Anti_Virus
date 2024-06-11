@@ -40,7 +40,7 @@ bool FirewallConfig::Load(const std::string& filename) {
 bool FirewallConfig::AddRule(const std::string& direction, const std::string& ip, const std::string& port, const std::string& action) {
     std::cout << "AddRule called. iniData size: " << m_iniData.size() << std::endl;
 
-    std::string ruleNumber = generateRuleNumber();
+    std::string ruleNumber = "rule"+generateRuleNumber();
     m_iniData[ruleNumber]["direction"] = direction;
     m_iniData[ruleNumber]["ip"] = ip;
     m_iniData[ruleNumber]["port"] = port;

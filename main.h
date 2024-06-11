@@ -5,7 +5,7 @@
 #include <iostream>
 #include "logfile_manager.h"
 #include "options_info.h"
-#include "scan.h"
+#include "file_scanner.h"
 #include "usage_collector.h"
 #include "event_monitor.h"
 #include "packet_handler.h"

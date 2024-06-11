@@ -14,6 +14,7 @@
 #include "error_codes.h"
 #include "VariadicTable.h"
 #include "logfile_manager.h"
+#include "firewall.h"
 
 #define COLUMN_WIDTH 30
 #define HALF_WORD_SIZE 16
