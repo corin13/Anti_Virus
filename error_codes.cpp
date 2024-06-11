@@ -39,6 +39,12 @@ std::string GetErrorMessage(int code) {
         case 17:
             return "Failed to execute iptables";
         case 18:
+            return "Failed logging operation";
+        case 19:
+            return "Failed to find interface";
+        case 20:
+            return "Failed to open device";
+        case 21:
         default:
             return "Unknown error";
     }

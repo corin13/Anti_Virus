@@ -25,7 +25,7 @@
 
 CPacketHandler::CPacketHandler()
     : m_DuplicateIPCount(0), m_LargePacketCount(0), m_MaliciousPayloadCount(0), m_MaliciousPacketCount(0),
-      vt({"No", "Packet Size", "Random src IP", "IP Flooding", "Fragmentation", "Data"}, 30) {}
+      vt({"No", "Packet Size", "Random src IP", "IP Flooding", "Fragmentation", "Data"}, COLUMN_WIDTH) {}
 
 CPacketHandler::~CPacketHandler() {}
 
@@ -41,26 +41,30 @@ unsigned short CheckSum(void *b, int len) {
     if (len == 1) {
         sum += *(unsigned char*)buf;
     }
-    sum = (sum >> 16) + (sum & 0xFFFF);
-    sum += (sum >> 16);
+    sum = (sum >> HALF_WORD_SIZE) + (sum & HALF_WORD_MASK);
+    sum += (sum >> HALF_WORD_SIZE);
     result = ~sum;
     return result;
+}
+
+// 공통 패킷 처리 함수
+void CPacketHandler::ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP) {
+    pHandler->AnalyzePacket(pIpHeader, pPayload, nPayloadLength, srcIP);
 }
 
 // pcap 패킷 처리 핸들러 함수
 void CPacketHandler::PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket) {
     CPacketHandler *pHandler = reinterpret_cast<CPacketHandler*>(pUserData); 
-    const struct ip* pIpHeader = (struct ip*)(pPacket + 14); 
-    int nIpHeaderLength = pIpHeader->ip_hl * 4; 
+    const struct ip* pIpHeader = (struct ip*)(pPacket + ETHERNET_HEADER_LENGTH); 
+    int nIpHeaderLength = pIpHeader->ip_hl * IP_HEADER_LENGTH_UNIT; 
     int nIpTotalLength = ntohs(pIpHeader->ip_len); 
     int nPayloadLength = nIpTotalLength - nIpHeaderLength;
-    const u_char* pPayload = pPacket + 14 + nIpHeaderLength; 
-	std::string strSrcIP = inet_ntoa(pIpHeader->ip_src); 
-		
-	pHandler->AnalyzePacket(pIpHeader, pPayload, nPayloadLength, strSrcIP); 
-} 
+    const u_char* pPayload = pPacket + ETHERNET_HEADER_LENGTH + nIpHeaderLength; 
+    std::string strSrcIP = inet_ntoa(pIpHeader->ip_src); 
 
-// 글로벌 변수
+    ProcessPacket(pHandler, pIpHeader, nPayloadLength, pPayload, strSrcIP); 
+}
+
 std::atomic<uint64_t> totalBytes(0);  
 
 // 패킷의 IP 주소, 프로토콜, 크기를 분석하여 악성 패킷을 감지하고 로그 파일에 기록
@@ -75,15 +79,13 @@ void CPacketHandler::LogPacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice*
         int packetLen = packet.getRawPacket()->getRawDataLen();
         int protocol = ipLayer->getIPv4Header()->protocol;
 
-        // 총 바이트 수에 패킷 크기 추가
         totalBytes += packetLen;
 
-        // IP 헤더 가져오기
         const struct ip* pIpHeader = (struct ip*)ipLayer->getData();
-        int nPayloadLength = packetLen - (pIpHeader->ip_hl * 4);
-        const u_char* pPayload = (const u_char*)ipLayer->getData() + (pIpHeader->ip_hl * 4);
+        int nPayloadLength = packetLen - (pIpHeader->ip_hl * IP_HEADER_LENGTH_UNIT);
+        const u_char* pPayload = (const u_char*)ipLayer->getData() + (pIpHeader->ip_hl * IP_HEADER_LENGTH_UNIT);
 
-        handler->AnalyzePacket(pIpHeader, pPayload, nPayloadLength, srcIP);
+        ProcessPacket(handler, pIpHeader, nPayloadLength, pPayload, srcIP);
     }
 }
 
@@ -96,7 +98,7 @@ void CPacketHandler::MonitorBandwidth() {
         std::chrono::duration<double> elapsedSeconds = endTime - startTime;
         
         uint64_t bytes = totalBytes.exchange(0);
-        double bandwidth = (bytes * 8) / elapsedSeconds.count();  // 대역폭(bps) 계산
+        double bandwidth = (bytes * BITS_PER_BYTE) / elapsedSeconds.count();  // 대역폭(bps) 계산
         
         std::cout << "Current bandwidth: " << bandwidth << " bps" << std::endl;
         startTime = endTime;
@@ -105,26 +107,20 @@ void CPacketHandler::MonitorBandwidth() {
 
 // 비정상 패킷을 지속적으로 생성하는 함수
 void CPacketHandler::GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPacketsSent) {
-    
-    const char* dst_ip = "192.168.1.1";
-
-    // 랜덤 시드 설정
     srand(static_cast<unsigned int>(time(0)));
-
     std::ofstream logFile("logs/packet_transmission.log", std::ios_base::app);
     logFile << "Sending packets..." << std::endl;
     std::cout << COLOR_RED "Generating and sending malicious packets...\n" << COLOR_RESET << std::endl;
 
     auto startTime = std::chrono::steady_clock::now();
-
-    while (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - startTime).count() < 10) {
-        for (int i = 0; i < 1240; i++) {
-            std::string src_ip = "192.168." + std::to_string(rand() % 256) + "." + std::to_string(rand() % 256);
-            SendMaliciousPacket(src_ip.c_str(), dst_ip, 1, logFile);
+    while (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - startTime).count() < TRANSMISSION_DURATION) {
+        for (int i = 0; i < PACKETS_PER_INTERVAL; i++) {
+            std::string src_ip = "192.168." + std::to_string(rand() % MAX_SEGMENT_VALUE) + "." + std::to_string(rand() % MAX_SEGMENT_VALUE);
+            SendMaliciousPacket(src_ip.c_str(), "192.168.1.1", 1, logFile);
             totalMaliciousPacketsSent++;
             std::cout << "\rTotal malicious packets sent: " << totalMaliciousPacketsSent.load() << std::flush;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(TRANSMISSION_INTERVAL));
     }
 
     logFile << "Total malicious packets sent: " << totalMaliciousPacketsSent.load() << std::endl;
@@ -133,17 +129,15 @@ void CPacketHandler::GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPa
 
 // 비정상 패킷을 전송하는 함수
 void CPacketHandler::SendMaliciousPacket(const char* src_ip, const char* dst_ip, int packet_count, std::ofstream& logFile) {
-
     int sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if (sock < 0) {
         perror("Socket creation failed");
         exit(1);
     }
 
-    char packet[4096];
-    memset(packet, 0, 4096);
+    char packet[PACKET_BUFFER_SIZE];
+    memset(packet, 0, PACKET_BUFFER_SIZE);
 
-    // UDP 헤더 설정 
     struct iphdr *iph = (struct iphdr *)packet;
     struct udphdr *udph = (struct udphdr *)(packet + sizeof(struct iphdr));
     struct sockaddr_in sin;
@@ -151,33 +145,28 @@ void CPacketHandler::SendMaliciousPacket(const char* src_ip, const char* dst_ip,
     sin.sin_family = AF_INET;
     sin.sin_addr.s_addr = inet_addr(dst_ip);
 
-    // IP 헤더 설정
-    iph->ihl = 5;
-    iph->version = 4;
-    iph->tos = 0;
-    iph->tot_len = htons(sizeof(struct iphdr) + sizeof(struct udphdr) + 1472); // 모든 패킷은 540바이트로 동일한 크기의 패킷으로 구성 (IP헤더 + UDP헤더 + 데이터)
-    iph->id = htonl(rand() % 65535); // 임의의 패킷 ID
-    iph->frag_off = htons(0x2000); // 단편화 플래그 설정 (More Fragments)
-    iph->ttl = 255;
+    iph->ihl = IP_HEADER_LENGTH;
+    iph->version = IP_VERSION;
+    iph->tos = IP_TYPE_OF_SERVICE;
+    iph->tot_len = htons(sizeof(struct iphdr) + sizeof(struct udphdr) + MAX_PACKET_SIZE);
+    iph->id = htonl(rand() % MAX_PACKET_ID); 
+    iph->frag_off = htons(IP_MORE_FRAGMENTS); 
+    iph->ttl = IP_TTL;
     iph->protocol = IPPROTO_UDP; 
     iph->check = 0; 
     iph->saddr = inet_addr(src_ip);
     iph->daddr = sin.sin_addr.s_addr;
 
-    // UDP 헤더 설정
-    udph->source = htons(12345);
-    udph->dest = htons(54321);
-    udph->len = htons(sizeof(struct udphdr) + 1472); // UDP 헤더 + 데이터 길이
+    udph->source = htons(SOURCE_PORT);
+    udph->dest = htons(DESTINATION_PORT);
+    udph->len = htons(sizeof(struct udphdr) + MAX_PACKET_SIZE);
     udph->check = 0; 
 
-    // 의미 없는 형태의 값 (패킷의 크기를 의도적으로 크게 만들기 위한 목적)
-    memset(packet + sizeof(struct iphdr) + sizeof(struct udphdr), 'A', 1472); 
-
-    // IP 체크섬 계산
-    iph->check = CheckSum((unsigned short *)packet, sizeof(struct iphdr) + sizeof(struct udphdr) + 1472);
+    memset(packet + sizeof(struct iphdr) + sizeof(struct udphdr), 'A', MAX_PACKET_SIZE); 
+    iph->check = CheckSum((unsigned short *)packet, sizeof(struct iphdr) + sizeof(struct udphdr) + MAX_PACKET_SIZE);
 
     for (int i = 0; i < packet_count; i++) {
-        if (sendto(sock, packet, sizeof(struct iphdr) + sizeof(struct udphdr) + 1472, 0, (struct sockaddr *)&sin, sizeof(sin)) < 0) { // 패킷 크기 수정
+        if (sendto(sock, packet, sizeof(struct iphdr) + sizeof(struct udphdr) + MAX_PACKET_SIZE, 0, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
             perror("Packet send failed");
         } else {
             logFile << "Packet sent from " << src_ip << " to " << dst_ip << std::endl;
@@ -208,9 +197,8 @@ int CPacketHandler::AnalyzeNetworkTraffic(const char *pcap_file) {
 
     while (int res = pcap_next_ex(handle, &header, &data) >= 0) {
         if (res == 0) {
-            continue; 
+            continue;
         }
-
         PacketHandler(reinterpret_cast<u_char*>(this), header, data);
         packetCount++;
     }
@@ -222,7 +210,7 @@ int CPacketHandler::AnalyzeNetworkTraffic(const char *pcap_file) {
 // 패킷을 분석하여 악성 여부를 판단하고 로그 파일에 기록
 int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP) {
     bool bIsMalicious = false;
-    bool payloadMalicious = true;
+    bool payloadMalicious = false;
     bool ipFloodingDetected = false;
     bool randomIPDetected = false;
     bool largePacketDetected = false;
@@ -233,12 +221,10 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
     auto currentTime = std::chrono::steady_clock::now();
     static std::unordered_set<std::string> loggedMessages; // 중복 메시지 추적
     static std::unordered_set<std::string> processedIPs; // 처리된 IP 추적
-    // IP flooding을 탐지하고 관리하는 자료구조 선언
-    std::unordered_map<std::string, bool> ipFloodingDetectedMap;
     static std::unordered_map<std::string, std::unordered_set<std::string>> ipAddressesForPayload;
     static int detectionCount = 0;
 
-    std::ofstream logFile("logs/detailed_logs.log", std::ios_base::app); 
+    std::ofstream logFile("logs/detailed_logs.log", std::ios_base::app);
 
     // 비정상 패킷이 정상 패킷보다 같은 시간 동안 2배 이상 많은지 확인
     if (bIsMalicious) {
@@ -295,13 +281,7 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
     }
 
     // 의미없는 형태의 값 (패킷의 크기를 의도적으로 크게 만들기 위한 목적)
-    int aCount = 0;
-    payloadMalicious = false;
-    for (int i = 0; i < nPayloadLength; i++) {
-        if (pPayload[i] == 'A') {
-            aCount++;
-        }
-    }
+    int aCount = std::count(pPayload, pPayload + nPayloadLength, 'A');
 
     // 페이로드의 70% 이상이 'A'로 채워져 있을 경우 악성으로 간주
     if (aCount >= 0.7 * nPayloadLength) {
@@ -370,8 +350,7 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
         // 탐지된 패킷 정보를 표에 추가
         detectionCount++;
         std::string detectedRandomIP = randomIPDetected ? std::to_string(ipAddressesForPayload[payloadString].size()) + " different IPs" : "No";
-        int nIpLength = ntohs(pIpHeader->ip_len);
-        int aCount = std::count(pPayload, pPayload + nPayloadLength, 'A'); // 'A'의 개수를 계산
+        int aCount = std::count(pPayload, pPayload + nPayloadLength, 'A');
         std::string displayFloodingIP = !floodingIP.empty() ? floodingIP : "No";
 
         vt.addRow(
@@ -380,38 +359,21 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
             detectedRandomIP,
             displayFloodingIP,
             fragmentationDetected ? "Yes" : "No",
-            payloadMalicious ? std::to_string(aCount) + " bytes" : "No" // 'A'가 몇 바이트 들어있는지 출력
+            payloadMalicious ? std::to_string(aCount) + " bytes" : "No"
         );
 
-        // 악성 여부 판단에 대한 결과 출력
-        std::cout << "Malicious packet detected: " << strSrcIP << std::endl;
         logFile << "Malicious packet detected: " << strSrcIP << std::endl;
-        if (payloadMalicious) {
-            std::cout << "- Reason: Malicious payload" << std::endl;
-            logFile << "- Reason: Malicious payload" << std::endl;
-        }
-        if (ipFloodingDetected) {
-            std::cout << "- Reason: IP Flooding" << std::endl;
-            logFile << "- Reason: IP Flooding" << std::endl;
-        }
-        if (randomIPDetected) {
-            std::cout << "- Reason: Random source IP" << std::endl;
-            logFile << "- Reason: Random source IP" << std::endl;
-        }
-        if (largePacketDetected) {
-            std::cout << "- Reason: Large packet" << std::endl;
-            logFile << "- Reason: Large packet" << std::endl;
-        }
-        if (fragmentationDetected) {
-            std::cout << "- Reason: Packet fragmentation" << std::endl;
-            logFile << "- Reason: Packet fragmentation" << std::endl;
-        }
- 
-        processedIPs.insert(strSrcIP); // Add IP to processed set
-    }
+        if (payloadMalicious) logFile << "- Reason: Malicious payload" << std::endl;
+        if (ipFloodingDetected) logFile << "- Reason: IP Flooding" << std::endl;
+        if (randomIPDetected) logFile << "- Reason: Random source IP" << std::endl;
+        if (largePacketDetected) logFile << "- Reason: Large packet" << std::endl;
+        if (fragmentationDetected) logFile << "- Reason: Packet fragmentation" << std::endl;
 
-    logFile.close();
-    return SUCCESS_CODE;
+        processedIPs.insert(strSrcIP);
+        }
+
+        logFile.close();
+        return SUCCESS_CODE;
 }
 
 // 전역적으로 원래 버퍼를 저장할 변수
@@ -429,143 +391,136 @@ void enableOutput() {
 }
 
 int CPacketHandler::RunSystem(const char* interfaceName) {
-
-    int result = CLoggingManager::StartRotation();
-    // 로그 메시지 생성하여 로그 파일 크기 증가시키기
-    result = CLoggingManager::GenerateLogs("packetLogger");
-    // 로그 로테이션 수행
-    result = CLoggingManager::RotateLogs();
-
-    // 네트워크 인터페이스 가져오기
-    pcpp::PcapLiveDevice* dev = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDeviceByName(interfaceName);
-    if (dev == nullptr) {
-        std::cerr << "Cannot find interface: " << interfaceName << std::endl;
-        return 1;
+    if (CLoggingManager::StartRotation() != SUCCESS_CODE ||
+        CLoggingManager::GenerateLogs("packetLogger") != SUCCESS_CODE ||
+        CLoggingManager::RotateLogs() != SUCCESS_CODE) {
+        std::cerr << "Log operation failed." << std::endl;
+        return ERROR_LOG_OPERATION_FAILED;
     }
 
-    // 네트워크 인터페이스 열기
+    auto dev = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDeviceByName(interfaceName);
+    if (!dev) {
+        std::cerr << "Cannot find interface: " << interfaceName << std::endl;
+        return ERROR_CANNOT_FIND_INTERFACE;
+    }
+
     if (!dev->open()) {
         std::cerr << "Cannot open device: " << interfaceName << std::endl;
-        return 1;
+        return ERROR_CANNOT_OPEN_DEVICE;
     }
 
-    std::atomic<int> packetCount(0);
-
-    // 패킷 핸들러 객체 생성
-    CPacketHandler handler;
-
-    // 로그 파일 초기화
-    std::ofstream logFile("logs/malicious_packets.log", std::ios_base::trunc);
-    logFile.close();
-
-    // 패킷 생성 스레드 시작
     std::atomic<int> totalMaliciousPacketsSent(0);
     std::thread packetThread(&CPacketHandler::GenerateMaliciousPackets, std::ref(totalMaliciousPacketsSent));
     packetThread.join();
 
-    char userInput;
-    std::cout << COLOR_RED "\nDo you want to capture the sent packets? (y/n): " << COLOR_RESET;
-    std::cin >> userInput;
+    CPacketHandler handler;
 
-    if (userInput == 'y' || userInput == 'Y') {
-        std::cout << COLOR_RED "Capturing packets on " << interfaceName << "... Press Ctrl+C to stop" << COLOR_RESET << std::endl;
-
-        // pcap 파일로 저장할 준비
-        pcap_t *pcapHandle;
-        pcap_dumper_t *pcapDumper;
-        char errbuf[PCAP_ERRBUF_SIZE];
-
-        // 네트워크 인터페이스로부터 pcap handle 가져오기
-        pcapHandle = pcap_open_live(interfaceName, 65536, 1, 10, errbuf);
-        if (pcapHandle == nullptr) {
-            std::cerr << "Couldn't open device " << interfaceName << ": " << errbuf << std::endl;
-            return 1;
-        }
-
-        // pcap 파일로 저장할 dumper 설정
-        pcapDumper = pcap_dump_open(pcapHandle, "captured_packets.pcap");
-        if (pcapDumper == nullptr) {
-            std::cerr << "Couldn't open output file: " << pcap_geterr(pcapHandle) << std::endl;
-            return 1;
-        }
-
-        // 패킷 캡처 콜백 함수
-        auto pcapCallback = [](u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet) {
-            pcap_dump(userData, pkthdr, packet);
-        };
-
-        // 패킷 캡처 시작
-        signal(SIGINT, CPacketHandler::SigintHandler);
-
-        while (!stop_capture) {
-            pcap_dispatch(pcapHandle, 0, pcapCallback, (u_char*)pcapDumper);
-        }
-
-        // 캡처 중지 및 pcap handle 종료
-        pcap_dump_close(pcapDumper);
-        pcap_close(pcapHandle);
-
-        std::cout << "Packets captured and saved to 'captured_packets.pcap'.\n" << std::endl;
-
-        std::cout << COLOR_GREEN "Do you want to analyze the captured packets? (y/n): " << COLOR_RESET;
-        std::cin >> userInput;
-
-        if (userInput == 'y' || userInput == 'Y') {
-            std::cout << COLOR_GREEN "Analyzing captured packets for malicious content..." << COLOR_RESET << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(5)); 
-            
-            int result = handler.AnalyzeNetworkTraffic("captured_packets.pcap"); // 캡처된 패킷 파일 경로
-
-            if (result == SUCCESS_CODE) {
-                std::cout << COLOR_GREEN "Packet analysis completed successfully." << COLOR_RESET << std::endl;
-            } else {
-                std::cerr << "Packet analysis failed with error code: " << result << std::endl;
-            }
-
-            // 테이블 출력 추가
-            handler.vt.print(std::cout);
-
-            // 차단 여부를 묻는 부분 추가
-            std::cout << COLOR_RED "Do you want to block the detected malicious IPs? (y/n): " << COLOR_RESET;
-            std::cin >> userInput;
-
-            if (userInput == 'y' || userInput == 'Y') {
-                std::ifstream infile("logs/malicious_ips.log");
-                if (!infile.is_open()) {
-                    std::cerr << "Could not open malicious_ips.log for reading." << std::endl;
-                    return ERROR_CANNOT_OPEN_FILE;
-                }
-
-                std::string ip;
-                while (std::getline(infile, ip)) {
-                    disableOutput();
-                    int sshInputResult = handler.RunIptables("INPUT", ip, "22", "ACCEPT");
-                    int sshOutputResult = handler.RunIptables("OUTPUT", ip, "22", "ACCEPT");
-                    enableOutput();
-                    if (sshInputResult != SUCCESS_CODE || sshOutputResult != SUCCESS_CODE) {
-                    std::cerr << "Failed to set SSH exception for IP " << ip << "." << std::endl;
-                    continue;
-                    }
-                    int result = handler.RunIptables("INPUT", ip, "ANY", "DROP");
-                    if (result == SUCCESS_CODE) {
-                        std::cout << "IP " << ip << " has been blocked successfully.\n" << std::endl;
-                    } else {
-                        std::cerr << "Failed to block IP " << ip << "." << std::endl;
-                    }
-                }
-
-                infile.close();
-            } else {
-                std::cout << "No IPs were blocked." << std::endl;
-            }
-        } else {
-            std::cout << "No packets analyzed." << std::endl;
+    if (handler.PromptUserForPacketCapture()) {
+        handler.CapturePackets(interfaceName);
+        if (handler.PromptUserForPacketAnalysis()) {
+            handler.AnalyzeCapturedPackets();
         }
     } else {
         std::cout << "No packets captured." << std::endl;
     }
 
-    return 0;
+    return SUCCESS_CODE;
+}
+
+bool CPacketHandler::PromptUserForPacketCapture() {
+    char userInput;
+    std::cout << COLOR_RED "\nDo you want to capture the sent packets? (y/n): " << COLOR_RESET;
+    std::cin >> userInput;
+    return userInput == 'y' || userInput == 'Y';
+}
+
+bool CPacketHandler::PromptUserForPacketAnalysis() {
+    char userInput;
+    std::cout << COLOR_GREEN "Do you want to analyze the captured packets? (y/n): " << COLOR_RESET;
+    std::cin >> userInput;
+    return userInput == 'y' || userInput == 'Y';
+}
+
+void CPacketHandler::CapturePackets(const char* interfaceName) {
+    std::cout << COLOR_RED "Capturing packets on " << interfaceName << "... Press Ctrl+C to stop" << COLOR_RESET << std::endl;
+
+    char errbuf[PCAP_ERRBUF_SIZE];
+    auto pcapHandle = pcap_open_live(interfaceName, MAX_SNAP_LEN, 1, 10, errbuf);
+    if (!pcapHandle) {
+        std::cerr << "Couldn't open device " << interfaceName << ": " << errbuf << std::endl;
+        return;
+    }
+
+    auto pcapDumper = pcap_dump_open(pcapHandle, "captured_packets.pcap");
+    if (!pcapDumper) {
+        std::cerr << "Couldn't open output file: " << pcap_geterr(pcapHandle) << std::endl;
+        return;
+    }
+
+    signal(SIGINT, CPacketHandler::SigintHandler);
+
+    auto pcapCallback = [](u_char* userData, const struct pcap_pkthdr* pkthdr, const u_char* packet) {
+        pcap_dump(userData, pkthdr, packet);
+    };
+
+    while (!stop_capture) {
+        pcap_dispatch(pcapHandle, 0, pcapCallback, (u_char*)pcapDumper);
+    }
+
+    pcap_dump_close(pcapDumper);
+    pcap_close(pcapHandle);
+
+    std::cout << "Packets captured and saved to 'captured_packets.pcap'.\n" << std::endl;
+}
+
+void CPacketHandler::AnalyzeCapturedPackets() {
+    auto result = AnalyzeNetworkTraffic("captured_packets.pcap");
+    if (result == SUCCESS_CODE) {
+        std::cout << COLOR_GREEN "Packet analysis completed successfully." << COLOR_RESET << std::endl;
+    } else {
+        std::cerr << "Packet analysis failed with error code: " << result << std::endl;
+    }
+
+    vt.print(std::cout);
+
+    if (PromptUserForBlockingIPs()) {
+        BlockDetectedIPs();
+    }
+}
+
+bool CPacketHandler::PromptUserForBlockingIPs() {
+    char userInput;
+    std::cout << COLOR_RED "Do you want to block the detected malicious IPs? (y/n): " << COLOR_RESET;
+    std::cin >> userInput;
+    return userInput == 'y' || userInput == 'Y';
+}
+
+void CPacketHandler::BlockDetectedIPs() {
+    std::ifstream infile("logs/malicious_ips.log");
+    if (!infile.is_open()) {
+        std::cerr << "Could not open malicious_ips.log for reading." << std::endl;
+        return;
+    }
+
+    std::string ip;
+    while (std::getline(infile, ip)) {
+        disableOutput();
+        int sshInputResult = RunIptables("INPUT", ip, "22", "ACCEPT");
+        int sshOutputResult = RunIptables("OUTPUT", ip, "22", "ACCEPT");
+        enableOutput();
+        if (sshInputResult != SUCCESS_CODE || sshOutputResult != SUCCESS_CODE) {
+            std::cerr << "Failed to set SSH exception for IP " << ip << "." << std::endl;
+            continue;
+        }
+        int result = RunIptables("INPUT", ip, "ANY", "DROP");
+        if (result == SUCCESS_CODE) {
+            std::cout << "IP " << ip << " has been blocked successfully.\n" << std::endl;
+        } else {
+            std::cerr << "Failed to block IP " << ip << "." << std::endl;
+        }
+    }
+
+    infile.close();
 }
 
 int CPacketHandler::RunIptables(std::string direction, std::string ip, std::string port, std::string action){

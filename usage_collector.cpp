@@ -12,13 +12,12 @@
 
 // 명령어를 실행하고 그 결과를 문자열로 반환하는 함수
 int CUsageCollector::RunCommand(const char* pCommand, std::string& strResult) {
-    char chOutputBuffer[128];
+    char chOutputBuffer[BUFFER_SIZE];
     strResult = "";
     FILE* pPipe = nullptr;
     try {
         pPipe = popen(pCommand, "r");
         if (!pPipe) return ERROR_CANNOT_OPEN_FILE;
-        
         while (fgets(chOutputBuffer, sizeof(chOutputBuffer), pPipe) != nullptr) {
             strResult += chOutputBuffer;
         }
@@ -37,7 +36,6 @@ int CUsageCollector::SaveDataToFile(const std::string& strData, const std::strin
     try {
         outputFile.open(strFileName, std::ios::out | std::ios::app);
         if (!outputFile) return ERROR_CANNOT_OPEN_FILE;
-
         outputFile << strData;
 
         if (!outputFile.good()) return ERROR_CANNOT_WRITE_FILE;
@@ -81,18 +79,15 @@ int CUsageCollector::SaveUsageToFile(const std::string& strFileName) {
     std::string strCpuUsage, strDiskUsage, strNetworkUsage;
 
     int nErrorCode = GetCpuUsage(strCpuUsage);
-    if (nErrorCode != SUCCESS_CODE) return nErrorCode;
-    
+    if (nErrorCode != SUCCESS_CODE) return nErrorCode;  
     strCpuUsage = "CPU Usage: " + strCpuUsage + "%\n\n";
 
     nErrorCode = GetDiskUsage(strDiskUsage);
     if (nErrorCode != SUCCESS_CODE) return nErrorCode;
-
     strDiskUsage = "Disk Usage:\n" + strDiskUsage + "\n";
 
     nErrorCode = GetNetworkUsage(strNetworkUsage);
     if (nErrorCode != SUCCESS_CODE) return nErrorCode;
-
     strNetworkUsage = "Network Usage:\n" + strNetworkUsage + "\n";
 
     std::string strUsageInfo = "********************************************************************************* Usage Information *********************************************************************************\n" + strCpuUsage + strDiskUsage + strNetworkUsage;
