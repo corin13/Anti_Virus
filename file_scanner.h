@@ -34,6 +34,7 @@ class CFileScanner {
 public:
     static bool m_bStopScanning;
 
+    CFileScanner();
     int StartScan();
     int StartIniScan();
 

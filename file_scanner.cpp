@@ -15,6 +15,9 @@
 // 전역 변수 추가
 bool CFileScanner::m_bStopScanning = false;
 
+CFileScanner::CFileScanner() 
+    : m_nScanTypeOption(YARA_RULE), m_nFileTypeOption(ALL_FILES), m_nFileCount(0), m_llTotalSize(0), m_dScanTime(0.0) {}
+
 // 신호 처리기 함수 추가
 void signalHandler(int signal) {
     if (signal == SIGINT) {
@@ -74,7 +77,6 @@ int CFileScanner::PerformFileScan() {
     std::string strFileTypeInput;
     getline(std::cin, strFileTypeInput);
 
-    m_nFileTypeOption = ALL_FILES; // 기본값으로 모든 파일 검사
     if (strFileTypeInput == "3") {
         m_nFileTypeOption = SPECIFIC_EXTENSION;
         std::cout << "Enter the file extension to scan (Default is 'exe'): ";
