@@ -1,6 +1,5 @@
 #include "firewall.h"
-#include "config_firewall.h"
-#include "VariadicTable.h"
+
 
 int Firewall() {
     int option = 0;
@@ -108,7 +107,6 @@ int ConfigureFirewall(){
 
         PrintConfigMenual();
 
-        std::cout << "COMMAND : ";
         std::getline(std::cin, input);
         std::cout << std::endl;
 
@@ -433,8 +431,11 @@ void PrintConfigMenual(){
         "\033[1;32m[UPDATE] : \033[0m [U/update] [Rule Number] [OPTION] [>] [Change Value]\n"
         "\033[1;31m[DELETE] : \033[0m [D/delete] [Rule Number] \n"
         "\033[1;33m[LIST]   : \033[0m [L/list] \n\n" 
+
         "\033[36m[EXIT]\033[0m "
-        "\033[35m[HELP]\033[0m \n" << std::endl;
+        "\033[35m[HELP]\033[0m \n\n"
+
+        "COMMAND : ";
 }
 
 
@@ -451,18 +452,23 @@ void handle_exit(int signum) {
 int FirewallHelp() {
     std::cout << 
         "A, add     -Rule Add Command\n"       
-        "[TO]    : Outbound network\n"
-        "[FROM]  : Inbound network\n"
-        "[DROP]  : Blocking the network\n"
-        "[ACCEPT]: Allow the network\n\n"
+        "-[TO]    : Outbound network\n"
+        "-[FROM]  : Inbound network\n"
+        "-[DROP]  : Blocking the network\n"
+        "-[ACCEPT]: Allow the network\n\n"
 
         "U, update  -Rule Update Command \n"
-        "[Rule Number] : Rule Index Number\n"
-        "                                   [OPTION]: The title of the value you want to change\n"
-        "                                   [>]     : Must use '>' \n"
-        "                                   [Change Value]: Value to change\n\n"
-        "D, delete  -Rule Delete Command    [Rule Number] : Rule Index Number\n\n" 
-        "L, list    -Rule Inquiry Command\n"
-        "EXIT       -End Rule Set Commands\n" << std::endl;  
+        "-[Rule Number] : Rule Index Number\n"
+        "-[OPTION]: The title of the value you want to change\n"
+        "-[>]     : Must use '>' \n"
+        "-[Change Value]: Value to change\n\n"
+
+        "D, delete  -Rule Delete Command \n"    
+        "-[Rule Number] : Rule Index Number\n\n"
+
+        "L, list    -Rule Inquiry Command\n\n"
+        
+        "EXIT       -End Rule Set Commands\n" 
+        << std::endl;  
     return SUCCESS_CODE;
 }
