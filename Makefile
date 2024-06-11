@@ -4,10 +4,10 @@
 CXX=g++
 
 # 컴파일러 플래그 설정
-CXXFLAGS=-Wall -Wextra -O2 -std=c++17
+CXXFLAGS=-Wall -Wextra -O2 -std=c++17 -I/usr/local/include/pcapplusplus
 
 # 링커 플래그 설정
-LDFLAGS=-lssl -lcrypto -lyara -lpthread -ljsoncpp -lcurl -lpcap
+LDFLAGS=-lssl -lcrypto -lyara -lpthread -ljsoncpp -lcurl -lpcap -L/usr/local/lib -lPcap++ -lPacket++ -lCommon++
 
 # 최종 타겟 설정
 TARGET=UdkdAgent
@@ -30,11 +30,11 @@ $(TARGET): $(OBJECTS)
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ || (echo "Compilation failed on $<"; exit 1)
 
-# 'make clean'을 실행할 때 오브젝트 파일과 실행 파일 제거
+# 'make clean'을 실행할 때 오브젝트 파일 제거
 clean:
 	rm -f $(OBJECTS)
 
 # 라이브러리 설치 규칙
 install:
 	sudo apt-get update
-	sudo apt-get install -y libjsoncpp-dev libcurl4-openssl-dev libspdlog-dev sysstat ifstat yara libyara-dev libpcap-dev
+	sudo apt-get install -y libjsoncpp-dev libcurl4-openssl-dev libspdlog-dev sysstat ifstat yara libyara-dev libpcap-dev cmake

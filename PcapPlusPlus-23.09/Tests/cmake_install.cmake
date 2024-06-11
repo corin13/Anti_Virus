@@ -1,4 +1,4 @@
-# Install script for directory: /home/soyoung/Test2/PcapPlusPlus-23.09/Tests
+# Install script for directory: /home/hun/Desktop/Anti_Virus/PcapPlusPlus-23.09/Tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,9 +39,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/soyoung/Test2/PcapPlusPlus-23.09/Tests/Packet++Test/cmake_install.cmake")
-  include("/home/soyoung/Test2/PcapPlusPlus-23.09/Tests/Pcap++Test/cmake_install.cmake")
-  include("/home/soyoung/Test2/PcapPlusPlus-23.09/Tests/PcppTestFramework/cmake_install.cmake")
+  include("/home/hun/Desktop/Anti_Virus/PcapPlusPlus-23.09/Tests/Packet++Test/cmake_install.cmake")
+  include("/home/hun/Desktop/Anti_Virus/PcapPlusPlus-23.09/Tests/Pcap++Test/cmake_install.cmake")
+  include("/home/hun/Desktop/Anti_Virus/PcapPlusPlus-23.09/Tests/PcppTestFramework/cmake_install.cmake")
 
 endif()
 
