@@ -270,7 +270,7 @@ int CFileScanner::MoveFile(ST_ScanData& data, const std::string& destinationDir)
             return ERROR_CANNOT_CHANGE_PERMISSIONS;
         }
 
-        std::cout << "[+] Moved: " << data.DetectedFile << " -> " << GetAbsolutePath(strDestination) << "\n";
+        std::cout << COLOR_GREEN << "[+] Moved: " << data.DetectedFile << " -> " << GetAbsolutePath(strDestination) << COLOR_RESET << "\n";
         data.IsMoved = true;
         data.PathAfterMoving = GetAbsolutePath(strDestination);
 
