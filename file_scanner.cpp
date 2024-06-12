@@ -12,21 +12,17 @@
 #include "malware_hash_checker.h"
 #include "yara_checker.h"
 
-#define ALL_FILES 1
-#define ELF_FILES 2
-#define SPECIFIC_EXTENSION 3
-
-#define YARA_RULE 1
-#define HASH_COMPARISON 2
-
 // 전역 변수 추가
-bool CFileScanner::g_stopScanning = false;
+bool CFileScanner::m_bStopScanning = false;
+
+CFileScanner::CFileScanner() 
+    : m_nScanTypeOption(YARA_RULE), m_nFileTypeOption(ALL_FILES), m_nFileCount(0), m_llTotalSize(0), m_dScanTime(0.0) {}
 
 // 신호 처리기 함수 추가
 void signalHandler(int signal) {
     if (signal == SIGINT) {
         std::cout << "\nScan interrupted. Stopping the scan...\n";
-        CFileScanner::g_stopScanning = true;
+        CFileScanner::m_bStopScanning = true;
     }
 }
 
@@ -40,15 +36,14 @@ int CFileScanner::StartScan(){
     return SUCCESS_CODE;
 }
 
-
 int CFileScanner::StartIniScan(){
     //INI 파일에서 설정 값을 읽어옵니다.
-    m_scanTargetPath = Config::Instance().GetScanPath();
-    m_scanTypeOption = Config::Instance().GetScanType();
-    m_extension = Config::Instance().GetFileExtension(); // 설정 파일에서 확장자 값을 읽어옴
-    m_fileTypeOption = m_extension.empty() ? 1 : 3;
+    m_strScanTargetPath = Config::Instance().GetScanPath();
+    m_nScanTypeOption = Config::Instance().GetScanType();
+    m_strExtension = Config::Instance().GetFileExtension(); // 설정 파일에서 확장자 값을 읽어옴
+    m_nFileTypeOption = m_strExtension.empty() ? 1 : 3;
     
-    std::cout << "Starting scan on path: " << m_scanTargetPath << " with scan type: " << m_scanTypeOption << " and extension: " << m_extension << "\n";
+    std::cout << "Starting scan on path: " << m_strScanTargetPath << " with scan type: " << m_nScanTypeOption << " and extension: " << m_strExtension << "\n";
 
     // 스캔을 수행하는 함수 호출
     int result = ScanDirectory();
@@ -63,16 +58,16 @@ int CFileScanner::StartIniScan(){
 
 int CFileScanner::PerformFileScan() {
     std::cout << "Please enter the path (Default is '/') : ";
-    getline(std::cin, m_scanTargetPath);
+    getline(std::cin, m_strScanTargetPath);
 
-    if(m_scanTargetPath.empty()) {
-        m_scanTargetPath = "/"; // 경로가 비어있을 경우 디폴트로 '/' 설정
+    if(m_strScanTargetPath.empty()) {
+        m_strScanTargetPath = DEFAULT_PATH; // 경로가 비어있을 경우 디폴트로 '/' 설정
     }
-    if (!IsDirectory(m_scanTargetPath)) { // 경로 유효성 검사
+    if (!IsDirectory(m_strScanTargetPath)) { // 경로 유효성 검사
         return ERROR_PATH_NOT_FOUND;
     }
 
-    std::cout << "\n[-] Scan Path : " << m_scanTargetPath << "\n\n";
+    std::cout << "\n[-] Scan Path : " << m_strScanTargetPath << "\n\n";
 
         std::cout << "Select a file type to scan:\n\n"
             << "1. All files (Default)\n"
@@ -82,13 +77,12 @@ int CFileScanner::PerformFileScan() {
     std::string strFileTypeInput;
     getline(std::cin, strFileTypeInput);
 
-    m_fileTypeOption = ALL_FILES; // 기본값으로 모든 파일 검사
     if (strFileTypeInput == "3") {
-        m_fileTypeOption = SPECIFIC_EXTENSION;
+        m_nFileTypeOption = SPECIFIC_EXTENSION;
         std::cout << "Enter the file extension to scan (Default is 'exe'): ";
-        getline(std::cin, m_extension);
+        getline(std::cin, m_strExtension);
     } else if (strFileTypeInput == "1" || strFileTypeInput == "2") {
-        m_fileTypeOption = std::stoi(strFileTypeInput);
+        m_nFileTypeOption = std::stoi(strFileTypeInput);
     } else if (!strFileTypeInput.empty()) {
         return ERROR_INVALID_OPTION;
     }
@@ -103,9 +97,9 @@ int CFileScanner::PerformFileScan() {
     if (strScanTypeInput != "1" && strScanTypeInput != "2" && !strScanTypeInput.empty()) {
         return ERROR_INVALID_OPTION;
     }
-    m_scanTypeOption = (strScanTypeInput.empty() || strScanTypeInput == "1") ? YARA_RULE : HASH_COMPARISON;
+    m_nScanTypeOption = (strScanTypeInput.empty() || strScanTypeInput == "1") ? YARA_RULE : HASH_COMPARISON;
 
-    std::cout << "\n### File Scan Start ! (Path : " << m_scanTargetPath << " , FileTypeOption : " << m_fileTypeOption << " , ScanTypeOption : " << m_scanTypeOption << ") ###\n\n";
+    std::cout << "\n### File Scan Start ! (Path : " << m_strScanTargetPath << " , FileTypeOption : " << m_nFileTypeOption << " , ScanTypeOption : " << m_nScanTypeOption << ") ###\n\n";
 
     int nResult = ScanDirectory();
     if (nResult != SUCCESS_CODE) {
@@ -121,7 +115,7 @@ int CFileScanner::ScanDirectory() {
     // 파일 검사 시작 시간 기록
     auto start = std::chrono::high_resolution_clock::now();
 
-    char * const paths[] = {const_cast<char *>(m_scanTargetPath.c_str()), nullptr};
+    char * const paths[] = {const_cast<char *>(m_strScanTargetPath.c_str()), nullptr};
 
     FTS *fileSystem = fts_open(paths, FTS_NOCHDIR | FTS_PHYSICAL, nullptr);
     if (fileSystem == nullptr) {
@@ -130,46 +124,55 @@ int CFileScanner::ScanDirectory() {
 
     FTSENT *node;
     int nResult;
+
+    CYaraChecker IYaraChecker(YARA_RULES_PATH);
+    CMalwareHashChecker IMalwareHashChecker;
+    nResult = IMalwareHashChecker.LoadHashes(HASH_LIST_PATH);
+    if (nResult != SUCCESS_CODE) {
+        fts_close(fileSystem);
+        return nResult;
+    }
+    
     signal(SIGINT, signalHandler);  // 신호 처리기 등록
-    while ((node = fts_read(fileSystem)) != nullptr && !g_stopScanning) {
+    while ((node = fts_read(fileSystem)) != nullptr && !m_bStopScanning) {
+        if (node->fts_info == FTS_D) {
+            // 특정 디렉토리를 건너뛰도록 설정
+            if (strcmp(GetAbsolutePath(node->fts_path).c_str(), GetAbsolutePath(DESTINATION_PATH).c_str()) == 0) {
+                fts_set(fileSystem, node, FTS_SKIP);
+                continue;
+            }
+        }
+
         if (node->fts_info == FTS_F) {
             bool shouldScan = false;
 
-            if (m_fileTypeOption == SPECIFIC_EXTENSION) {
-                if(m_extension.empty()) {
-                    m_extension = "exe";
+            if (m_nFileTypeOption == SPECIFIC_EXTENSION) {
+                if(m_strExtension.empty()) {
+                    m_strExtension = DEFAULT_EXTENSION;
                 }
-                shouldScan = IsExtension(node->fts_path, m_extension);
-            } else if (m_fileTypeOption == ELF_FILES) {
+                shouldScan = IsExtension(node->fts_path, m_strExtension);
+            } else if (m_nFileTypeOption == ELF_FILES) {
                 shouldScan = IsELFFile(node->fts_path);
             } else {
                 shouldScan = true;
             }
 
             if (shouldScan) {
-                m_fileCount++;
-                m_totalSize += node->fts_statp->st_size;
+                m_nFileCount++;
+                m_llTotalSize += node->fts_statp->st_size;
                 std::cout << node->fts_path << "\n";
                 std::string strDetectionCause;
-                if (m_scanTypeOption == YARA_RULE) {
-                    CYaraChecker IYaraChecker("./yara-rules");
-                    nResult = IYaraChecker.CheckYaraRule(node->fts_path, m_detectedMalware, strDetectionCause);
+                if (m_nScanTypeOption == YARA_RULE) {
+                    nResult = IYaraChecker.CheckYaraRule(node->fts_path, m_vecDetectedMalware, strDetectionCause);
                 } else {
-                    CMalwareHashChecker IMalwareHashChecker;
-                    std::string hashListPath = "./hashes.txt";
-                    nResult = IMalwareHashChecker.LoadHashes(hashListPath); // hashes.txt는 악성파일 해시값이 저장되어있는 텍스트 파일(현재는 테스트용으로 test.txt의 해시값이 저장되어 있음)
-                    if (nResult != SUCCESS_CODE) {
-                        fts_close(fileSystem);
-                        return nResult;
-                    }
-                    nResult = IMalwareHashChecker.CompareByHash(node, m_detectedMalware, strDetectionCause);
+                    nResult = IMalwareHashChecker.CompareByHash(node, m_vecDetectedMalware, strDetectionCause);
                 }
                 if(!strDetectionCause.empty()) {
                     ST_ScanData data = {
                     .DetectedFile = GetAbsolutePath(node->fts_path),
-                    .ScanType = m_scanTypeOption == YARA_RULE ? "Yara" : "Hash",
-                    .YaraRule = m_scanTypeOption == YARA_RULE ? strDetectionCause : "N/A",
-                    .HashValue = m_scanTypeOption == HASH_COMPARISON ? strDetectionCause : "N/A",
+                    .ScanType = m_nScanTypeOption == YARA_RULE ? "Yara" : "Hash",
+                    .YaraRule = m_nScanTypeOption == YARA_RULE ? strDetectionCause : "N/A",
+                    .HashValue = m_nScanTypeOption == HASH_COMPARISON ? strDetectionCause : "N/A",
                     .FileSize = "",
                     .Timestamp = GetCurrentTimeWithMilliseconds(),
                     .IsMoved = false,
@@ -194,7 +197,7 @@ int CFileScanner::ScanDirectory() {
 
     // 소요된 시간 계산 (밀리초 단위)
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    m_scanTime = duration.count() / 1000.0;
+    m_dScanTime = duration.count() / 1000.0;
 
     // 스캔 결과 출력
     nResult = PrintScanResult();
@@ -214,35 +217,34 @@ int CFileScanner::ScanDirectory() {
 int CFileScanner::PrintScanResult() {
         
     std::cout << "\n- File Scan Result -\n\n"
-            << COLOR_RED << "[+] Total Malware File : " << m_detectedMalware.size() << " files" << COLOR_RESET << "\n";
-    for (int i = 0; i < m_detectedMalware.size(); ++i) {
-        std::cout << COLOR_RED << "[" << i + 1 << "] : " << m_detectedMalware[i] << COLOR_RESET << "\n";
+            << COLOR_RED << "[+] Total Malware File : " << m_vecDetectedMalware.size() << " files" << COLOR_RESET << "\n";
+    for (int i = 0; i < m_vecDetectedMalware.size(); ++i) {
+        std::cout << COLOR_RED << "[" << i + 1 << "] : " << m_vecDetectedMalware[i] << COLOR_RESET << "\n";
     }
-    std::cout << "\n[+] Total Scan File : " << m_fileCount << " files " << m_totalSize << " bytes\n";
-    std::cout << "\n[+] File scan time :  " << std::fixed << std::setprecision(3) << m_scanTime << " sec\n";
+    std::cout << "\n[+] Total Scan File : " << m_nFileCount << " files " << m_llTotalSize << " bytes\n";
+    std::cout << "\n[+] File scan time :  " << std::fixed << std::setprecision(3) << m_dScanTime << " sec\n";
 
     return SUCCESS_CODE;
 }
 
 // 악성파일로 탐지된 파일들 특정 디렉토리로 이동
 int CFileScanner::MoveDetectedMalware() {
-    if (!m_detectedMalware.empty()) {
+    if (!m_vecDetectedMalware.empty()) {
         std::cout << "\nWould you like to move all detected malware files? (Y/n): ";
         std::string input;
         getline(std::cin, input);
 
         if (input == "y" || input.empty()) { // 기본값으로 엔터 입력을 y로 처리
             // 이동할 디렉토리 설정
-            std::string strDestinationDir = "./detected-malware";
-            if (!IsDirectory(strDestinationDir)) {
-                if (mkdir(strDestinationDir.c_str(), 0700) != 0) {  // 관리자만 접근 가능
+            if (!IsDirectory(DESTINATION_PATH)) {
+                if (mkdir(DESTINATION_PATH, 0700) != 0) {  // 관리자만 접근 가능
                     return ERROR_CANNOT_OPEN_DIRECTORY;
                 }
             }
 
             // 발견된 모든 악성 파일을 이동
             for(ST_ScanData& data : m_vecScanData) {
-                int nResult = MoveFile(data, strDestinationDir);
+                int nResult = MoveFile(data, DESTINATION_PATH);
                 if(nResult != SUCCESS_CODE) {
                     PrintErrorMessage(nResult);
                 }
@@ -268,7 +270,7 @@ int CFileScanner::MoveFile(ST_ScanData& data, const std::string& destinationDir)
             return ERROR_CANNOT_CHANGE_PERMISSIONS;
         }
 
-        std::cout << "[+] Moved: " << data.DetectedFile << " -> " << GetAbsolutePath(strDestination) << "\n";
+        std::cout << COLOR_GREEN << "[+] Moved: " << data.DetectedFile << " -> " << GetAbsolutePath(strDestination) << COLOR_RESET << "\n";
         data.IsMoved = true;
         data.PathAfterMoving = GetAbsolutePath(strDestination);
 
@@ -299,5 +301,5 @@ void CFileScanner::LogResult(ST_ScanData& data) {
     } else {
         logEntry["file_size"] = "N/A";
     }
-    SaveLogInJson(logEntry, "./logs/file_scanner.log");
+    SaveLogInJson(logEntry, LOG_FILE_PATH);
 }

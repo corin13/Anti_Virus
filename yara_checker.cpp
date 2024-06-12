@@ -5,8 +5,8 @@
 #include "util.h"
 #include "yara_checker.h"
 
-CYaraChecker::CYaraChecker(const std::string& rulesDirectory) : rulesDirectory(rulesDirectory) {
-    GetRuleFiles(rulesDirectory, ruleFiles);
+CYaraChecker::CYaraChecker(const std::string& rulesDirectory) : m_strRulesDirectory(rulesDirectory) {
+    GetRuleFiles();
 }
 
 // YARA 룰 매칭 콜백 함수
@@ -28,35 +28,35 @@ int CYaraChecker::YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, vo
 }
 
 // 디렉토리 내 YARA 룰 파일들을 가져오는 함수
-int CYaraChecker::GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFiles) {
+int CYaraChecker::GetRuleFiles() {
     DIR* dir;
     struct dirent* ent;
-    if ((dir = opendir(directory.c_str())) != nullptr) {
+    if ((dir = opendir(m_strRulesDirectory.c_str())) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
             if (ent->d_type == DT_REG) { // regular file
-                std::string strFilePath = directory + "/" + ent->d_name;
-                ruleFiles.push_back(GetAbsolutePath(strFilePath));
+                std::string strFilePath = m_strRulesDirectory + "/" + ent->d_name;
+                m_vecRuleFiles.push_back(GetAbsolutePath(strFilePath));
             }
         }
         closedir(dir);
         return SUCCESS_CODE;
     } else {
-        PrintError("Could not open directory " + directory );
+        PrintError("Could not open directory " + m_strRulesDirectory );
         return ERROR_CANNOT_OPEN_DIRECTORY;
     }
 }
 
-int CYaraChecker::CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& strDetectionCause) {
+int CYaraChecker::CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& detectionCause) {
     YR_COMPILER* compiler = nullptr;
     YR_RULES* rules = nullptr;
 
     // YARA 룰 파일 리스트
-    if (ruleFiles.empty()) {
+    if (m_vecRuleFiles.empty()) {
         PrintError("No YARA rules files found.");
     }
     
     // filePath가 ruleFiles에 있는지 확인
-    if (std::find(ruleFiles.begin(), ruleFiles.end(), GetAbsolutePath(filePath)) != ruleFiles.end()) {
+    if (std::find(m_vecRuleFiles.begin(), m_vecRuleFiles.end(), GetAbsolutePath(filePath)) != m_vecRuleFiles.end()) {
         std::cout << "\n" << COLOR_YELLOW << "[+] Skipping YARA rule check for file : " << filePath << COLOR_RESET << "\n\n";
         return SUCCESS_CODE;
     }
@@ -76,7 +76,7 @@ int CYaraChecker::CheckYaraRule(const std::string& filePath, std::vector<std::st
     int nResult = SUCCESS_CODE;
 
     // YARA 룰 파일들 추가
-    for (const auto& ruleFile : ruleFiles) {
+    for (const auto& ruleFile : m_vecRuleFiles) {
         FILE* ruleFilePtr = fopen(ruleFile.c_str(), "r");
         if (!ruleFilePtr) {
             PrintError("Failed to open YARA rules file.");
@@ -107,7 +107,7 @@ int CYaraChecker::CheckYaraRule(const std::string& filePath, std::vector<std::st
                 PrintError("Error scanning file " + filePath);
                 nResult = ERROR_YARA_LIBRARY;
             }
-            strDetectionCause = yaraData.NameOfYaraRule;
+            detectionCause = yaraData.NameOfYaraRule;
         }
     }
 

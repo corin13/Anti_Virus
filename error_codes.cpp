@@ -44,6 +44,8 @@ std::string GetErrorMessage(int code) {
             return "Failed to find interface";
         case ERROR_CANNOT_OPEN_DEVICE:
             return "Failed to open device";
+        case ERROR_DATABASE_GENERAL:
+            return "Database error";
         case ERROR_UNKNOWN:
         default:
             return "Unknown error";
