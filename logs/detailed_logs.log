@@ -120,3 +120,81 @@ Malicious packet detected: 192.168.64.2
 Large packet detected in 192.168.64.2: 1500 bytes
 Large packet detected in 192.168.64.1: 1500 bytes
 [2024-06-11 14:05:53] [info] Logged message.
+[2024-06-11 14:20:26] [info] Logged message.
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+Large packet detected in 192.168.64.2: 1500 bytes
+Large packet detected in 192.168.64.1: 1500 bytes
+Large packet detected in 13.70.79.200: 4584 bytes
+Malicious packet detected: 13.70.79.200
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+Malicious payload detected in 0.0.0.0
+Malicious packet detected: 0.0.0.0
+- Reason: Malicious payload
+Large packet detected in 0.0.0.0: 2048 bytes
+Packet fragmentation detected: 0.0.0.0
+Malicious packet detected: 0.0.0.0
+- Reason: Packet fragmentation
+Malicious payload detected in 0.0.0.0
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+IP Flooding detected in 127.0.0.1
+Malicious packet detected: 127.0.0.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+Large packet detected in 189.100.192.168: 2048 bytes
+Packet fragmentation detected: 189.100.192.168
+Malicious packet detected: 189.100.192.168
+- Reason: Packet fragmentation
+Large packet detected in 137.107.192.168: 2048 bytes
+Packet fragmentation detected: 137.107.192.168
+Malicious packet detected: 137.107.192.168
+- Reason: Packet fragmentation
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding

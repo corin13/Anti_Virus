@@ -49,6 +49,7 @@ enum iniFormat {
 #include "error_codes.h"
 #include "VariadicTable.h"
 #include "config_firewall.h"
+#include "ansi_color.h"
 
 int Firewall();
 

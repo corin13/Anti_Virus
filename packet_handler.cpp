@@ -29,24 +29,6 @@ CPacketHandler::CPacketHandler()
 
 CPacketHandler::~CPacketHandler() {}
 
-// IP 헤더의 체크섬을 계산
-unsigned short CheckSum(void *b, int len) {
-    unsigned short *buf = (unsigned short*)b;
-    unsigned int sum = 0;
-    unsigned short result;
-
-    for (sum = 0; len > 1; len -= 2) {
-        sum += *buf++;
-    }
-    if (len == 1) {
-        sum += *(unsigned char*)buf;
-    }
-    sum = (sum >> HALF_WORD_SIZE) + (sum & HALF_WORD_MASK);
-    sum += (sum >> HALF_WORD_SIZE);
-    result = ~sum;
-    return result;
-}
-
 // 공통 패킷 처리 함수
 void CPacketHandler::ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP) {
     pHandler->AnalyzePacket(pIpHeader, pPayload, nPayloadLength, srcIP);
@@ -62,7 +44,7 @@ void CPacketHandler::PacketHandler(u_char *pUserData, const struct pcap_pkthdr* 
     const u_char* pPayload = pPacket + ETHERNET_HEADER_LENGTH + nIpHeaderLength; 
     std::string strSrcIP = inet_ntoa(pIpHeader->ip_src); 
 
-    ProcessPacket(pHandler, pIpHeader, nPayloadLength, pPayload, strSrcIP); 
+    pHandler->ProcessPacket(pHandler, pIpHeader, nPayloadLength, pPayload, strSrcIP); 
 }
 
 std::atomic<uint64_t> totalBytes(0);  
@@ -85,7 +67,7 @@ void CPacketHandler::LogPacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice*
         int nPayloadLength = packetLen - (pIpHeader->ip_hl * IP_HEADER_LENGTH_UNIT);
         const u_char* pPayload = (const u_char*)ipLayer->getData() + (pIpHeader->ip_hl * IP_HEADER_LENGTH_UNIT);
 
-        ProcessPacket(handler, pIpHeader, nPayloadLength, pPayload, srcIP);
+        handler->ProcessPacket(handler, pIpHeader, nPayloadLength, pPayload, srcIP);
     }
 }
 
@@ -103,77 +85,6 @@ void CPacketHandler::MonitorBandwidth() {
         std::cout << "Current bandwidth: " << bandwidth << " bps" << std::endl;
         startTime = endTime;
     }
-}
-
-// 비정상 패킷을 지속적으로 생성하는 함수
-void CPacketHandler::GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPacketsSent) {
-    srand(static_cast<unsigned int>(time(0)));
-    std::ofstream logFile("logs/packet_transmission.log", std::ios_base::app);
-    logFile << "Sending packets..." << std::endl;
-    std::cout << COLOR_RED "Generating and sending malicious packets...\n" << COLOR_RESET << std::endl;
-
-    auto startTime = std::chrono::steady_clock::now();
-    while (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - startTime).count() < TRANSMISSION_DURATION) {
-        for (int i = 0; i < PACKETS_PER_INTERVAL; i++) {
-            std::string src_ip = "192.168." + std::to_string(rand() % MAX_SEGMENT_VALUE) + "." + std::to_string(rand() % MAX_SEGMENT_VALUE);
-            SendMaliciousPacket(src_ip.c_str(), "192.168.1.1", 1, logFile);
-            totalMaliciousPacketsSent++;
-            std::cout << "\rTotal malicious packets sent: " << totalMaliciousPacketsSent.load() << std::flush;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(TRANSMISSION_INTERVAL));
-    }
-
-    logFile << "Total malicious packets sent: " << totalMaliciousPacketsSent.load() << std::endl;
-    logFile.close();
-}
-
-// 비정상 패킷을 전송하는 함수
-void CPacketHandler::SendMaliciousPacket(const char* src_ip, const char* dst_ip, int packet_count, std::ofstream& logFile) {
-    int sock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
-    if (sock < 0) {
-        perror("Socket creation failed");
-        exit(1);
-    }
-
-    char packet[PACKET_BUFFER_SIZE];
-    memset(packet, 0, PACKET_BUFFER_SIZE);
-
-    struct iphdr *iph = (struct iphdr *)packet;
-    struct udphdr *udph = (struct udphdr *)(packet + sizeof(struct iphdr));
-    struct sockaddr_in sin;
-
-    sin.sin_family = AF_INET;
-    sin.sin_addr.s_addr = inet_addr(dst_ip);
-
-    iph->ihl = IP_HEADER_LENGTH;
-    iph->version = IP_VERSION;
-    iph->tos = IP_TYPE_OF_SERVICE;
-    iph->tot_len = htons(sizeof(struct iphdr) + sizeof(struct udphdr) + MAX_PACKET_SIZE);
-    iph->id = htonl(rand() % MAX_PACKET_ID); 
-    iph->frag_off = htons(IP_MORE_FRAGMENTS); 
-    iph->ttl = IP_TTL;
-    iph->protocol = IPPROTO_UDP; 
-    iph->check = 0; 
-    iph->saddr = inet_addr(src_ip);
-    iph->daddr = sin.sin_addr.s_addr;
-
-    udph->source = htons(SOURCE_PORT);
-    udph->dest = htons(DESTINATION_PORT);
-    udph->len = htons(sizeof(struct udphdr) + MAX_PACKET_SIZE);
-    udph->check = 0; 
-
-    memset(packet + sizeof(struct iphdr) + sizeof(struct udphdr), 'A', MAX_PACKET_SIZE); 
-    iph->check = CheckSum((unsigned short *)packet, sizeof(struct iphdr) + sizeof(struct udphdr) + MAX_PACKET_SIZE);
-
-    for (int i = 0; i < packet_count; i++) {
-        if (sendto(sock, packet, sizeof(struct iphdr) + sizeof(struct udphdr) + MAX_PACKET_SIZE, 0, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
-            perror("Packet send failed");
-        } else {
-            logFile << "Packet sent from " << src_ip << " to " << dst_ip << std::endl;
-        }
-    }
-
-    close(sock);
 }
 
 std::atomic<bool> stop_capture(false);
@@ -410,7 +321,7 @@ int CPacketHandler::RunSystem(const char* interfaceName) {
     }
 
     std::atomic<int> totalMaliciousPacketsSent(0);
-    std::thread packetThread(&CPacketHandler::GenerateMaliciousPackets, std::ref(totalMaliciousPacketsSent));
+    std::thread packetThread(GenerateMaliciousPackets, std::ref(totalMaliciousPacketsSent));
     packetThread.join();
 
     CPacketHandler handler;
@@ -503,22 +414,34 @@ void CPacketHandler::BlockDetectedIPs() {
     }
 
     std::string ip;
+    bool ipBlocked = false; // IP가 차단되었는지 여부를 추적하는 변수
+
+    disableOutput();
     while (std::getline(infile, ip)) {
-        disableOutput();
         int sshInputResult = ::RunIptables("INPUT", ip, "22", "ACCEPT");
         int sshOutputResult = ::RunIptables("OUTPUT", ip, "22", "ACCEPT");
-        enableOutput();
+        
         if (sshInputResult != SUCCESS_CODE || sshOutputResult != SUCCESS_CODE) {
+            enableOutput();
             std::cerr << "Failed to set SSH exception for IP " << ip << "." << std::endl;
+            disableOutput();
             continue;
         }
+        
         int result = ::RunIptables("INPUT", ip, "ANY", "DROP");
+        enableOutput();
         if (result == SUCCESS_CODE) {
             std::cout << "IP " << ip << " has been blocked successfully.\n" << std::endl;
+            ipBlocked = true;
         } else {
             std::cerr << "Failed to block IP " << ip << "." << std::endl;
         }
+        disableOutput();
     }
-
+    enableOutput();
     infile.close();
+
+    if (!ipBlocked) {
+        std::cout << "No IPs blocked." << std::endl; // IP가 차단되지 않았음을 알림
+    }
 }

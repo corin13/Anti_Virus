@@ -21,7 +21,7 @@ OBJECTS=$(SOURCES:.cpp=.o)
 all: $(TARGET)
 	@echo "Build successful!"
 	@$(MAKE) clean
-
+	
 # 최종 실행 파일 생성 규칙
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) || (echo "Build failed!"; exit 1)
