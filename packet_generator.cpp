@@ -36,7 +36,7 @@ void GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPacketsSent) {
     logFile << "Sending packets..." << std::endl;
     {
         std::lock_guard<std::mutex> lock(print_mutex); // 출력 동기화
-        std::cout << COLOR_RED "Generating and sending malicious packets...\n" << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN "Packets being sent over the network for 10 seconds...\n" << COLOR_RESET << std::endl;
     }
 
     auto startTime = std::chrono::steady_clock::now();
