@@ -16,7 +16,7 @@
 #define ADD_ACTION (4)
 ////////////////////////////////
 //UPDATE
-#define UPDATE_LENGTH (4)
+#define UPDATE_LENGTH (5)
 #define UPDATE_NUMBER (1)
 #define UPDATE_OPTION (2)
 #define UPDATE_REDIRECTION (3)
@@ -45,6 +45,7 @@ enum iniFormat {
 #include <cstdlib>
 #include <unistd.h>
 #include <csignal>
+#include <algorithm>
 
 #include "error_codes.h"
 #include "VariadicTable.h"
@@ -70,6 +71,8 @@ void ExecCommand(std::string cmd);
 int FirewallHelp();
 
 std::vector<std::string> ConfigureUserInput(std::string& input);
+std::string GetSectionName(auto& iniData, int number);
+
 
 int RunIptables();
 int RunIptables(std::string direction, std::string ip, std::string port, std::string action);
@@ -77,3 +80,6 @@ int RunIptables(std::string direction, std::string ip, std::string port, std::st
 int isVaildInput(std::vector<std::string>& words);
 bool isValidIP(const std::string& ip);
 bool isValidPort(const std::string& port);
+bool isValidNumber(const std::string& number);
+
+void PrintInputError(std::string error);

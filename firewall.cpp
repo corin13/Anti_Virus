@@ -48,46 +48,30 @@ int RunFirewall(){
         return ERROR_INVALID_FUNCTION;
     }
 
-    std::cout << "Firewall rules loaded successfully in StartFirewall\n";
     
     signal(SIGINT, handle_exit);
     signal(SIGTERM, handle_exit);
     
-    // 이부분 문제
-    auto rulesList= FirewallConfig::Instance().GetRulesList();
-    std::istringstream iss(rulesList);
-    std::string line;
-    
-    while (std::getline(iss, line)) {
-        if (line.empty()) continue;
 
-        if (line[0] == '[' && line.back() == ']') {
-            std::string sectionName = line.substr(1, line.length() - 2);
-            auto sectionData = FirewallConfig::Instance().GetSectionData(sectionName);
-        
-            for (const auto& item : sectionData) {
-                auto& value = item.second;
-            }   
+    auto& iniData = FirewallConfig::Instance().GetIniData();
+    for (auto id : iniData){
+        std::vector<std::string> iniList;
+
+        for (auto idSecond : id.second){
+            iniList.push_back(idSecond.second);
         }
+        RunIptables(iniList[DIRECTION], iniList[IP], iniList[PORT],iniList[ACTION]);
     }
 
+    while (true){
+        std::cout << "run" << std::endl;
+        sleep(1);
+    }
 
+    return SUCCESS_CODE;
     // ExecCommand("iptables -A INPUT -j LOG --log-prefix \"INPUT packet: \" --log-level 1");
     // ExecCommand("iptables -A OUTPUT -j LOG --log-prefix \"OUTPUT packet: \" --log-level 1");
-    // for (auto& section : iniData){ 
-    //     std::vector<std::string> tmpCmd;
-    //     std::cout << section.first << std::endl;
-
-    //     for (auto& key : section.second){
-    //         tmpCmd.push_back(key.second);
-    //     }
-
-    //     std::cout << tmpCmd[DIRECTION] << tmpCmd[IP] << tmpCmd[PORT] << tmpCmd[ACTION] <<std::endl;
-    //     RunIptables(tmpCmd[DIRECTION], tmpCmd[IP], tmpCmd[PORT],tmpCmd[ACTION]);
-
-    // }
-    // ExecCommand("tail -f /var/log/syslog | grep -e \"INPUT packet:\" -e \"OUTPUT packet:\" ");
-
+    
 }
 
 
@@ -127,15 +111,15 @@ int ConfigureFirewall(){
         if (cmd =="a"){
             statusCode=AddRule(words);
         }
-        // else if (cmd == "u"){
-        //     statusCode=UpdateRule(words);
-        // }
-        // else if (cmd == "d") {
-        //     statusCode = DeleteRule(words);
-        // }
-        // else if (cmd == "l"){
-        //     statusCode = RuleList();
-        // }
+        else if (cmd == "u"){
+            statusCode=UpdateRule(words);
+        }
+        else if (cmd == "d") {
+            statusCode = DeleteRule(words);
+        }
+        else if (cmd == "l"){
+            statusCode = RuleList();
+        }
         else if (cmd == "help"){
             statusCode = FirewallHelp();
         }
@@ -234,6 +218,7 @@ std::vector<std::string> ConfigureUserInput(std::string& input){
         word = (word == "add") ? "a" : (word == "update") ? "u" : (word == "delete") ? "d" : (word == "list") ? "l" : word;
         word = (word == "x" || word == "drop") ? "DROP" : (word == "o" || word=="accept") ? "ACCEPT" :  word;
         word = (word == "to" || word =="output") ? "OUTPUT" : (word == "from" || word == "input") ? "INPUT" : word;
+        word = (word == "any") ? "ANY" : word;
 
         words.push_back(word);
     }
@@ -252,9 +237,18 @@ std::vector<std::string> ConfigureUserInput(std::string& input){
     return words;
 }
 
-int isVaildInput(std::vector<std::string>& words){
 
 
+int isVaildInput(std::vector<std::string>& words) {
+    if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
+        std::cerr << "Failed to load firewall rules in ConfigureFirewall\n";
+        return ERROR_INVALID_FUNCTION;
+    }
+    auto& iniData = FirewallConfig::Instance().GetIniData();
+
+    std::vector<std::string> directionWords = {"INPUT", "OUTPUT"};
+    std::vector<std::string> actionWords = {"DROP", "ACCEPT"};
+    
     std::string command= words[COMMAND];
 
     if (command =="a"){
@@ -266,20 +260,20 @@ int isVaildInput(std::vector<std::string>& words){
         }
 
         //입력값 검증
-        if (!(words[ADD_DIRECTION] == "OUTPUT" || words[ADD_DIRECTION] =="INPUT")){
-            std::cerr << "Invalid Direction : " << words[ADD_DIRECTION] << std::endl;
+        if (std::find(directionWords.begin(),directionWords.end(),words[ADD_DIRECTION]) == directionWords.end()){
+            PrintInputError(words[ADD_DIRECTION]);
             return ERROR_INVALID_INPUT;
         }
-        if (!(isValidIP(words[ADD_IP]) || words[ADD_IP] =="ANY")){
-            std::cerr << "Invalid IP format : " << words[ADD_IP] << std:: endl;
+        if (!isValidIP(words[ADD_IP])){
+            PrintInputError(words[ADD_IP]);
             return ERROR_INVALID_INPUT;
         }
-        if (!(isValidPort(words[ADD_PORT]) || words[ADD_PORT] =="ANY")){
-            std::cerr << "Invalid PORT format : " << words[ADD_PORT] << std:: endl;
+        if (!isValidPort(words[ADD_PORT])){
+            PrintInputError(words[ADD_PORT]);
             return ERROR_INVALID_INPUT;
         }
-        if (!(words[ADD_ACTION] == "DROP" || words[ADD_ACTION] == "ACCEPT")){
-            std::cerr << "Invalid Action : " << words[ADD_ACTION] << std:: endl;
+        if (std::find(actionWords.begin(),actionWords.end(),words[ADD_ACTION]) == actionWords.end()){
+            PrintInputError(words[ADD_ACTION]);
             return ERROR_INVALID_INPUT;
         }
 
@@ -289,27 +283,101 @@ int isVaildInput(std::vector<std::string>& words){
         
         //길이 검증
         if (words.size() != UPDATE_LENGTH){
-            std::cout << "Invalid length input." << std::endl;
+            std::cerr << "Invalid length input." << std::endl;
             return ERROR_INVALID_INPUT;
         }
 
         //입력값 검증
-        // for (auto& section : iniData) {
-        //     if (words[U_NUMBER] == section) 
-        // }
+
+        if (!isValidNumber(words[UPDATE_NUMBER])) {
+            PrintInputError(words[UPDATE_NUMBER]);
+            return ERROR_INVALID_INPUT;
+        }
+
+        int UpdateNum = std::stoi(words[UPDATE_NUMBER]);
+
+        if (iniData.size() < UpdateNum || UpdateNum < 1) {
+            PrintInputError(words[UPDATE_NUMBER]);
+            return ERROR_INVALID_INPUT;
+        }
+
+        if (words[UPDATE_REDIRECTION] != ">"){
+            PrintInputError(words[UPDATE_REDIRECTION]);
+            return ERROR_INVALID_INPUT;
+        }
+
+        if (words[UPDATE_OPTION] =="direction"){
+            if (std::find(directionWords.begin(),directionWords.end(),words[UPDATE_NEW_VALUE]) == directionWords.end()){
+                PrintInputError(words[UPDATE_NEW_VALUE]);
+                return ERROR_INVALID_INPUT;
+            }
+        }
+        else if (words[UPDATE_OPTION] == "ip"){
+            if (!isValidIP(words[UPDATE_NEW_VALUE])){
+                PrintInputError(words[UPDATE_NEW_VALUE]);
+                return ERROR_INVALID_INPUT;
+            }
+        }
+        else if (words[UPDATE_OPTION] == "port") {
+            if (!isValidPort(words[UPDATE_NEW_VALUE])){
+                PrintInputError(words[UPDATE_NEW_VALUE]);
+                return ERROR_INVALID_INPUT;
+            }
+        }
+        else if (words[UPDATE_OPTION] == "action") {
+            if (std::find(actionWords.begin(),actionWords.end(),words[UPDATE_NEW_VALUE]) == actionWords.end()){
+                PrintInputError(words[UPDATE_NEW_VALUE]);
+                return ERROR_INVALID_INPUT;
+            }
+        }
+        else {
+            PrintInputError(words[UPDATE_NEW_VALUE]);
+            return ERROR_INVALID_INPUT;
+        }
+
+        return SUCCESS_CODE;
         
     }
-    // else if (command == "d"){
+    else if (command == "d"){
+        //길이 검증
+        if (words.size() != DELETE_LENGTH) {
+            std::cerr << "Invalid length input." << std::endl;
+            return ERROR_INVALID_INPUT;
+        }
 
-    // }   
-    // else if (command == "l"){
+        //입력값 검증
 
-    // }
+        if (words[DELETE_NUMBER] == "all"){
+            return SUCCESS_CODE;
+        }
+
+        if (!isValidNumber(words[DELETE_NUMBER])){
+            PrintInputError(words[DELETE_NUMBER]);
+            return ERROR_INVALID_INPUT;
+        }
+
+        int delNum = std::stoi(words[DELETE_NUMBER]);
+
+        if (iniData.size() < delNum || delNum < 1){
+            PrintInputError(words[DELETE_NUMBER]);
+            return ERROR_INVALID_INPUT;
+        }
+
+        return SUCCESS_CODE;
+
+    }     
+    else if (command == "l"){
+        if (words.size() !=1) {
+            std::cerr << "Invalid Input" << std::endl;
+            return ERROR_INVALID_INPUT;
+        }
+        return SUCCESS_CODE;
+    }
     else if (command == "exit" || command == "help"){
         return SUCCESS_CODE;
     }
     else {
-        std::cerr << "Invalid Command : " << command << std::endl;
+        PrintInputError(command);
         return ERROR_INVALID_INPUT; 
     }
 
@@ -329,77 +397,92 @@ int AddRule(std::vector<std::string>& words){
     return SUCCESS_CODE;    
     }
     catch(std::exception &e) {
-        std::cout << "ERROR : " << e.what() << std::endl;
+        std::cerr << "ERROR : " << e.what() << std::endl;
         return ERROR_UNKNOWN;
     }
 }
 
+
+
+
 // 기존 룰 업데이트 함수
-// int UpdateRule(std::vector<std::string>& words){
-//     if (words.size() == 5){
-//         file.read(ini);
-//         std::unordered_set<std::string> validWords = {"in", "out", "permit", "deny"};
-//         bool isValidWord = validWords.find(words[4]) != validWords.end();
+int UpdateRule(std::vector<std::string>& words){
+    
+    if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
+        std::cerr << "Failed to load firewall rules in ConfigureFirewall\n";
+        return ERROR_INVALID_FUNCTION;
+    }
 
-//         //입력값 검증
-//         if (ini[words[1]].has(words[2]) && words[3] == ">"){
-//             if (isValidIP(words[4]) || isValidPort(words[4]) || isValidWord){
-//                 ini[words[1]][words[2]]=words[4];
-//                 file.write(ini);
+    try {
+        auto& iniData = FirewallConfig::Instance().GetIniData();
+        std::string sectionName;
 
-//                 std::cout << "Rule successfully Updated\n" << std::endl;
-//                 return SUCCESS_CODE;
-//             }
-            
-//         }
-//     }
+        sectionName = GetSectionName(iniData, std::stoi(words[UPDATE_NUMBER]));
+        FirewallConfig::Instance().UpdateRule(sectionName, words[UPDATE_OPTION], words[UPDATE_NEW_VALUE]);
+        
+        std::cout << "Rule successfully Updated\n" << std::endl;
 
-//     return ERROR_INVALID_INPUT;
+        return SUCCESS_CODE;
+    }
+    catch(std::exception &e) {
+        std::cerr << "ERROR : " << e.what() << std::endl;
+        return ERROR_UNKNOWN;
+    }
+}
 
-// }
+
+//룰 삭제 함수
+int DeleteRule(std::vector<std::string>& words){
+    if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
+        std::cerr << "Failed to load firewall rules in ConfigureFirewall\n";
+        return ERROR_INVALID_FUNCTION;
+    }
+
+    auto iniData = FirewallConfig::Instance().GetIniData();
+
+    std::string sectionName;
+
+    if (words[DELETE_NUMBER] == "all") {
+        sectionName = "all";
+    }
+    else {
+        sectionName = GetSectionName(iniData, std::stoi(words[DELETE_NUMBER]));
+    }
+
+    FirewallConfig::Instance().DeleteRule(sectionName);
 
 
-// // 방화벽 룰 삭제 함수
-// int DeleteRule(std::vector<std::string>& words){
 
-//     file.read(ini);
-//     if (words[1] == "all"){
-//         ini.clear();
-//     }
-//     else if (ini.has(words[1])){
-//         ini.remove(words[1]);
-//     }
-//     else{
-//         return ERROR_INVALID_INPUT;
-//     }
-
-//     file.write(ini);
-//     std::cout << "Rule successfully Deleted\n" << std::endl;
-//     return SUCCESS_CODE;
-// }
+    std::cout << "Rule successfully Deleted\n" << std::endl;
+    return SUCCESS_CODE;
+}
 
 
 // 현재 설정된 방화벽 룰 확인 함수
-// int RuleList(){
-//     VariadicTable<std::string, std::string, std::string, std::string, std::string> vt({"No", "Direction", "IP Address", "PORT", "Action"}, 10);
+int RuleList(){
+    if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
+        std::cerr << "Failed to load firewall rules in ConfigureFirewall\n";
+        return ERROR_INVALID_FUNCTION;
+    }
+    VariadicTable<int, std::string, std::string, std::string, std::string> vt({"No", "Direction", "IP Address", "PORT", "Action"}, 10);
     
-//     file.read(ini);
+    auto iniData = FirewallConfig::Instance().GetIniData();
+    int ruleNumber =0;
 
-//     for (auto const& it : ini){ 
-//         std::vector<std::string> tmp;
-//         auto const& section = it.first;
-//         auto const& collection = it.second;
-        
-//          for (auto const& it2 : collection){
-//             tmp.push_back(it2.second);
-// 	    }
-//         vt.addRow(section,tmp[0],tmp[1],tmp[2],tmp[3]);
-//     }
+    for (auto& id : iniData){
+        ruleNumber++;
+        std::vector<std::string> dataFormat;
 
-//     vt.print(std::cout);
+        for (auto& sd : id.second){
+            dataFormat.push_back(sd.second);
+        }
+        vt.addRow(ruleNumber,dataFormat[DIRECTION],dataFormat[IP],dataFormat[PORT],dataFormat[ACTION]);
+    }
 
-//     return SUCCESS_CODE;
-// }
+    vt.print(std::cout);
+
+    return SUCCESS_CODE;
+}
 
 int ViewLogs(){
     return SUCCESS_CODE;
@@ -408,20 +491,42 @@ int ViewLogs(){
 
 
 
+std::string GetSectionName(auto& iniData, int number){
+    int cnt =1;
+    for (auto& id : iniData){
+        if (number == cnt){
+            return id.first;
+        }
+        else {
+            cnt ++;
+        }
+    }
+
+    return "";
+}
+
+
 // IP의 형식이 맞는지 비교하는 함수
 bool isValidIP(const std::string& ip) {
     std::regex ipPattern("^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\."
                          "(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\."
                          "(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\."
                          "(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$");
-    return std::regex_match(ip, ipPattern);
+    
+    return std::regex_match(ip, ipPattern) || ip == "ANY";
 }
 
 bool isValidPort(const std::string& port) {
     std::regex portPattern("^(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}|0)$");
-    return std::regex_match(port, portPattern);
+    return std::regex_match(port, portPattern) || port == "ANY";
 }
 
+bool isValidNumber(const std::string& number){
+    std::istringstream iss(number);
+    int num;
+
+    return (iss >> num) && (iss.eof());
+}
 
 
 // 2번 기능 메뉴얼 출력 함수
@@ -438,7 +543,9 @@ void PrintConfigMenual(){
         "COMMAND : ";
 }
 
-
+void PrintInputError(std::string error){
+    std::cerr << "Invalid Input : \"" << error << "\"" << std::endl;
+}
 
 // 프로그램 종료 시 iptables 룰 초기화 함수
 void handle_exit(int signum) {
@@ -447,7 +554,6 @@ void handle_exit(int signum) {
     system(cmd.c_str());
     exit(signum);
 }
-
 
 int FirewallHelp() {
     std::cout << 
