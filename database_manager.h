@@ -19,8 +19,12 @@ public:
     void LogEventToDatabase(const ST_MonitorData& data);
     std::string GetFileHash(const std::string& filePath);
     void RemoveFileFromDatabase(const std::string& filePath);
+    int64_t GetFileSize(const std::string& filePath);
 
 private:
     sqlite3* m_pDb;
+    
+    bool PrepareSQL(const std::string& sql, sqlite3_stmt** stmt);
+    void FinalizeAndExecuteSQL(sqlite3_stmt* stmt);
     void ExecuteSQL(const std::string& sql);
 };

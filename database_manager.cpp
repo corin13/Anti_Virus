@@ -27,7 +27,8 @@ void CDatabaseManager::InitializeDatabase() {
             file_path TEXT UNIQUE,
             creation_time TEXT,
             last_modified_time TEXT,
-            hash TEXT
+            hash TEXT,
+            file_size INTEGER
         );
 
         CREATE TABLE IF NOT EXISTS file_events (
@@ -45,6 +46,24 @@ void CDatabaseManager::InitializeDatabase() {
     ExecuteSQL(chSql);
 }
 
+// SQL 쿼리 준비
+bool CDatabaseManager::PrepareSQL(const std::string& sql, sqlite3_stmt** stmt) {
+    if (sqlite3_prepare_v2(m_pDb, sql.c_str(), -1, stmt, nullptr) != SQLITE_OK) {
+        PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to prepare statement: " + std::string(sqlite3_errmsg(m_pDb)));
+        return false;
+    }
+    return true;
+}
+
+// SQL 쿼리 실행 및 리소스 해제
+void CDatabaseManager::FinalizeAndExecuteSQL(sqlite3_stmt* stmt) {
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to execute statement: " + std::string(sqlite3_errmsg(m_pDb)));
+    }
+    sqlite3_finalize(stmt);
+}
+
+
 // 파일 이벤트 발생마다 데이터 추가 및 업데이트
 void CDatabaseManager::LogEventToDatabase(const ST_MonitorData& data) {
     sqlite3_stmt* stmt;
@@ -56,10 +75,9 @@ void CDatabaseManager::LogEventToDatabase(const ST_MonitorData& data) {
     )";
 
     // SQL 쿼리 준비
-    if (sqlite3_prepare_v2(m_pDb, insertEventSql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to prepare statement: " + std::string(sqlite3_errmsg(m_pDb)));
-        return;
-    }
+if (!PrepareSQL(insertEventSql, &stmt)) {
+    return;
+}
 
     // SQL 쿼리에 매개변수 바인딩
     sqlite3_bind_text(stmt, 1, data.filePath.c_str(), -1, SQLITE_STATIC);
@@ -71,25 +89,20 @@ void CDatabaseManager::LogEventToDatabase(const ST_MonitorData& data) {
     sqlite3_bind_int64(stmt, 7, data.processId);
 
     // SQL 쿼리 실행
-    if (sqlite3_step(stmt) != SQLITE_DONE) {
-        PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to insert event: " + std::string(sqlite3_errmsg(m_pDb)));
-    }
-
-    // SQL문 해제
-    sqlite3_finalize(stmt);
+    FinalizeAndExecuteSQL(stmt);
 
     // files 테이블 업데이트
     if (data.eventType != "File moved from" && data.eventType != "File deleted") {
         std::string updateMainSql = R"(
-            INSERT INTO files (file_path, creation_time, last_modified_time, hash)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO files (file_path, creation_time, last_modified_time, hash, file_size)
+            VALUES (?, ?, ?, ?, ?)
             ON CONFLICT(file_path) DO UPDATE SET
                 last_modified_time=excluded.last_modified_time,
-                hash=excluded.hash;
+                hash=excluded.hash,
+                file_size=excluded.file_size;
         )";
 
-        if (sqlite3_prepare_v2(m_pDb, updateMainSql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-            PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to prepare statement: " + std::string(sqlite3_errmsg(m_pDb)));
+        if (!PrepareSQL(updateMainSql, &stmt)) {
             return;
         }
 
@@ -97,12 +110,9 @@ void CDatabaseManager::LogEventToDatabase(const ST_MonitorData& data) {
         sqlite3_bind_text(stmt, 2, data.timestamp.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 3, data.timestamp.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_text(stmt, 4, data.newHash.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_int64(stmt, 5, data.fileSize);
 
-        if (sqlite3_step(stmt) != SQLITE_DONE) {
-            PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to update files table: " + std::string(sqlite3_errmsg(m_pDb)));
-        }
-
-        sqlite3_finalize(stmt);
+        FinalizeAndExecuteSQL(stmt);
     }
 }
 
@@ -120,9 +130,8 @@ std::string CDatabaseManager::GetFileHash(const std::string& filePath) {
     sqlite3_stmt* stmt;
     std::string sql = "SELECT hash FROM files WHERE file_path = ?";
 
-    if (sqlite3_prepare_v2(m_pDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        std::string strErrorMsg = "Failed to prepare statement: " + std::string(sqlite3_errmsg(m_pDb));
-        throw std::runtime_error(strErrorMsg);
+    if (!PrepareSQL(sql, &stmt)) {
+        return "";
     }
 
     sqlite3_bind_text(stmt, 1, filePath.c_str(), -1, SQLITE_STATIC);
@@ -132,13 +141,28 @@ std::string CDatabaseManager::GetFileHash(const std::string& filePath) {
         hash = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
     }
 
-    if (hash.empty()) {
-        return "";
+    sqlite3_finalize(stmt);
+    return hash;
+}
+
+// 특정 파일 경로의 파일 크기 가져옴
+int64_t CDatabaseManager::GetFileSize(const std::string& filePath) {
+    sqlite3_stmt* stmt;
+    std::string sql = "SELECT file_size FROM files WHERE file_path = ?";
+
+    if (!PrepareSQL(sql, &stmt)) {
+        return -1;
+    }
+
+    sqlite3_bind_text(stmt, 1, filePath.c_str(), -1, SQLITE_STATIC);
+
+    int64_t fileSize = -1;
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        fileSize = sqlite3_column_int64(stmt, 0);
     }
 
     sqlite3_finalize(stmt);
-
-    return hash;
+    return fileSize;
 }
 
 // 파일 경로에 대한 데이터를 files 테이블에서 삭제
@@ -146,26 +170,11 @@ void CDatabaseManager::RemoveFileFromDatabase(const std::string& filePath) {
     sqlite3_stmt* stmt;
     std::string sql = "DELETE FROM files WHERE file_path = ?";
 
-    if (sqlite3_prepare_v2(m_pDb, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to prepare statement: " + std::string(sqlite3_errmsg(m_pDb)));
+    if (!PrepareSQL(sql, &stmt)) {
         return;
     }
 
     sqlite3_bind_text(stmt, 1, filePath.c_str(), -1, SQLITE_STATIC);
 
-    if (sqlite3_step(stmt) != SQLITE_DONE) {
-        PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to delete file: " + std::string(sqlite3_errmsg(m_pDb)));
-        return;
-    }
-
-    sqlite3_finalize(stmt);
-/*
-    // 데이터베이스 변경 사항 커밋
-    char* errMsg = nullptr;
-    if (sqlite3_exec(m_pDb, "COMMIT;", nullptr, nullptr, &errMsg) != SQLITE_OK) {
-        PrintErrorMessage(ERROR_DATABASE_GENERAL, "Failed to commit transaction: " + std::string(errMsg));
-        sqlite3_free(errMsg);
-        return;
-    }
-    */
+    FinalizeAndExecuteSQL(stmt);
 }

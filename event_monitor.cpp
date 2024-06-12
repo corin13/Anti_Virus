@@ -127,7 +127,7 @@ void CEventMonitor::addWatchListToInotify() {
                 PrintErrorMessage(ERROR_CANNOT_OPEN_DIRECTORY, fullPath);
             } else {
                 m_mapWatchDescriptors[wd] = fullPath; // 전체 경로를 매핑에 추가
-                std::cout << "[+] Monitoring " << fullPath << "\n";
+                std::cout << COLOR_GREEN << "[+] Monitoring " << fullPath << COLOR_RESET << "\n";
             }
         }
     }
@@ -180,6 +180,11 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
         }
     }
 
+    // 파일 크기 가져오기
+    if (stat(data.filePath.c_str(), &pathStat) == 0) {
+        data.fileSize = pathStat.st_size;
+    } 
+
     std::cout << "[" << data.timestamp << "]";
 
     if (event->mask & IN_CREATE) {
@@ -195,19 +200,16 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
     } else if (event->mask & IN_MOVED_FROM) {
         data.eventType = "File moved from";
         data.oldHash = m_dbManager->GetFileHash(data.filePath);
+        data.fileSize = m_dbManager->GetFileSize(data.filePath);
         m_dbManager->RemoveFileFromDatabase(data.filePath);
     } else if (event->mask & IN_DELETE) {
         data.eventType = "File deleted";
         data.oldHash = m_dbManager->GetFileHash(data.filePath);
+        data.fileSize = m_dbManager->GetFileSize(data.filePath);
         m_dbManager->RemoveFileFromDatabase(data.filePath);
     } else {
         data.eventType = "Other event occurred";
     }
-
-    // 파일 크기 가져오기
-    if (stat(data.filePath.c_str(), &pathStat) == 0) {
-        data.fileSize = pathStat.st_size;
-    } 
 
     printEventsInfo(data);
     logEvent(data);
