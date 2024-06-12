@@ -302,6 +302,7 @@ bool isValidPort(const std::string& port) {
     return std::regex_match(port, portPattern);
 }
 
+// 여기서 종료시에 초기화 되는 느낌
 void handle_exit(int signum) {
     std::cout << "\nProgram is terminating\n" << std::endl;
     std::string cmd = "iptables -F";
