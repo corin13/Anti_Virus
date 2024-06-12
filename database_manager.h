@@ -17,6 +17,8 @@ public:
     
     void InitializeDatabase();
     void LogEventToDatabase(const ST_MonitorData& data);
+    std::string GetFileHash(const std::string& filePath);
+    void RemoveFileFromDatabase(const std::string& filePath);
 
 private:
     sqlite3* m_pDb;

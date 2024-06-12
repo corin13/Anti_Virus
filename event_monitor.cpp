@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include <jsoncpp/json/json.h>
+#include <pwd.h>
 #include <vector>
 #include <string>
 #include <sys/inotify.h>
@@ -14,7 +15,6 @@
 #include "email_sender.h"
 #include "event_monitor.h"
 #include "ini.h"
-#include "integrity_checker.h"
 #include "util.h"
 #include "config.h"
 
@@ -29,7 +29,7 @@ CEventMonitor::~CEventMonitor() {
 
 int CEventMonitor::StartMonitoring() {
     std::cout << "\nPlease select the task you'd like to perform:\n\n"
-        << "1. Perform a file event integrity check (Default)\n"
+        << "1. Perform a file event monitoring (Default)\n"
         << "2. Send today's log file to an email\n\n"
         << "Please enter the option: ";
     
@@ -52,10 +52,7 @@ int CEventMonitor::StartMonitoring() {
         
         // 감시할 파일 목록 읽기
         readWatchList();
-        
-        // 초기화 작업 수행: 해시 값 저장
-        initializeWatchList();
-        
+
         // inotify 인스턴스 생성
         createInotifyInstance();
         
@@ -101,30 +98,6 @@ void CEventMonitor::readWatchList() {
             if (!path.empty()) {
                 m_vecWatchList.push_back(path);
             }
-        }
-    }
-}
-
-void CEventMonitor::initializeWatchList() {
-    for (const auto& path : m_vecWatchList) {
-        struct stat pathStat;
-        stat(path.c_str(), &pathStat);
-        if (S_ISDIR(pathStat.st_mode)) {
-            DIR* dir = opendir(path.c_str());
-            if (dir) {
-                struct dirent* entry;
-                while ((entry = readdir(dir)) != nullptr) {
-                    if (entry->d_type == DT_REG) {
-                        std::string filePath = path + "/" + entry->d_name;
-                        CIntegrityChecker checker(filePath);
-                        checker.SaveFileHash();
-                    }
-                }
-                closedir(dir);
-            }
-        } else if (S_ISREG(pathStat.st_mode)) {
-            CIntegrityChecker checker(path);
-            checker.SaveFileHash();
         }
     }
 }
@@ -190,13 +163,14 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
     }
 
     ST_MonitorData data = {
-        .eventDescription = "",
+        .eventType = "",
         .filePath = it->second,
-        .integrityResult = "Unchanged",
         .newHash = "",
         .oldHash = "",
         .timestamp = GetCurrentTimeWithMilliseconds(),
-        .fileSize = -1
+        .fileSize = -1,
+        .user = getpwuid(getuid())->pw_name,
+        .processId = getpid()
     };
 
     struct stat pathStat;
@@ -206,32 +180,28 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
         }
     }
 
-    CIntegrityChecker checker(data.filePath);
     std::cout << "[" << data.timestamp << "]";
 
     if (event->mask & IN_CREATE) {
-        data.eventDescription = "File created";
-        checker.SaveFileHash();
-        data.newHash = checker.RetrieveStoredHash();
+        data.eventType = "File created";
+        data.newHash = CalculateFileHash(data.filePath);
     } else if (event->mask & IN_MODIFY) {
-        data.eventDescription = "File modified";
-        data.oldHash = checker.RetrieveStoredHash();
-        checker.SaveFileHash();
-        data.newHash = checker.RetrieveStoredHash();
+        data.eventType = "File modified";
+        data.oldHash = m_dbManager->GetFileHash(data.filePath);
+        data.newHash = CalculateFileHash(data.filePath);
     } else if (event->mask & IN_MOVED_TO) {
-        data.eventDescription = "File moved to";
-        checker.SaveFileHash();
-        data.newHash = checker.RetrieveStoredHash();
+        data.eventType = "File moved to";
+        data.newHash = CalculateFileHash(data.filePath);
     } else if (event->mask & IN_MOVED_FROM) {
-        data.eventDescription = "File moved from";
-        data.oldHash = checker.RetrieveStoredHash();
-        checker.RemoveFileHash();
+        data.eventType = "File moved from";
+        data.oldHash = m_dbManager->GetFileHash(data.filePath);
+        m_dbManager->RemoveFileFromDatabase(data.filePath);
     } else if (event->mask & IN_DELETE) {
-        data.eventDescription = "File deleted";
-        data.oldHash = checker.RetrieveStoredHash();
-        checker.RemoveFileHash();
+        data.eventType = "File deleted";
+        data.oldHash = m_dbManager->GetFileHash(data.filePath);
+        m_dbManager->RemoveFileFromDatabase(data.filePath);
     } else {
-        data.eventDescription = "Other event occurred";
+        data.eventType = "Other event occurred";
     }
 
     // 파일 크기 가져오기
@@ -240,25 +210,23 @@ void CEventMonitor::processEvent(struct inotify_event *event) {
     } 
 
     printEventsInfo(data);
-    verifyFileIntegrity(data);
     logEvent(data);
     m_dbManager->LogEventToDatabase(data);
-    std::cout << "\n";
+    std::cout << "\n\n";
+}
+
+std::string CEventMonitor::CalculateFileHash(std::string filePath) {
+    std::string fileHash;
+    int result = ComputeSHA256(filePath, fileHash);
+    if (result != SUCCESS_CODE) {
+        PrintErrorMessage(ERROR_CANNOT_COMPUTE_HASH);
+    }
+    return fileHash;
 }
 
 void CEventMonitor::printEventsInfo(ST_MonitorData& data) {
-    std::cout << "\n[+] Event type: " << COLOR_YELLOW << data.eventDescription << COLOR_RESET;
+    std::cout << "\n[+] Event type: " << COLOR_YELLOW << data.eventType << COLOR_RESET;
     std::cout << "\n[+] Target file: " << data.filePath;
-}
-
-// 무결성 검사 함수 구현
-void CEventMonitor::verifyFileIntegrity(ST_MonitorData& data) {
-    if (data.oldHash.empty() || data.newHash.empty() || data.newHash != data.oldHash) {
-        std::cout << "\n[+] Integrity check: " << COLOR_RED << "Detected changes" << COLOR_RESET << "\n";
-        data.integrityResult = "Changed";
-    } else {
-        std::cout << "\n[+] Integrity check: " << COLOR_GREEN << "No changes found" << COLOR_RESET << "\n";
-    }
 }
 
 // 파일 이벤트를 날짜별로 로그에 기록
@@ -266,12 +234,12 @@ void CEventMonitor::logEvent(ST_MonitorData& data) {
     // JSON 객체 생성
     Json::Value logEntry;
     logEntry["timestamp"] = data.timestamp;
-    logEntry["event_type"] = data.eventDescription;
+    logEntry["event_type"] = data.eventType;
     logEntry["target_file"] = data.filePath;
     logEntry["old_hash"] = data.oldHash.empty() ? "N/A" : data.oldHash;
     logEntry["new_hash"] = data.newHash.empty() ? "N/A" : data.newHash;
-    logEntry["integrity_result"] = data.integrityResult;
     logEntry["pid"] = Json::Int(getpid());
+    logEntry["user"] = data.user;
 
     if (data.fileSize != -1) {
         logEntry["file_size"] = Json::UInt64(data.fileSize);

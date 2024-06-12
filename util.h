@@ -5,6 +5,8 @@
 #include <jsoncpp/json/json.h>
 #include "error_codes.h"
 
+#define BUFFER_SIZE 8192
+
 bool IsDirectory(const std::string& path);
 void PrintError(const std::string& message);
 void PrintErrorMessage(int code, const std::string& context = "");

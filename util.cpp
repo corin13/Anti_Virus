@@ -70,7 +70,7 @@ int ComputeSHA256(const std::string& fileName, std::string& fileHash) {
 
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
-    char buffer[1024];
+    char buffer[BUFFER_SIZE];
     while (file.read(buffer, sizeof(buffer))) {
         SHA256_Update(&sha256, buffer, file.gcount());
     }

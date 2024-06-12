@@ -17,13 +17,14 @@
 #define EVENT_BUFFER_SIZE (1024 * (EVENT_SIZE + 16)) // 한 번에 읽을 수 있는 최대 바이트 수
 
 struct ST_MonitorData {
-    std::string eventDescription;
+    std::string eventType;
     std::string filePath;
-    std::string integrityResult;
     std::string newHash;
     std::string oldHash;
     std::string timestamp;
     int64_t fileSize;
+    std::string user;
+    int processId;
 };
 
 class CDatabaseManager; //전방 선언
@@ -41,13 +42,12 @@ private:
     CDatabaseManager* m_dbManager;
 
     void readWatchList();
-    void initializeWatchList();
     void createInotifyInstance();
     void addWatchListToInotify();
     void runEventLoop();
     void processEvent(struct inotify_event *event);
+    std::string CalculateFileHash(std::string filePath);
     void printEventsInfo(ST_MonitorData& data);
-    void verifyFileIntegrity(ST_MonitorData& data);
     void logEvent(ST_MonitorData& data);
     std::string getLogFilePath();
 };
