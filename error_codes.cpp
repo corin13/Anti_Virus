@@ -36,6 +36,8 @@ std::string GetErrorMessage(int code) {
             return "Failed to remove file";
         case ERROR_CANNOT_SEND_EMAIL:
             return "Failed to send email";
+        case ERROR_DATABASE_GENERAL:
+            return "Database error";
         case ERROR_UNKNOWN:
         default:
             return "Unknown error";
