@@ -33,12 +33,12 @@ std::string selectNetworkInterface() {
         exit(1);
     }
 
-    std::cout << "Available network interfaces:\n";
+    std::cout << "\nAvailable network interfaces:\n";
     for (size_t i = 0; i < interfaces.size(); ++i) {
         std::cout << i + 1 << ". " << interfaces[i] << "\n";
     }
 
-    std::cout << "Select an interface by number: ";
+    std::cout << "\n## Select an interface by number: ";
     int choice;
     std::cin >> choice;
 
@@ -59,7 +59,7 @@ void displayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic
     }
     {
         std::lock_guard<std::mutex> lock(print_mutex);
-        std::cout << "\rTotal packets sent: " << totalMaliciousPacketsSent.load() << std::endl;
+        std::cout << "\rTotal number of packets sent: " << totalMaliciousPacketsSent.load() << std::endl;
     }
 }
 

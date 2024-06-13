@@ -47,7 +47,7 @@ void GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPacketsSent) {
             totalMaliciousPacketsSent++;
             {
                 std::lock_guard<std::mutex> lock(print_mutex); // 출력 동기화
-                std::cout << "\rTotal packets sent: " << totalMaliciousPacketsSent.load() << std::flush;
+                std::cout << "\rTotal number of packets sent: " << totalMaliciousPacketsSent.load() << std::flush;
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(TRANSMISSION_INTERVAL));

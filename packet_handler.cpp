@@ -269,13 +269,6 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
             payloadMalicious ? std::to_string(aCount) + " bytes" : "No"
         );
 
-        logFile << "Malicious packet detected: " << strSrcIP << std::endl;
-        if (payloadMalicious) logFile << "- Reason: Malicious payload" << std::endl;
-        if (ipFloodingDetected) logFile << "- Reason: IP Flooding" << std::endl;
-        if (randomIPDetected) logFile << "- Reason: Random source IP" << std::endl;
-        if (largePacketDetected) logFile << "- Reason: Large packet" << std::endl;
-        if (fragmentationDetected) logFile << "- Reason: Packet fragmentation" << std::endl;
-
         processedIPs.insert(strSrcIP);
         }
 
@@ -336,14 +329,15 @@ int CPacketHandler::RunSystem(const char* interfaceName) {
 
 bool CPacketHandler::PromptUserForPacketCapture() {
     char userInput;
-    std::cout << COLOR_WHITE "\nDo you want to capture the sent packets? (y/n): " << COLOR_RESET;
+    std::cout << COLOR_WHITE "\n## Do you want to capture the sent packets? (y/n): " << COLOR_RESET;
     std::cin >> userInput;
     return userInput == 'y' || userInput == 'Y';
 }
 
 bool CPacketHandler::PromptUserForPacketAnalysis() {
     char userInput;
-    std::cout << COLOR_WHITE "Do you want to analyze malicious packets among the captured packets? (y/n): " << COLOR_RESET;
+    sleep(1);
+    std::cout << COLOR_WHITE "## Do you want to analyze malicious packets among the captured packets? (y/n): " << COLOR_RESET;
     std::cin >> userInput;
     return userInput == 'y' || userInput == 'Y';
 }
@@ -377,13 +371,13 @@ void CPacketHandler::CapturePackets(const char* interfaceName) {
     pcap_dump_close(pcapDumper);
     pcap_close(pcapHandle);
 
-    std::cout << "## Packets captured and saved to " << COLOR_YELLOW << "'captured_packets.pcap'." << COLOR_RESET << "\n" << std::endl;
+    std::cout << "Packets captured and saved to " << COLOR_YELLOW << "'captured_packets.pcap'." << COLOR_RESET << "\n" << std::endl;
 }
 
 void CPacketHandler::AnalyzeCapturedPackets() {
     auto result = AnalyzeNetworkTraffic("captured_packets.pcap");
     if (result == SUCCESS_CODE) {
-        std::cout << COLOR_GREEN "## Packet analysis completed successfully." << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN "Packet analysis completed successfully." << COLOR_RESET << std::endl;
     } else {
         std::cerr << "Packet analysis failed with error code: " << result << std::endl;
     }
@@ -399,7 +393,8 @@ void CPacketHandler::AnalyzeCapturedPackets() {
 
 bool CPacketHandler::PromptUserForBlockingIPs() {
     char userInput;
-    std::cout << COLOR_RED "\nDo you want to block the detected malicious IPs? (y/n): " << COLOR_RESET;
+    sleep(1);
+    std::cout << COLOR_RED "\n## Do you want to block the detected malicious IPs? (y/n): " << COLOR_RESET;
     std::cin >> userInput;
     if (userInput == 'y' || userInput == 'Y') {
         return true;
