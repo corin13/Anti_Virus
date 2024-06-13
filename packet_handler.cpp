@@ -3,17 +3,17 @@
 #include <chrono>
 #include <csignal>
 #include <cstring>
+#include <fstream> 
 #include <iomanip>
 #include <iostream> 
 #include <IPv4Layer.h>
+#include <netinet/ip.h>
+#include <netinet/ip_icmp.h> 
+#include <netinet/udp.h> 
 #include <Packet.h>
 #include <pcap.h> 
 #include <PcapLiveDevice.h>
 #include <PcapLiveDeviceList.h>
-#include <fstream> 
-#include <netinet/ip.h>
-#include <netinet/ip_icmp.h> 
-#include <netinet/udp.h> 
 #include <stdexcept> 
 #include <sys/socket.h>
 #include <SystemUtils.h>
@@ -108,9 +108,7 @@ int CPacketHandler::AnalyzeNetworkTraffic(const char *pcap_file) {
     int packetCount = 0;
 
     while (int res = pcap_next_ex(handle, &header, &data) >= 0) {
-        if (res == 0) {
-            continue;
-        }
+        if (res == 0) continue;
         PacketHandler(reinterpret_cast<u_char*>(this), header, data);
         packetCount++;
     }
@@ -195,9 +193,7 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
     int aCount = std::count(pPayload, pPayload + nPayloadLength, 'A');
 
     // 페이로드의 70% 이상이 'A'로 채워져 있을 경우 악성으로 간주
-    if (aCount >= 0.7 * nPayloadLength) {
-        payloadMalicious = true;
-    }
+    if (aCount >= 0.7 * nPayloadLength) payloadMalicious = true;
 
     if (payloadMalicious && processedIPs.find(strSrcIP + "-payload") == processedIPs.end()) {
         std::string msg = "Malicious payload detected in " + strSrcIP;
@@ -247,9 +243,8 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
         if (strLoggedIPs.find(strSrcIP) == strLoggedIPs.end()) {
             std::ofstream outfile;
             outfile.open("logs/malicious_ips.log", std::ios_base::app);
-            if (!outfile.is_open()) {
-                return ERROR_CANNOT_OPEN_FILE;
-            }
+            if (!outfile.is_open()) return ERROR_CANNOT_OPEN_FILE;
+            
             outfile << strSrcIP << std::endl;
             outfile.close();
             strLoggedIPs.insert(strSrcIP);
@@ -391,9 +386,7 @@ void CPacketHandler::AnalyzeCapturedPackets() {
     vt.print(std::cout);
     std::cout << COLOR_RESET;
 
-    if (PromptUserForBlockingIPs()) {
-        BlockDetectedIPs();
-    }
+    if (PromptUserForBlockingIPs()) BlockDetectedIPs();
 }
 
 bool CPacketHandler::PromptUserForBlockingIPs() {
@@ -426,7 +419,7 @@ void CPacketHandler::BlockDetectedIPs() {
             std::cerr << "Failed to set SSH exception for IP " << ip << "." << std::endl;
             continue;
         }
-        int result = ::RunIptables("INPUT", ip, "IP", "DROP");
+        int result = ::RunIptables("INPUT", ip, "80", "DROP");
         if (result == SUCCESS_CODE) {
             std::cout << "IP " << ip << " has been blocked successfully.\n" << std::endl;
         } else {

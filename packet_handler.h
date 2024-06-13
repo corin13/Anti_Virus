@@ -1,14 +1,14 @@
 #pragma once
 
 #include <netinet/ip.h>
+#include <Packet.h>
 #include <pcap.h>
+#include <PcapLiveDevice.h>
+#include <PcapLiveDeviceList.h>
 #include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <Packet.h>
-#include <PcapLiveDevice.h>
-#include <PcapLiveDeviceList.h>
 #include <vector>
 #include "ansi_color.h"
 #include "error_codes.h"
@@ -42,7 +42,6 @@ public:
     static void MonitorBandwidth();
     static void SigintHandler(int signum);
     static int RunSystem(const char* interfaceName);
-    int RunIptables(std::string direction, std::string ip, std::string port, std::string action);
     void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP);
     bool PromptUserForPacketCapture();
     bool PromptUserForPacketAnalysis();

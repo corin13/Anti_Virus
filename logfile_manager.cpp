@@ -52,12 +52,11 @@ int CLoggingManager::RotateLogs() {
             auto logger = spdlog::get(loggerName);
             if (!logger) {
                 logger = spdlog::rotating_logger_mt(loggerName, "logs/" + fileName, siMaxSize, siMaxFiles);
-                logger->set_level(spdlog::level::trace); // 모든 로그 레벨의 메시지를 포착
+                logger->set_level(spdlog::level::trace);
                 logger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
             }
         };
 
-        // 각 로거를 생성 또는 재설정
         create_rotating_logger("packetLogger", "packet_transmission.log");
         create_rotating_logger("maliciousLogger", "malicious_ips.log");
         create_rotating_logger("detailedLogger", "detailed_logs.log");
@@ -183,8 +182,8 @@ int CLoggingManager::MeasureAsyncLogPerformance() {
             spdlog::error("Logger not found");
             return ERROR_UNKNOWN;
         }
-        const int nLogs = 10000;
 
+        const int nLogs = 10000;
         auto start = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < nLogs; ++i) {
             logger->info("This is an asynchronous log message number {}", i);
@@ -194,7 +193,6 @@ int CLoggingManager::MeasureAsyncLogPerformance() {
 
         std::cout << " " << "\n";
         std::cout << "Logging " << nLogs << " messages took " << elapsed.count() << " seconds using asynchronous logging." << std::endl;
-
         logger->flush();
 
         return SUCCESS_CODE;
@@ -226,8 +224,8 @@ int CLoggingManager::MeasureSyncLogPerformance() {
             spdlog::error("Logger not found");
             return ERROR_UNKNOWN;
         }
-        const int nLogs = 10000;
 
+        const int nLogs = 10000;
         auto start = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < nLogs; ++i) {
             logger->info("This is a synchronous log message number {}", i);
@@ -236,7 +234,6 @@ int CLoggingManager::MeasureSyncLogPerformance() {
         std::chrono::duration<double> elapsed = end - start;
 
         std::cout << "Logging " << nLogs << " messages took " << elapsed.count() << " seconds using synchronous logging." << std::endl;
-
         logger->flush();
 
         return SUCCESS_CODE;
@@ -282,7 +279,7 @@ int CLoggingManager::StartRotation(){
 // 전체 로깅 시스템을 설정하고 다양한 로깅 테스트를 수행하는 함수
 int CLoggingManager::TestLogging() {
     try{
-        int result = CLoggingManager::StartRotation();
+        int nRotationResult = CLoggingManager::StartRotation();
 
         CLoggingManager instance;
 
