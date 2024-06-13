@@ -51,17 +51,7 @@ int Config::GetNetworkPort() const {
 }
 
 std::string Config::GetFileExtension() const {
-    int option = m_reader.GetInteger("SCAN", "extension", 1);
-    switch (option) {
-        case 1:
-            return "all"; // 모든 파일
-        case 2:
-            return "elf"; // ELF 파일
-        case 3:
-            return m_reader.Get("SCAN", "specific_extension", "all"); // 특정 확장자
-        default:
-            return "all"; // 기본값
-    }
+    return m_reader.Get("SCAN", "extension", "");
 }
 
 

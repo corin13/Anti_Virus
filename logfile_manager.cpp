@@ -1,6 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include "logfile_manager.h"
+#include "packet_handler.h"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
@@ -44,12 +45,29 @@ int CLoggingManager::ManageLogLevel(){
 // 크기와 개수가 제한된 회전 로그 파일을 설정하고 로거 패턴을 정의하는 함수
 int CLoggingManager::RotateLogs() {
     try {
-        size_t siMaxSize = 1048576 * 5;
-        size_t siMaxFiles = 3;
+        size_t siMaxSize = 1048576 * 5;  // 최대 로그 파일 크기: 5MB
+        size_t siMaxFiles = 2;  // 최대 로그 파일 개수: 3(원본로그파일 + 2)개
 
-        auto logger = spdlog::rotating_logger_mt("rotatingLogger", "logs/rotating_log.txt", siMaxSize, siMaxFiles);
-        logger->set_level(spdlog::level::debug);
-        logger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
+        // packetLogger 로거 생성 또는 가져오기
+        if (!spdlog::get("packetLogger")) {
+            auto packetLogger = spdlog::rotating_logger_mt("packetLogger", "logs/packet_transmission.log", siMaxSize, siMaxFiles);
+            packetLogger->set_level(spdlog::level::debug);
+            packetLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
+        }
+
+        // maliciousLogger 로거 생성 또는 가져오기
+        if (!spdlog::get("maliciousLogger")) {
+            auto maliciousLogger = spdlog::rotating_logger_mt("maliciousLogger", "logs/malicious_ips.log", siMaxSize, siMaxFiles);
+            maliciousLogger->set_level(spdlog::level::debug);
+            maliciousLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
+        }
+
+        // detailedLogger 로거 생성 또는 가져오기
+        if (!spdlog::get("detailedLogger")) {
+            auto detailedLogger = spdlog::rotating_logger_mt("detailedLogger", "logs/detailed_logs.log", siMaxSize, siMaxFiles);
+            detailedLogger->set_level(spdlog::level::debug);
+            detailedLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
+        }
 
         return SUCCESS_CODE;
     } catch (const std::exception& ex) {
@@ -59,13 +77,16 @@ int CLoggingManager::RotateLogs() {
 }
 
 // 로그 메시지를 생성하여 로그 파일의 크기를 빠르게 증가시키는 함수
-int CLoggingManager::GenerateLogs() {
+int CLoggingManager::GenerateLogs(const std::string& loggerName) {
     try {
-        auto logger = spdlog::get("rotatingLogger");
-        if (!logger) return ERROR_UNKNOWN;
+        auto logger = spdlog::get(loggerName);
+        if (!logger) {
+            spdlog::error("Logger with name {} does not exist.", loggerName);
+            return ERROR_UNKNOWN;
+        }
 
-        for (int i = 0; i < 20000; ++i) {
-            logger->info("This is log message number {}", i);
+        for (int i = 0; i < 1; ++i) {
+            logger->info("Logged message.");
         }
 
         return SUCCESS_CODE;
@@ -232,37 +253,91 @@ int CLoggingManager::MeasureSyncLogPerformance() {
     }
 }
 
+int CLoggingManager::StartRotation(){
+    try {
+        int nResult = RotateLogs();
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to rotate logs.");
+            return nResult;
+        }
+
+        nResult = GenerateLogs("packetLogger");
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to generate logs for packetLogger.");
+            return nResult;
+        }
+
+        nResult = GenerateLogs("maliciousLogger");
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to generate logs for maliciousLogger.");
+            return nResult;
+        }
+
+        nResult = GenerateLogs("detailedLogger");
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to generate logs for detailedLogger.");
+            return nResult;
+        }
+
+        return SUCCESS_CODE;
+    } catch (const std::exception& ex) {
+        spdlog::error("Exception in TestLogging: {}", ex.what());
+        return ERROR_UNKNOWN;
+    }
+}
+
 // 전체 로깅 시스템을 설정하고 다양한 로깅 테스트를 수행하는 함수
-int CLoggingManager::TestLogging(){
-    int nResult = ManageLogLevel();
-    if (nResult != SUCCESS_CODE) return nResult;
+int CLoggingManager::TestLogging() {
+    try{
+        int result = CLoggingManager::StartRotation();
 
-    nResult = RotateLogs();
-    if (nResult != SUCCESS_CODE) return nResult;
+        CLoggingManager instance;
 
-    nResult = GenerateLogs();
-    if (nResult != SUCCESS_CODE) return nResult;
+        int nResult = instance.ManageLogLevel();
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to manage log level.");
+            return nResult;
+        }
 
-    nResult = MultiSinkLogger();
-    if (nResult != SUCCESS_CODE) return nResult;
+        nResult = instance.MultiSinkLogger();
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to create multi-sink logger.");
+            return nResult;
+        }
 
-    nResult = SetupAsyncLogger();
-    if (nResult != SUCCESS_CODE) return nResult;
+        nResult = instance.SetupAsyncLogger();
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to setup async logger.");
+            return nResult;
+        }
 
-    nResult = TestMultiThreadedLogging();
-    if (nResult != SUCCESS_CODE) return nResult;
+        nResult = instance.TestMultiThreadedLogging();
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to test multi-threaded logging.");
+            return nResult;
+        }
 
-    spdlog::get("multiSinkLogger")->info("This is an informational message that will appear in console and file.");
+        nResult = instance.MeasureAsyncLogPerformance();
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to measure async log performance.");
+            return nResult;
+        }
 
-    nResult = MeasureAsyncLogPerformance();
-    if (nResult != SUCCESS_CODE) return nResult;
+        nResult = instance.SetupSyncLogger();
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to setup sync logger.");
+            return nResult;
+        }
 
-    nResult = SetupSyncLogger();
-    if (nResult != SUCCESS_CODE) return nResult;
+        nResult = instance.MeasureSyncLogPerformance();
+        if (nResult != SUCCESS_CODE) {
+            spdlog::error("Failed to measure sync log performance.");
+            return nResult;
+        }
 
-    nResult = MeasureSyncLogPerformance();
-    if (nResult != SUCCESS_CODE) return nResult;
-
-    spdlog::shutdown();
-    return SUCCESS_CODE;
+        return SUCCESS_CODE;
+    } catch (const std::exception& ex) {
+        spdlog::error("Exception in TestLogging: {}", ex.what());
+        return ERROR_UNKNOWN;
+    }
 }

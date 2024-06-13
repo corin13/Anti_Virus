@@ -1,0 +1,10 @@
+coverage:
+  status:
+    project:
+      default:
+        threshold: 1%
+    patch: off
+
+codecov:
+  notify:
+    after_n_builds: 16

@@ -1,0 +1,22 @@
+[
+{
+	"detected_file" : "/home/chlqls/Anti_Virus/test.txt",
+	"file_size" : 9,
+	"hash_value" : "cd5e9b1a6c3c37593b8b622b2921ee5320944192acb48b55155cbe8d32dc5ea1",
+	"is_moved" : "False",
+	"path_after_moving" : "N/A",
+	"scan_type" : "Hash",
+	"timestamp" : "2024-06-07 14:42:06.544",
+	"yara_rule" : "N/A"
+},
+{
+	"detected_file" : "/home/chlqls/Anti_Virus/test.txt",
+	"file_size" : 9,
+	"hash_value" : "cd5e9b1a6c3c37593b8b622b2921ee5320944192acb48b55155cbe8d32dc5ea1",
+	"is_moved" : "True",
+	"path_after_moving" : "/home/chlqls/Anti_Virus/detected-malware/test.txt",
+	"scan_type" : "Hash",
+	"timestamp" : "2024-06-07 14:42:32.392",
+	"yara_rule" : "N/A"
+}
+]

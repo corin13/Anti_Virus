@@ -18,12 +18,16 @@ int CUdkdAgentOptions::DisplayHelpOption() {
     std::cout << "Usage: ./UdkdAgent [OPTIONS]\n"
               << " \n"
               << "Options: \n"
-              << "  -i, --info               Print detailed information about the Agent.\n"
-              << "  -d, --detect             Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging.\n"
-              << "  -s, --scan               Scan files in the specified directory.\n"
-              << "  -u, --usage              Collects and stores CPU, disk, and network usage data.\n"
-              << "  -l, --log                Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n";
-           
+              << "  -i, --info                  Print detailed information about the Agent.\n"
+              << "  -d, --detect                Activate the anti-debugging protection. Use this feature to safeguard sensitive code from being analyzed or tampered with by external debugging.\n"
+              << "  -s, --scan                  Scan files in the specified directory.\n"
+              << "  -u, --usage                 Collects and stores CPU, disk, and network usage data.\n"
+              << "  -l, --log                   Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n"
+              << "  -m, --monitor               Monitor file events in the system and send the recorded log files via email.\n"
+              << "  -n, --network [interface]   Generates and sends packets in real-time, captures and analyzes them to detect malicious packets, and blocks any detected malicious packets.\n"
+              << "  -f, --firewall              Network Control Using Firewall Rules.\n"
+              << "  -c, --config                Scan Using Custom Rules.\n";
+   
     return SUCCESS_CODE;
 }
 
@@ -68,7 +72,8 @@ int CUdkdAgentOptions::DisplayInfoOption() {
               << "    - Malware Scanning: Eliminates potential threats before they can cause harm.\n"
               << "    - Anti-Debugging: Protects sensitive code from being analyzed or manipulated by unauthorized debuggers.\n"
               << "    - Collect System Resource: Collects CPU usage, disk I/O, and network usage, saving the data to a file for performance analysis and optimization.\n"
-              << "    - Log File Management: Manages log levels, rotation, formatting, multi-sync, and asynchronous settings to ensure log integrity."
+              << "    - Log File Management: Manages log levels, rotation, formatting, multi-sync, and asynchronous settings to ensure log integrity.\n"
+              << "    - Network Malicious Packet Analysis: captures and processes network packets, extracting and displaying the source and destination IP addresses from each IP packet transmitted over the network.\n"
               << " \n"
               << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities.\n";
               
