@@ -89,3 +89,44 @@ std::vector<std::unordered_map<std::string, std::string>> LogParser::ParseJsonLo
     logFile.close();
     return logEntries;
 }
+
+std::unordered_map<std::string, std::string> LogParser::ParseFirewallLog(const std::string& logFilePath) {
+    std::unordered_map<std::string, std::string> logData;
+    std::ifstream logFile(logFilePath);
+    if (!logFile.is_open()) {
+        std::cerr << "Could not open log file: " << logFilePath << std::endl;
+        return logData;
+    }
+
+    std::string line;
+    int totalEvents = 0;
+    int allowedTraffic = 0;
+    int blockedTraffic = 0;
+    std::string date;
+
+    while (std::getline(logFile, line)) {
+        std::istringstream iss(line);
+        std::string logDate, action;
+        iss >> logDate >> action;
+
+        if (date.empty()) {
+            date = logDate;
+        }
+
+        totalEvents++;
+        if (action == "ALLOW") {
+            allowedTraffic++;
+        } else if (action == "BLOCK") {
+            blockedTraffic++;
+        }
+    }
+
+    logFile.close();
+
+    logData["날짜"] = date;
+    logData["총 이벤트 수"] = std::to_string(totalEvents);
+    logData["허용된 트래픽"] = std::to_string(allowedTraffic);
+    logData["차단된 트래픽"] = std::to_string(blockedTraffic);
+
+    return logData;
+}
