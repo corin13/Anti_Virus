@@ -52,7 +52,9 @@ int RunFirewall(){
     signal(SIGINT, handle_exit);
     signal(SIGTERM, handle_exit);
     
-
+    ExecCommand("iptables -A INPUT -j LOG --log-prefix \"INPUT packet: \" --log-level 1");
+    ExecCommand("iptables -A OUTPUT -j LOG --log-prefix \"OUTPUT packet: \" --log-level 1");
+    
     auto& iniData = FirewallConfig::Instance().GetIniData();
     for (auto id : iniData){
         std::vector<std::string> iniList;
@@ -69,8 +71,6 @@ int RunFirewall(){
     }
 
     return SUCCESS_CODE;
-    // ExecCommand("iptables -A INPUT -j LOG --log-prefix \"INPUT packet: \" --log-level 1");
-    // ExecCommand("iptables -A OUTPUT -j LOG --log-prefix \"OUTPUT packet: \" --log-level 1");
     
 }
 
