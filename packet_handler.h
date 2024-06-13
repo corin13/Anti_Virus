@@ -19,8 +19,6 @@
 #include "user_program.h"
 
 #define COLUMN_WIDTH 30
-#define HALF_WORD_SIZE 16
-#define HALF_WORD_MASK 0xFFFF
 #define ETHERNET_HEADER_LENGTH 14
 #define IP_HEADER_LENGTH_UNIT 4
 #define BITS_PER_BYTE 8

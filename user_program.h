@@ -1,9 +1,10 @@
 #pragma once
 
-#include <pcap.h>
-#include <vector>
-#include <string>
 #include <atomic>
+#include <pcap.h>
+#include <string>
+#include <vector>
+#include "error_codes.h"
 #include "packet_generator.h"
 #include "packet_handler.h"
 
