@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <unordered_map>
 #include <unordered_set>
+#include "packet_generator.h"
 #include "packet_handler.h"
 
 CPacketHandler::CPacketHandler()
@@ -309,8 +310,12 @@ int CPacketHandler::RunSystem(const char* interfaceName) {
         return ERROR_CANNOT_OPEN_DEVICE;
     }
 
+    CPacketGenerator packetGenerator;
+
     std::atomic<int> totalMaliciousPacketsSent(0);
-    std::thread packetThread(GenerateMaliciousPackets, std::ref(totalMaliciousPacketsSent));
+    std::thread packetThread([&]() {
+        packetGenerator.GenerateMaliciousPackets(totalMaliciousPacketsSent);
+    });
     packetThread.join();
 
     CPacketHandler handler;

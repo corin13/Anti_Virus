@@ -1,4 +1,3 @@
-#include "packet_handler.h"
 #include <pcap.h>
 #include <vector>
 #include <string>
@@ -7,10 +6,13 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
+#include "user_program.h"
+#include "packet_handler.h"
+#include "packet_generator.h"
 
 std::mutex print_mutex; // 콘솔 출력을 위한 뮤텍스
 
-std::string selectNetworkInterface() {
+std::string CNetworkInterface::SelectNetworkInterface() {
     char errbuf[PCAP_ERRBUF_SIZE];
     pcap_if_t *alldevs, *d;
     std::vector<std::string> interfaces;
@@ -50,7 +52,7 @@ std::string selectNetworkInterface() {
     return interfaces[choice - 1];
 }
 
-void displayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic<bool>& sendingComplete) {
+void CNetworkInterface::DisplayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic<bool>& sendingComplete) {
     while (!sendingComplete.load()) {
         {
             std::lock_guard<std::mutex> lock(print_mutex); // 뮤텍스를 사용하여 동기화
@@ -63,20 +65,21 @@ void displayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic
     }
 }
 
-int SelectInterface() {
-    std::string interfaceName = selectNetworkInterface();
+int CNetworkInterface::SelectInterface() {
+    std::string interfaceName = SelectNetworkInterface();
     CPacketHandler handler;
+    CPacketGenerator packetGenerator;
 
     std::atomic<int> totalMaliciousPacketsSent(0);
     std::atomic<bool> sendingComplete(false); // 패킷 전송 완료 플래그
 
     std::thread packetThread([&]() {
-        GenerateMaliciousPackets(totalMaliciousPacketsSent);
+        packetGenerator.GenerateMaliciousPackets(totalMaliciousPacketsSent);
         sendingComplete.store(true); // 패킷 전송 완료 플래그 설정
     });
 
     std::thread displayThread([&]() {
-        displayPacketCount(totalMaliciousPacketsSent, sendingComplete);
+        DisplayPacketCount(totalMaliciousPacketsSent, sendingComplete);
     });
 
     packetThread.join();
