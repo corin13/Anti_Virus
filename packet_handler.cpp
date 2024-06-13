@@ -22,10 +22,15 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "packet_handler.h"
+#include "email_sender.h"
+#include "log_parser.h"
+#include "config.h"
 
 CPacketHandler::CPacketHandler()
     : m_DuplicateIPCount(0), m_LargePacketCount(0), m_MaliciousPayloadCount(0), m_MaliciousPacketCount(0),
-      vt({"No", "Packet Size", "Random src IP", "IP Flooding", "Fragmentation", "Data"}, COLUMN_WIDTH) {}
+      vt({"No", "Packet Size", "Random src IP", "IP Flooding", "Fragmentation", "Data"}, COLUMN_WIDTH),
+      emailSender("smtps://smtp.gmail.com", 465, Config::Instance().GetEmailAddress()) // EmailSender 초기화
+{}
 
 CPacketHandler::~CPacketHandler() {}
 
@@ -435,4 +440,64 @@ void CPacketHandler::BlockDetectedIPs() {
     }
 
     infile.close();
+}
+
+void CPacketHandler::SendAnomalyReportEmail(const std::string& logFilePath) {
+    LogParser logParser;
+    std::vector<std::string> keys = {
+        "악성 패킷 출발지 IP", "출발지 IP 주소", "탐지된 이상 유형"
+    };
+    /*std::vector<std::string> keys = {
+        "탐지 시간", "출발지 IP 주소", "패킷 크기", "탐지된 이상 유형",
+        "목적지 IP 주소", "출발지 포트", "목적지 포트", "프로토콜"
+    };*/
+    auto logData = logParser.ParseLogFile(logFilePath, keys);
+
+    std::string emailBody = 
+       /* "[Alert] 네트워크 이상 패킷 탐지 알림 (가제)\n\n"
+        "안녕하세요,\n"
+        "네트워크에서 악성 패킷이 탐지되어 알림 드립니다.\n\n"
+        "탐지 시간: " + logData["탐지 시간"] + "\n"
+        "탐지 시스템: Server1\n\n"
+        "[탐지된 이상 패킷 정보]\n"
+        "출발지 IP 주소: " + logData["출발지 IP 주소"] + "\n"
+        "목적지 IP 주소: " + logData["목적지 IP 주소"] + "\n"
+        "출발지 포트: " + logData["출발지 포트"] + "\n"
+        "목적지 포트: " + logData["목적지 포트"] + "\n"
+        "프로토콜: " + logData["프로토콜"] + "\n"
+        "패킷 크기: " + logData["패킷 크기"] + " bytes\n"
+        "탐지된 이상 유형: " + logData["탐지된 이상 유형"] + "\n\n"
+        "[추가 정보]\n"
+        "탐지된 패킷 내용: (필요 시 여기에 추가)\n"
+        "연관된 규칙: Rule-ID-12345 (DDoS 탐지 규칙)\n\n"
+        "[조치 권고 사항]\n"
+        "즉각적인 조치: 출발지 IP " + logData["출발지 IP 주소"] + "을 차단\n"
+        "추가 조사: 출발지 IP의 이전 트래픽 패턴 분석 등\n\n"
+        "[연락처 정보]\n"
+        "시스템 관리자: 이름 (이메일, 전화번호)\n\n"
+        "감사합니다.\n"
+        "~~드림";
+*/
+        "[Alert] 네트워크 이상 패킷 탐지 알림 (가제)\n\n"
+        "안녕하세요,\n"
+        "네트워크에서 악성 패킷이 탐지되어 알림 드립니다.\n\n"
+        "탐지 시스템: Server1\n\n"
+        "[탐지된 이상 패킷 정보]\n"
+        "출발지 IP 주소: " + logData["출발지 IP 주소"] + "\n"
+        "악성 IP 주소: " + logData["악성 패킷 출발지 IP"] + "\n"
+    
+        "탐지된 이상 유형: " + logData["탐지된 이상 유형"] + "\n\n"
+        "[추가 정보]\n"
+        "탐지된 패킷 내용: (필요 시 여기에 추가)\n"
+        "연관된 규칙: Rule-ID-12345 (DDoS 탐지 규칙)\n\n"
+        "[조치 권고 사항]\n"
+        "즉각적인 조치: 출발지 IP " + logData["출발지 IP 주소"] + "을 차단\n"
+        "추가 조사: 출발지 IP의 이전 트래픽 패턴 분석 등\n\n"
+        "[연락처 정보]\n"
+        "시스템 관리자: 이름 (이메일, 전화번호)\n\n"
+        "감사합니다.\n"
+        "~~드림";
+
+
+    emailSender.SendEmailWithAttachment("네트워크 이상 패킷 탐지 알림", emailBody, logFilePath);
 }

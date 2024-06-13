@@ -17,6 +17,10 @@
 #include "firewall.h"
 #include "packet_generator.h"
 #include "user_program.h"
+#include "email_sender.h"
+#include "log_parser.h"
+#include "config.h"
+
 
 #define COLUMN_WIDTH 30
 #define HALF_WORD_SIZE 16
@@ -54,6 +58,8 @@ public:
     bool PromptUserForBlockingIPs();
     void BlockDetectedIPs();
 
+    //이메일
+    void SendAnomalyReportEmail(const std::string& logFilePath);
 private:
     int m_DuplicateIPCount;
     int m_LargePacketCount;
@@ -70,4 +76,6 @@ private:
     std::unordered_set<std::string> strLoggedIPs;
 
     VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;
+    EmailSender emailSender;  // 이메일 보내기 객체 추가
+    LogParser logParser;      // 로그 파서 객체 추가
 };

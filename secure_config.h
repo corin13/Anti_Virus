@@ -8,6 +8,8 @@ class CSecureConfig {
 public:
     CSecureConfig(const std::string& iniFilename, const std::string& privateKeyPath);
     std::string getDecryptedPassword(const std::string& section, const std::string& name) const;
+    std::string getDecryptedEmail(const std::string& section, const std::string& name) const;
+
 
 private:
     INIReader m_iniReader;
