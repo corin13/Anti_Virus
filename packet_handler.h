@@ -59,7 +59,7 @@ public:
     void BlockDetectedIPs();
 
     //이메일
-    void SendAnomalyReportEmail(const std::string& logFilePath);
+    void SendEmailWithLogPacketData(const std::string& logFilePath);
 private:
     int m_DuplicateIPCount;
     int m_LargePacketCount;
@@ -76,6 +76,5 @@ private:
     std::unordered_set<std::string> strLoggedIPs;
 
     VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;
-    EmailSender emailSender;  // 이메일 보내기 객체 추가
-    LogParser logParser;      // 로그 파서 객체 추가
+
 };
