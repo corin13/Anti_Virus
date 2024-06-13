@@ -75,3 +75,7 @@ IP Flooding detected in 192.168.64.2
 Large packet detected in 93.158.146.146: 4761 bytes
 Packet fragmentation detected: 93.158.146.146
 [2024-06-13 11:25:14] [info] Logged message.
+IP Flooding detected in 192.168.64.1
+IP Flooding detected in 192.168.64.2
+Large packet detected in 192.168.64.1: 1500 bytes
+[2024-06-13 11:30:56] [info] Logged message.

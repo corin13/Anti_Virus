@@ -10,6 +10,7 @@
 
 std::mutex print_mutex;
 
+// 사용 가능한 네트워크 인터페이스 목록을 사용자에게 제공하는 함수
 std::string CNetworkInterface::SelectNetworkInterface() {
     char chErrBuf[PCAP_ERRBUF_SIZE];
     pcap_if_t *pAlldevs, *pDevice;
@@ -44,6 +45,7 @@ std::string CNetworkInterface::SelectNetworkInterface() {
     return strInterfaces[siChoice - 1];
 }
 
+// 패킷 전송이 완료될 때까지 대기하며, 전송된 패킷의 총 개수를 출력하는 함수
 void CNetworkInterface::DisplayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic<bool>& sendingComplete) {
     try {
         while (!sendingComplete.load()) {
@@ -61,7 +63,8 @@ void CNetworkInterface::DisplayPacketCount(std::atomic<int>& totalMaliciousPacke
     }
 }
 
-int CNetworkInterface::SelectInterface() {
+// 네트워크 인터페이스를 선택하고, 해당 인터페이스에서 패킷을 캡처하고 분석하는 과정일 관리하는 함수
+int CNetworkInterface::ManageInterface() {
     if (CLoggingManager::StartRotation() != SUCCESS_CODE ||
         CLoggingManager::GenerateLogs("packetLogger") != SUCCESS_CODE ||
         CLoggingManager::RotateLogs() != SUCCESS_CODE) {

@@ -52,7 +52,7 @@ void CheckOption(int &argc, char** &argv){
                 break;
 
             case 'n':
-                IUserProgram.SelectInterface();
+                IUserProgram.ManageInterface();
                 networkOption = true;
                 break;
 

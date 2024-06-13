@@ -13,5 +13,5 @@ class CNetworkInterface{
 public:
     std::string SelectNetworkInterface();
     void DisplayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic<bool>& sendingComplete);
-    int SelectInterface();
+    int ManageInterface();
 };
