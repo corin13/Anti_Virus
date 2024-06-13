@@ -50,6 +50,9 @@ enum iniFormat {
 #include "VariadicTable.h"
 #include "config_firewall.h"
 #include "ansi_color.h"
+#include "email_sender.h"
+#include "log_parser.h"
+#include "config.h"
 
 int Firewall();
 
@@ -77,3 +80,6 @@ int RunIptables(std::string direction, std::string ip, std::string port, std::st
 int isVaildInput(std::vector<std::string>& words);
 bool isValidIP(const std::string& ip);
 bool isValidPort(const std::string& port);
+
+//이메일
+void SendEmailWithFireWallLogData(const std::string& logFilePath);
