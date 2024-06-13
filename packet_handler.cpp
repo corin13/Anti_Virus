@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <unordered_map>
 #include <unordered_set>
-#include "packet_generator.h"
 #include "packet_handler.h"
 
 CPacketHandler::CPacketHandler()
@@ -287,13 +286,6 @@ void enableOutput() {
 }
 
 int CPacketHandler::RunSystem(const char* interfaceName) {
-    if (CLoggingManager::StartRotation() != SUCCESS_CODE ||
-        CLoggingManager::GenerateLogs("packetLogger") != SUCCESS_CODE ||
-        CLoggingManager::RotateLogs() != SUCCESS_CODE) {
-        std::cerr << "Log operation failed." << std::endl;
-        return ERROR_LOG_OPERATION_FAILED;
-    }
-
     auto dev = pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDeviceByName(interfaceName);
     if (!dev) {
         std::cerr << "Cannot find interface: " << interfaceName << std::endl;

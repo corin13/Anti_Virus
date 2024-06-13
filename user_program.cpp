@@ -62,6 +62,13 @@ void CNetworkInterface::DisplayPacketCount(std::atomic<int>& totalMaliciousPacke
 }
 
 int CNetworkInterface::SelectInterface() {
+    if (CLoggingManager::StartRotation() != SUCCESS_CODE ||
+        CLoggingManager::GenerateLogs("packetLogger") != SUCCESS_CODE ||
+        CLoggingManager::RotateLogs() != SUCCESS_CODE) {
+        std::cerr << "Log operation failed." << std::endl;
+        return ERROR_LOG_OPERATION_FAILED;
+    }
+
     std::string strInterfaceName = SelectNetworkInterface();
     if (strInterfaceName.empty()) {
         return ERROR_CANNOT_OPEN_DEVICE;

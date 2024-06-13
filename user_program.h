@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "error_codes.h"
+#include "logfile_manager.h"
 #include "packet_generator.h"
 #include "packet_handler.h"
 

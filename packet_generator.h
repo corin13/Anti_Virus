@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include "ansi_color.h"
 #include "error_codes.h"
+#include "logfile_manager.h"
 
 #define HALF_WORD_SIZE 16
 #define HALF_WORD_MASK 0xFFFF
