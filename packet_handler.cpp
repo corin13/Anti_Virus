@@ -25,12 +25,13 @@
 #include "email_sender.h"
 #include "log_parser.h"
 #include "config.h"
+#include "util.h"
+
 
 CPacketHandler::CPacketHandler()
     : m_DuplicateIPCount(0), m_LargePacketCount(0), m_MaliciousPayloadCount(0), m_MaliciousPacketCount(0),
-      vt({"No", "Packet Size", "Random src IP", "IP Flooding", "Fragmentation", "Data"}, COLUMN_WIDTH),
-      emailSender("smtps://smtp.gmail.com", 465, Config::Instance().GetEmailAddress()) // EmailSender 초기화
-{}
+      vt({"No", "Packet Size", "Random src IP", "IP Flooding", "Fragmentation", "Data"}, COLUMN_WIDTH)
+      {}
 
 CPacketHandler::~CPacketHandler() {}
 
@@ -442,7 +443,7 @@ void CPacketHandler::BlockDetectedIPs() {
     infile.close();
 }
 
-void CPacketHandler::SendAnomalyReportEmail(const std::string& logFilePath) {
+void CPacketHandler::SendEmailWithLogPacketData(const std::string& logFilePath) {
     LogParser logParser;
     std::vector<std::string> keys = {
         "악성 패킷 출발지 IP", "출발지 IP 주소", "탐지된 이상 유형"
@@ -478,7 +479,7 @@ void CPacketHandler::SendAnomalyReportEmail(const std::string& logFilePath) {
         "감사합니다.\n"
         "~~드림";
 */
-        "[Alert] 네트워크 이상 패킷 탐지 알림 (가제)\n\n"
+        "[네트워크 이상 패킷 탐지 알림] (가제)\n\n"
         "안녕하세요,\n"
         "네트워크에서 악성 패킷이 탐지되어 알림 드립니다.\n\n"
         "탐지 시스템: Server1\n\n"
@@ -499,5 +500,18 @@ void CPacketHandler::SendAnomalyReportEmail(const std::string& logFilePath) {
         "~~드림";
 
 
-    emailSender.SendEmailWithAttachment("네트워크 이상 패킷 탐지 알림", emailBody, logFilePath);
+    std::string subject = "네트워크 이상 패킷 탐지 알림";
+
+    std::string recipientEmailAddress = Config::Instance().GetEmailAddress();
+    if (!recipientEmailAddress.empty()) {
+        EmailSender emailSender("smtps://smtp.gmail.com", 465, recipientEmailAddress);
+        if (emailSender.SendEmailWithAttachment(subject, emailBody, logFilePath) == 0) {
+            std::cout << "\n" << COLOR_GREEN << "Email sent successfully." << COLOR_RESET << "\n";
+        } else {
+            HandleError(ERROR_CANNOT_SEND_EMAIL);
+        }
+    } else {
+        std::cerr << "Email address is not configured.\n";
+    }
 }
+ 
