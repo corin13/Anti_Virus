@@ -1,4 +1,10 @@
 #include "log_parser.h"
+#include <iostream>
+#include <fstream>
+#include <unordered_map>
+#include <vector>
+#include <regex>
+#include <jsoncpp/json/json.h>
 
 std::unordered_map<std::string, std::string> LogParser::ParseLogFile(const std::string& logFilePath, const std::vector<std::string>& keys) {
     std::unordered_map<std::string, std::string> logData;
@@ -20,7 +26,7 @@ std::unordered_map<std::string, std::string> LogParser::ParseLogFile(const std::
 
     std::string line;
     while (std::getline(logFile, line)) {
-        std::cout << "Processing line: " << line << std::endl; // 디버깅 출력
+        //std::cout << "Processing line: " << line << std::endl; // 디버깅 출력
 
         std::smatch match;
         if (std::find(keys.begin(), keys.end(), "출발지 IP 주소") != keys.end() && std::regex_search(line, match, ipFloodingPattern)) {
@@ -48,12 +54,12 @@ std::unordered_map<std::string, std::string> LogParser::ParseLogFile(const std::
     return logData;
 }
 
-std::unordered_map<std::string, std::string> LogParser::ParseJsonLogFile(const std::string& logFilePath) {
-    std::unordered_map<std::string, std::string> logData;
+std::vector<std::unordered_map<std::string, std::string>> LogParser::ParseJsonLogFile(const std::string& logFilePath) {
+    std::vector<std::unordered_map<std::string, std::string>> logEntries;
     std::ifstream logFile(logFilePath, std::ifstream::binary);
     if (!logFile.is_open()) {
         std::cerr << "Could not open log file: " << logFilePath << std::endl;
-        return logData;
+        return logEntries;
     }
 
     Json::Value root;
@@ -62,22 +68,24 @@ std::unordered_map<std::string, std::string> LogParser::ParseJsonLogFile(const s
 
     if (!Json::parseFromStream(builder, logFile, &root, &errs)) {
         std::cerr << "Failed to parse JSON: " << errs << std::endl;
-        return logData;
+        return logEntries;
     }
 
-    // Assuming we are interested in the first object in the array for simplicity
-    if (root.isArray() && !root.empty()) {
-        const Json::Value& entry = root[0];
-        logData["탐지된 파일"] = entry["detected_file"].asString();
-        logData["파일 크기"] = std::to_string(entry["file_size"].asInt());
-        logData["해시 값"] = entry["hash_value"].asString();
-        logData["이동 여부"] = entry["is_moved"].asString();
-        logData["이동 후 경로"] = entry["path_after_moving"].asString();
-        logData["스캔 유형"] = entry["scan_type"].asString();
-        logData["탐지 시간"] = entry["timestamp"].asString();
-        logData["YARA 규칙"] = entry["yara_rule"].asString();
+    if (root.isArray()) {
+        for (const auto& entry : root) {
+            std::unordered_map<std::string, std::string> logData;
+            logData["탐지된 파일"] = entry["detected_file"].asString();
+            logData["파일 크기"] = std::to_string(entry["file_size"].asInt());
+            logData["해시 값"] = entry["hash_value"].asString();
+            logData["이동 여부"] = entry["is_moved"].asString();
+            logData["이동 후 경로"] = entry["path_after_moving"].asString();
+            logData["스캔 유형"] = entry["scan_type"].asString();
+            logData["탐지 시간"] = entry["timestamp"].asString();
+            logData["YARA 규칙"] = entry["yara_rule"].asString();
+            logEntries.push_back(logData);
+        }
     }
 
     logFile.close();
-    return logData;
+    return logEntries;
 }

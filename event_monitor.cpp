@@ -17,6 +17,8 @@
 #include "ini.h"
 #include "util.h"
 #include "config.h"
+#include "log_parser.h"
+
 
 CEventMonitor::CEventMonitor() : m_inotifyFd(-1), m_vecWatchList(*(new std::vector<std::string>)), m_dbManager(new CDatabaseManager()) {}
 
@@ -65,26 +67,51 @@ int CEventMonitor::StartMonitoring() {
         close(m_inotifyFd);
 
     } else if (taskTypeOption == SEND_EMAIL) {
-        std::string recipientEmailAddress = Config::Instance().GetEmailAddress();
-        std::cout << "Recipient email address read from config: " << recipientEmailAddress << "\n";
-
-        //임시 추가
-          // 필요한 인자들 정의
-        std::string subject = "Log File for Anomaly Detection";
-        std::string body = "This email contains the log file for anomaly detection as attachment.";
-        std::string logFilePath = "/home/choeun/Anti_Virus/logs/file_scanner.log";
-        if (!recipientEmailAddress.empty()) {
-            EmailSender emailSender("smtps://smtp.gmail.com", 465, recipientEmailAddress);
-            if (emailSender.SendEmailWithAttachment(subject, body, logFilePath) == 0) {
-                std::cout << "\n" << COLOR_GREEN << "Email sent successfully." << COLOR_RESET << "\n";
-            } else {
-                HandleError(ERROR_CANNOT_SEND_EMAIL);
-            }
-        } else {
-            std::cerr << "Email address is not configured.\n";
-        }
+    
+        // 로그 데이터로 이메일 전송
+        SendEmailWithLogData(LOG_FILE_PATH);
     }
     return SUCCESS_CODE;
+}
+
+void CEventMonitor::SendEmailWithLogData(const std::string& logFilePath) {
+    LogParser logParser;
+    auto logData = logParser.ParseJsonLogFile(logFilePath);
+
+    std::string emailBody = "[파일 이벤트의 로그 기록]\n\n"
+                            "안녕하세요,\n"
+                            "0000년 00월 00일에 발생한 파일 이벤트의 로그 기록을 보내드립니다.\n\n"; //시간은 탐지시간을 가져오는지 몰라서 따로 파싱 안했습니다.
+
+    for (const auto& entry : logData) {
+         emailBody += "파일 경로: " + entry.at("탐지된 파일") + "\n"
+                     "시간: " + entry.at("탐지 시간") + "\n"
+                     "이벤트 타입: " + entry.at("스캔 유형") + "\n"
+                     "파일 크기: " + entry.at("파일 크기") + " bytes\n"
+                     "해시 값: " + entry.at("해시 값") + "\n"
+                     "이동 여부: " + entry.at("이동 여부") + "\n"
+                     "이동 후 경로: " + entry.at("이동 후 경로") + "\n"
+                     "YARA 규칙: " + entry.at("YARA 규칙") + "\n\n";
+    }
+
+
+    emailBody += "[연락처 정보]\n"
+                 "시스템 관리자: 이름 (이메일, 전화번호)\n\n"
+                 "감사합니다.\n"
+                 "OOO 드림";
+
+    std::string subject = "파일 이벤트의 로그 기록";
+
+    std::string recipientEmailAddress = Config::Instance().GetEmailAddress();
+    if (!recipientEmailAddress.empty()) {
+        EmailSender emailSender("smtps://smtp.gmail.com", 465, recipientEmailAddress);
+        if (emailSender.SendEmailWithAttachment(subject, emailBody, logFilePath) == 0) {
+            std::cout << "\n" << COLOR_GREEN << "Email sent successfully." << COLOR_RESET << "\n";
+        } else {
+            HandleError(ERROR_CANNOT_SEND_EMAIL);
+        }
+    } else {
+        std::cerr << "Email address is not configured.\n";
+    }
 }
 
 // ini 파일에서 감시할 파일 목록을 읽어들이는 함수

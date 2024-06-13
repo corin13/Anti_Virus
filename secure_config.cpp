@@ -65,3 +65,10 @@ std::string CSecureConfig::getDecryptedPassword(const std::string& section, cons
     std::vector<unsigned char> encryptedPassword = base64Decode(encryptedPasswordBase64);
     return decryptRSA(encryptedPassword);
 }
+
+// INI 파일에서 암호화된 이메일 읽고 복호화하여 반환
+std::string CSecureConfig::getDecryptedEmail(const std::string& section, const std::string& name) const {
+    std::string encryptedEmailBase64 = m_iniReader.Get(section, name, "");
+    std::vector<unsigned char> encryptedEmail = base64Decode(encryptedEmailBase64);
+    return decryptRSA(encryptedEmail);
+}

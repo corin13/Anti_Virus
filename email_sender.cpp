@@ -9,7 +9,9 @@
 #include "util.h"
 
 EmailSender::EmailSender(const std::string& smtpServer, int smtpPort, const std::string& emailAddress)
-    : m_strSmtpServer(smtpServer), m_nSmtpPort(smtpPort), m_strEmailAddress(emailAddress), m_curl(nullptr) {}
+    : m_strSmtpServer(smtpServer), m_nSmtpPort(smtpPort), m_strEmailAddress(emailAddress), m_curl(nullptr) {
+        m_strSenderEmail = GetSenderEmail(); 
+    }
 
 EmailSender::~EmailSender() {
     if (m_curl) {
@@ -38,6 +40,28 @@ std::string EmailSender::GetEmailPassword() {
         return "";
     }
 }
+// 암호화된 발신자 이메일 주소를 복호화해서 가져오기 -> 굳이 inireader로 2번 읽을 필요가 있나 싶긴 함
+std::string EmailSender::GetSenderEmail() {
+    try {
+        INIReader reader(SETTING_FILE);
+        if (reader.ParseError() != 0) {
+            throw std::runtime_error("Failed to load ini file");
+        }
+
+        std::string strPrivateKeyPath = reader.Get(KEY_SECURITY, VALUE_PRIVATE_KEY_PATH, "");
+        if (strPrivateKeyPath.empty()) {
+            throw std::runtime_error("Private key path not found in ini file");
+        }
+
+        CSecureConfig ISecurityconfig(SETTING_FILE, strPrivateKeyPath);
+        std::string decrypted_email = ISecurityconfig.getDecryptedEmail(KEY_SECURITY, "encrypted_email");
+        return decrypted_email;
+    } catch (const std::exception& e) {
+        PrintError(e.what());
+        return "";
+    }
+}
+
 
 // curl 초기화
 void EmailSender::InitializeCurl() {
