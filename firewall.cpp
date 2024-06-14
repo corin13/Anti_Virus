@@ -620,37 +620,38 @@ int FirewallHelp() {
     return SUCCESS_CODE;
 }
 
-//메일 전송 함수
-void SendEmailWithFireWallLogData(const std::string& logFilePath){
+void SendEmailWithFireWallLogData(const std::string& logFilePath) {
     LogParser logParser;
-    auto logData =logParser.ParseFirewallLog(logFilePath);
+    auto logData = logParser.ParseFirewallLog(logFilePath);
+
+    if (logData.empty()) {
+        std::cerr << "Failed to parse log file." << std::endl;
+        return;
+    }
+
+    std::string emailBody =
+        "[Alert] 일간 방화벽 로그 요약 보고서\n\n"
+        "안녕하세요,\n"
+        "아래는 하루 동안의 방화벽 로그 요약 보고서 입니다.\n\n"
+        "[요약 보고서]\n"
+        "날짜: " + logData["날짜"] + "\n"
+        "총 이벤트 수: " + logData["총 이벤트 수"] + "\n"
+        "허용된 트래픽: " + logData["허용된 트래픽"] + "건\n"
+        "차단된 트래픽: " + logData["차단된 트래픽"] + "건\n\n"
+
+        "[연락처 정보]\n"
+        "시스템 관리자: 이름 (이메일, 전화번호)\n\n"
+        "감사합니다.\n";
 
     std::string subject = "일간 방화벽 로그 요약 보고서";
 
-    std::string emailBody = 
-    "[Alert] 일간 방화벽 로그 요약 보고서\n\n"
-    
-    "안녕하세요\n"
-    "아래는 하루 동안의 방화벽 로그 요약 보고서 입니다.\n\n"
-    
-    "[요약 보고서]\n"
-    "날짜 : " +logData["날짜"] + "\n"
-    "총 이벤트 수 : " + logData["총 이벤트 수"] + "\n"
-    "허용된 트래픽 : " +logData["허용된 트래픽"] + "\n"
-    "차단된 트래픽 : " +logData["차단된 트래픽"] + "\n\n"
-
-    "[연락처 정보]\n"
-    "시스템 관리자 : 이름 (이메일, 전화번호)\n\n"
-
-    "감사합니다.";
-    
     std::string recipientEmailAddress = Config::Instance().GetEmailAddress();
     if (!recipientEmailAddress.empty()) {
         EmailSender emailSender("smtps://smtp.gmail.com", 465, recipientEmailAddress);
         if (emailSender.SendEmailWithAttachment(subject, emailBody, logFilePath) == 0) {
             std::cout << "\n" << COLOR_GREEN << "Email sent successfully." << COLOR_RESET << "\n";
         } else {
-            HandleError(ERROR_CANNOT_SEND_EMAIL);
+            std::cerr << "Failed to send email." << std::endl;
         }
     } else {
         std::cerr << "Email address is not configured.\n";

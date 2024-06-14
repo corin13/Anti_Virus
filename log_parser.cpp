@@ -74,14 +74,14 @@ std::vector<std::unordered_map<std::string, std::string>> LogParser::ParseJsonLo
     if (root.isArray()) {
         for (const auto& entry : root) {
             std::unordered_map<std::string, std::string> logData;
-            logData["탐지된 파일"] = entry["detected_file"].asString();
-            logData["파일 크기"] = std::to_string(entry["file_size"].asInt());
-            logData["해시 값"] = entry["hash_value"].asString();
-            logData["이동 여부"] = entry["is_moved"].asString();
-            logData["이동 후 경로"] = entry["path_after_moving"].asString();
-            logData["스캔 유형"] = entry["scan_type"].asString();
-            logData["탐지 시간"] = entry["timestamp"].asString();
-            logData["YARA 규칙"] = entry["yara_rule"].asString();
+            logData["event_type"] = entry["event_type"].asString();
+            logData["file_size"] = std::to_string(entry["file_size"].asInt());
+            logData["new_hash"] = entry["new_hash"].asString();
+            logData["old_hash"] = entry["old_hash"].asString();
+            logData["pid"] = std::to_string(entry["pid"].asInt());
+            logData["target_file"] = entry["target_file"].asString();
+            logData["timestamp"] = entry["timestamp"].asString();
+            logData["user"] = entry["user"].asString();
             logEntries.push_back(logData);
         }
     }
