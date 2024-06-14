@@ -80,7 +80,9 @@ curl_mime* EmailSender::SetupMimeAndCurl(CURL* curl, const std::string& emailPas
     // 이메일 본문 추가
     part = curl_mime_addpart(mime);
     curl_mime_data(part, body.c_str(), CURL_ZERO_TERMINATED);
-    curl_mime_type(part, "text/plain");
+    curl_mime_type(part, "text/html");
+    curl_mime_name(part, "body");
+
 
     // 첨부파일 추가
     part = curl_mime_addpart(mime);

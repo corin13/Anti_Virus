@@ -67,9 +67,10 @@ int CEventMonitor::StartMonitoring() {
         close(m_inotifyFd);
 
     } else if (taskTypeOption == SEND_EMAIL) {
-    
+
+        std::string logFilePath = getLogFilePath();
         // 로그 데이터로 이메일 전송
-        SendEmailWithLogData(LOG_FILE_PATH);
+        SendEmailWithLogData(logFilePath);
     }
     return SUCCESS_CODE;
 }
@@ -78,26 +79,40 @@ void CEventMonitor::SendEmailWithLogData(const std::string& logFilePath) {
     LogParser logParser;
     auto logData = logParser.ParseJsonLogFile(logFilePath);
 
-    std::string emailBody = "[파일 이벤트의 로그 기록]\n\n"
-                            "안녕하세요,\n"
-                            "0000년 00월 00일에 발생한 파일 이벤트의 로그 기록을 보내드립니다.\n\n"; //시간은 탐지시간을 가져오는지 몰라서 따로 파싱 안했습니다.
+    auto currentTime = std::time(nullptr);
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&currentTime), "%Y-%m-%d");
+
+    std::string emailBody = "<html><head><style>"
+                            "table {width: 100%; border-collapse: collapse;}"
+                            "th, td {border: 1px solid black; padding: 8px; text-align: left;}"
+                            "th {background-color: #f2f2f2;}"
+                            "</style></head><body>"
+                            "<h2>[파일 이벤트의 로그 기록]</h2>"
+                            "<p>안녕하세요,</p>"
+                            "<p>다음은 " + ss.str() + " 파일 이벤트의 로그 기록입니다:</p>"
+                            "<table>"
+                            "<tr><th>파일 경로</th><th>시간</th><th>이벤트 타입</th><th>파일 크기</th><th>해시 값 (new)</th><th>해시 값 (old)</th><th>PID</th><th>사용자</th></tr>";
 
     for (const auto& entry : logData) {
-         emailBody += "파일 경로: " + entry.at("탐지된 파일") + "\n"
-                     "시간: " + entry.at("탐지 시간") + "\n"
-                     "이벤트 타입: " + entry.at("스캔 유형") + "\n"
-                     "파일 크기: " + entry.at("파일 크기") + " bytes\n"
-                     "해시 값: " + entry.at("해시 값") + "\n"
-                     "이동 여부: " + entry.at("이동 여부") + "\n"
-                     "이동 후 경로: " + entry.at("이동 후 경로") + "\n"
-                     "YARA 규칙: " + entry.at("YARA 규칙") + "\n\n";
+        emailBody += "<tr>"
+                     "<td>" + entry.at("target_file") + "</td>"
+                     "<td>" + entry.at("timestamp") + "</td>"
+                     "<td>" + entry.at("event_type") + "</td>"
+                     "<td>" + entry.at("file_size") + " bytes</td>"
+                     "<td>" + entry.at("new_hash") + "</td>"
+                     "<td>" + entry.at("old_hash") + "</td>"
+                     "<td>" + entry.at("pid") + "</td>"
+                     "<td>" + entry.at("user") + "</td>"
+                     "</tr>";
     }
 
-
-    emailBody += "[연락처 정보]\n"
-                 "시스템 관리자: 이름 (이메일, 전화번호)\n\n"
-                 "감사합니다.\n"
-                 "OOO 드림";
+    emailBody += "</table>"
+                 "<p>[연락처 정보]</p>"
+                 "<p>시스템 관리자: 이름 (이메일, 전화번호)</p>"
+                 "<p>감사합니다.</p>"
+                 "<p>우당탕 쿠당탕 드림</p>"
+                 "</body></html>";
 
     std::string subject = "파일 이벤트의 로그 기록";
 
