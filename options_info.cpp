@@ -24,7 +24,7 @@ int CUdkdAgentOptions::DisplayHelpOption() {
               << "  -u, --usage                 Collects and stores CPU, disk, and network usage data.\n"
               << "  -l, --log                   Manages log output, ensures log security and access control, optimizes log performance, and maintains log integrity and stability.\n"
               << "  -m, --monitor               Monitor file events in the system and send the recorded log files via email.\n"
-              << "  -n, --network [interface]   Generates and sends packets in real-time, captures and analyzes them to detect malicious packets, and blocks any detected malicious packets.\n"
+              << "  -n, --network               Generates and sends packets in real-time, captures and analyzes them to detect malicious packets, and blocks any detected malicious packets.\n"
               << "  -f, --firewall              Network Control Using Firewall Rules.\n"
               << "  -c, --config                Scan Using Custom Rules.\n";
    
