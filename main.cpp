@@ -6,6 +6,7 @@ CLoggingManager ILoggingOption;
 CPacketHandler INetworkingOption;
 CEventMonitor IEventMonitor;
 CFileScanner IFileScanner;
+CNetworkInterface IUserProgram;
 
 // 인자값 필요로 한다면 :붙이기 ex) hib:s:
 void CheckOption(int &argc, char** &argv){
@@ -51,7 +52,7 @@ void CheckOption(int &argc, char** &argv){
                 break;
 
             case 'n':
-                SelectInterface();
+                IUserProgram.ManageInterface();
                 networkOption = true;
                 break;
 

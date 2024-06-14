@@ -9,7 +9,6 @@ FirewallConfig& FirewallConfig::Instance() {
 }
 
 bool FirewallConfig::Load(const std::string& filename) {
-    std::cout << "FirewallConfig::Load called with filename: " << filename << std::endl;
     try {
         m_reader = INIReader(filename);
         if (m_reader.ParseError() != 0) {
@@ -28,8 +27,6 @@ bool FirewallConfig::Load(const std::string& filename) {
 
         m_writer = INIWriter(filename);
 
-        std::cout << "Loaded firewall rules from " << filename << "\n";
-        std::cout << "----------------------------------------\n";
         return true;
     } catch (const std::exception &e) {
         std::cerr << "Failed to load firewall rules from " << filename << ": " << e.what() << "\n";
@@ -38,24 +35,20 @@ bool FirewallConfig::Load(const std::string& filename) {
 }
 
 bool FirewallConfig::AddRule(const std::string& direction, const std::string& ip, const std::string& port, const std::string& action) {
-    std::cout << "AddRule called. iniData size: " << m_iniData.size() << std::endl;
+    std::string ruleName =generateRuleNumber();
+    m_iniData[ruleName]["direction"] = direction;
+    m_iniData[ruleName]["ip"] = ip;
+    m_iniData[ruleName]["port"] = port;
+    m_iniData[ruleName]["action"] = action;
 
-    std::string ruleNumber = "rule"+generateRuleNumber();
-    m_iniData[ruleNumber]["direction"] = direction;
-    m_iniData[ruleNumber]["ip"] = ip;
-    m_iniData[ruleNumber]["port"] = port;
-    m_iniData[ruleNumber]["action"] = action;
-
-    std::cout << "Attempting to write INI file\n";
     bool writeResult = writeIniFile();
-    std::cout << "Write INI file result: " << writeResult << std::endl;
-    std::cout << "----------------------------------------\n";
+
     return writeResult;
 }
 
-bool FirewallConfig::UpdateRule(const std::string& ruleNumber, const std::string& option, const std::string& newValue) {
-    if (m_iniData.find(ruleNumber) == m_iniData.end()) return false;
-    m_iniData[ruleNumber][option] = newValue;
+bool FirewallConfig::UpdateRule(const std::string& ruleName, const std::string& option, const std::string& newValue) {
+    if (m_iniData.find(ruleName) == m_iniData.end()) return false;
+    m_iniData[ruleName][option] = newValue;
     return writeIniFile();
 }
 
@@ -63,13 +56,15 @@ bool FirewallConfig::DeleteRule(const std::string& ruleNumber) {
     if (ruleNumber == "all") {
         m_iniData.clear();
     } else {
-        if (m_iniData.find(ruleNumber) == m_iniData.end()) return false;
-        m_iniData.erase(ruleNumber);
+        std::string ruleName =ruleNumber;
+        if (m_iniData.find(ruleName) == m_iniData.end()) return false;
+        m_iniData.erase(ruleName);
     }
     return writeIniFile();
 }
 
 std::string FirewallConfig::GetRulesList() const {
+    
     std::ostringstream oss;
     for (const auto& section : m_iniData) {
         oss << "[" << section.first << "]\n";
@@ -95,9 +90,12 @@ const std::map<std::string, std::map<std::string, std::string>>& FirewallConfig:
 std::string FirewallConfig::generateRuleNumber() {
     int maxRuleNumber = 0;
     for (const auto& section : m_iniData) {
-        maxRuleNumber = std::max(maxRuleNumber, std::stoi(section.first));
+        if (section.first.rfind("rule", 0) == 0) { 
+            int ruleNumber = std::stoi(section.first.substr(4));
+            maxRuleNumber = std::max(maxRuleNumber, ruleNumber);
+        }
     }
-    return std::to_string(maxRuleNumber + 1);
+    return "rule" + std::to_string(maxRuleNumber + 1);
 }
 
 bool FirewallConfig::writeIniFile() {

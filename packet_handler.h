@@ -1,14 +1,14 @@
 #pragma once
 
 #include <netinet/ip.h>
+#include <Packet.h>
 #include <pcap.h>
+#include <PcapLiveDevice.h>
+#include <PcapLiveDeviceList.h>
 #include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <Packet.h>
-#include <PcapLiveDevice.h>
-#include <PcapLiveDeviceList.h>
 #include <vector>
 #include "ansi_color.h"
 #include "error_codes.h"
@@ -21,10 +21,7 @@
 #include "log_parser.h"
 #include "config.h"
 
-
 #define COLUMN_WIDTH 30
-#define HALF_WORD_SIZE 16
-#define HALF_WORD_MASK 0xFFFF
 #define ETHERNET_HEADER_LENGTH 14
 #define IP_HEADER_LENGTH_UNIT 4
 #define BITS_PER_BYTE 8
@@ -36,45 +33,50 @@
 #define FLOODING_THRESHOLD 10
 #define RANDOM_IP_THRESHOLD 50
 #define ABNORMAL_PACKET_RATIO 2
+#define LOG_FILE_PATH "logs/detailed_logs.log"
 
 class CPacketHandler {
 public:
     CPacketHandler();
     ~CPacketHandler();
 
-    int AnalyzeNetworkTraffic(const char *pcap_file);
-    static void PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket);
-    static void LogPacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* userCookie);
-    static void MonitorBandwidth();
-    static void SigintHandler(int signum);
-    static int RunSystem(const char* interfaceName);
-    int RunIptables(std::string direction, std::string ip, std::string port, std::string action);
-    void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP);
+    void DisableOutput();
+    void EnableOutput();
+    int BlockDetectedIPs();
+    int AnalyzeCapturedPackets();
+    static int MonitorBandwidth();
+    bool PromptUserForBlockingIPs();
     bool PromptUserForPacketCapture();
     bool PromptUserForPacketAnalysis();
-    void CapturePackets(const char* interfaceName);
-    void AnalyzeCapturedPackets();
-    int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP);
-    bool PromptUserForBlockingIPs();
-    void BlockDetectedIPs();
-
-    //이메일
+    static void SigintHandler(int signum);
+    int CapturePackets(const char* interfaceName);
+    static int RunSystem(const char* interfaceName);
+    int AnalyzeNetworkTraffic(const char *pcap_file);
     void SendEmailWithLogPacketData(const std::string& logFilePath);
+    static int LogPacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* userCookie);
+    static int PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket);
+    int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP);
+    void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP);
+
 private:
+    int m_DetectionCount;
     int m_DuplicateIPCount;
     int m_LargePacketCount;
-    int m_MaliciousPayloadCount;
+    int m_NormalPacketCount;
+    int m_AbnormalPacketCount;
     int m_MaliciousPacketCount;
-    std::unordered_set<std::string> strRecentIPs;
-    std::unordered_map<std::string, std::unordered_set<int>> strIpProtocolHistory;
-    std::unordered_map<std::string, int> nIpFloodingCount;
-    std::unordered_set<std::string> strUniqueMaliciousIPs;
-    std::unordered_map<std::string, std::vector<int>> strProtocolChangeHistory;
-    std::unordered_set<std::string> strUniqueLargeIPs;
+    int m_MaliciousPayloadCount;
+    static std::streambuf* originalCoutBuffer;
     std::unordered_set<int> nLargePacketSizes;
-    std::unordered_set<std::string> strLoggedSuspiciousIPs;
+    std::unordered_set<std::string> strRecentIPs;
     std::unordered_set<std::string> strLoggedIPs;
+    std::unordered_set<std::string> strProcessedIPs;
+    std::unordered_set<std::string> strUniqueLargeIPs;
+    std::unordered_set<std::string> strLoggedMessages;
+    std::chrono::steady_clock::time_point lastCheckTime;
+    std::unordered_set<std::string> strUniqueMaliciousIPs;
+    std::unordered_map<std::string, int> nIpFloodingCount;
+    std::unordered_map<std::string, std::unordered_set<std::string>> strIpAddressesForPayload;
 
     VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;
-
 };

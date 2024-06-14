@@ -17,7 +17,8 @@ std::unordered_map<std::string, std::string> LogParser::ParseLogFile(const std::
     std::regex ipFloodingPattern("IP Flooding detected in (.+)");
     std::regex maliciousPacketPattern("Malicious packet detected: (.+)");
     std::regex reasonPattern("- Reason: (.+)");
-   // std::regex largePacketPattern("Large packet detected in (.+): (\\d+) bytes");
+    std::regex largePacketPattern("Large packet detected in (.+): (\\d+) bytes");
+    std::regex loggedMessagePattern("\\[.+\\] \\[info\\] Logged message");
    // std::regex timestampPattern("\\[(.+)\\] \\[info\\] Logged message");
    // std::regex destinationIpPattern("Destination IP address: (.+)");
    // std::regex sourcePortPattern("Source port: (.+)");
@@ -106,12 +107,20 @@ std::unordered_map<std::string, std::string> LogParser::ParseFirewallLog(const s
 
     while (std::getline(logFile, line)) {
         std::istringstream iss(line);
-        std::string logDate, action;
-        iss >> logDate >> action;
+        std::string month, day, time, hostname, kernel, timestamp, action;
+
+        iss >> month >> day >> time >> hostname >> kernel;
+
+        std::getline(iss, timestamp, ']');
+        timestamp += "]"; 
+        iss >> action;
 
         if (date.empty()) {
-            date = logDate;
+            date = month + " " + day;  
         }
+
+
+
 
         totalEvents++;
         if (action == "ALLOW") {

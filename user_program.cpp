@@ -1,96 +1,108 @@
-#include "packet_handler.h"
-#include <pcap.h>
-#include <vector>
-#include <string>
-#include <iostream>
 #include <atomic>
-#include <thread>
 #include <chrono>
+#include <iostream>
 #include <mutex>
+#include <pcap.h>
+#include <string>
+#include <thread>
+#include <vector>
+#include "user_program.h"
 
-std::mutex print_mutex; // 콘솔 출력을 위한 뮤텍스
+std::mutex print_mutex;
 
-std::string selectNetworkInterface() {
-    char errbuf[PCAP_ERRBUF_SIZE];
-    pcap_if_t *alldevs, *d;
-    std::vector<std::string> interfaces;
+// 사용 가능한 네트워크 인터페이스 목록을 사용자에게 제공하는 함수
+std::string CNetworkInterface::SelectNetworkInterface() {
+    char chErrBuf[PCAP_ERRBUF_SIZE];
+    pcap_if_t *pAlldevs, *pDevice;
+    std::vector<std::string> strInterfaces;
 
-    if (pcap_findalldevs(&alldevs, errbuf) == -1) {
-        std::cerr << "Error finding devices: " << errbuf << std::endl;
-        exit(1);
+    if (pcap_findalldevs(&pAlldevs, chErrBuf) == -1) {
+        return GetErrorMessage(ERROR_CANNOT_OPEN_DEVICE);
     }
-
-    for (d = alldevs; d != nullptr; d = d->next) {
-        if (d->name) {
-            interfaces.push_back(d->name);
+    for (pDevice = pAlldevs; pDevice != nullptr; pDevice = pDevice->next) {
+        if (pDevice->name) {
+            strInterfaces.push_back(pDevice->name);
         }
     }
 
-    pcap_freealldevs(alldevs);
-
-    if (interfaces.empty()) {
-        std::cerr << "No network interfaces found." << std::endl;
-        exit(1);
+    pcap_freealldevs(pAlldevs);
+    if (strInterfaces.empty()) {
+        return GetErrorMessage(ERROR_CANNOT_FIND_INTERFACE);
     }
 
-    std::cout << "Available network interfaces:\n";
-    for (size_t i = 0; i < interfaces.size(); ++i) {
-        std::cout << i + 1 << ". " << interfaces[i] << "\n";
+    std::cout << "\nAvailable network interfaces:\n";
+    for (size_t siIndex = 0; siIndex < strInterfaces.size(); ++siIndex) {
+        std::cout << siIndex + 1 << ". " << strInterfaces[siIndex] << "\n";
     }
 
-    std::cout << "Select an interface by number: ";
-    int choice;
-    std::cin >> choice;
-
-    if (choice < 1 || choice > interfaces.size()) {
-        std::cerr << "Invalid choice." << std::endl;
-        exit(1);
+    std::cout << "\n## Select an interface by number: ";
+    size_t siChoice;
+    std::cin >> siChoice;
+    if (siChoice < 1 || siChoice > strInterfaces.size()) {
+        std::cerr << GetErrorMessage(ERROR_INVALID_CHOICE) << std::endl;
+        return GetErrorMessage(ERROR_INVALID_CHOICE);
     }
-
-    return interfaces[choice - 1];
+    return strInterfaces[siChoice - 1];
 }
 
-void displayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic<bool>& sendingComplete) {
-    while (!sendingComplete.load()) {
+// 패킷 전송이 완료될 때까지 대기하며, 전송된 패킷의 총 개수를 출력하는 함수
+void CNetworkInterface::DisplayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic<bool>& sendingComplete) {
+    try {
+        while (!sendingComplete.load()) {
+            {
+                std::lock_guard<std::mutex> lock(print_mutex);
+            }
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
         {
-            std::lock_guard<std::mutex> lock(print_mutex); // 뮤텍스를 사용하여 동기화
+            std::lock_guard<std::mutex> lock(print_mutex);
+            std::cout << "\rTotal number of packets sent: " << totalMaliciousPacketsSent.load() << std::endl;
         }
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-    {
-        std::lock_guard<std::mutex> lock(print_mutex);
-        std::cout << "\rTotal packets sent: " << totalMaliciousPacketsSent.load() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error during packet count display: " << e.what() << std::endl;
     }
 }
 
-int SelectInterface() {
-    std::string interfaceName = selectNetworkInterface();
+// 네트워크 인터페이스를 선택하고, 해당 인터페이스에서 패킷을 캡처하고 분석하는 과정일 관리하는 함수
+int CNetworkInterface::ManageInterface() {
+    if (CLoggingManager::StartRotation() != SUCCESS_CODE ||
+        CLoggingManager::GenerateLogs("packetLogger") != SUCCESS_CODE ||
+        CLoggingManager::RotateLogs() != SUCCESS_CODE) {
+        std::cerr << "Log operation failed." << std::endl;
+        return ERROR_LOG_OPERATION_FAILED;
+    }
+
+    std::string strInterfaceName = SelectNetworkInterface();
+    if (strInterfaceName.empty()) {
+        return ERROR_CANNOT_OPEN_DEVICE;
+    }
+
     CPacketHandler handler;
+    CPacketGenerator packetGenerator;
 
     std::atomic<int> totalMaliciousPacketsSent(0);
-    std::atomic<bool> sendingComplete(false); // 패킷 전송 완료 플래그
+    std::atomic<bool> sendingComplete(false);
 
     std::thread packetThread([&]() {
-        GenerateMaliciousPackets(totalMaliciousPacketsSent);
-        sendingComplete.store(true); // 패킷 전송 완료 플래그 설정
+        packetGenerator.GenerateMaliciousPackets(totalMaliciousPacketsSent);
+        sendingComplete.store(true);
     });
 
     std::thread displayThread([&]() {
-        displayPacketCount(totalMaliciousPacketsSent, sendingComplete);
+        DisplayPacketCount(totalMaliciousPacketsSent, sendingComplete);
     });
 
     packetThread.join();
-    displayThread.join(); // displayThread가 종료되도록 변경
+    displayThread.join();
 
-    std::lock_guard<std::mutex> lock(print_mutex); // 뮤텍스를 사용하여 동기화
+    std::lock_guard<std::mutex> lock(print_mutex);
     if (handler.PromptUserForPacketCapture()) {
-        handler.CapturePackets(interfaceName.c_str());
+        handler.CapturePackets(strInterfaceName.c_str());
         if (handler.PromptUserForPacketAnalysis()) {
             handler.AnalyzeCapturedPackets();
         }
     } else {
         std::cout << "No packets captured." << std::endl;
     }
-
-    return 0;
+    return SUCCESS_CODE;
 }

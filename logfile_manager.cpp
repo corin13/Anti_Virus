@@ -45,29 +45,21 @@ int CLoggingManager::ManageLogLevel(){
 // 크기와 개수가 제한된 회전 로그 파일을 설정하고 로거 패턴을 정의하는 함수
 int CLoggingManager::RotateLogs() {
     try {
-        size_t siMaxSize = 1048576 * 5;  // 최대 로그 파일 크기: 5MB
-        size_t siMaxFiles = 2;  // 최대 로그 파일 개수: 3(원본로그파일 + 2)개
+        size_t siMaxSize = 1048576;  // 로그 파일 최대 크기를 1MB로 설정하여 빠른 로테이션 유도
+        size_t siMaxFiles = 2;  // 로그 파일 개수는 3(초기파일+2)개로 설정
 
-        // packetLogger 로거 생성 또는 가져오기
-        if (!spdlog::get("packetLogger")) {
-            auto packetLogger = spdlog::rotating_logger_mt("packetLogger", "logs/packet_transmission.log", siMaxSize, siMaxFiles);
-            packetLogger->set_level(spdlog::level::debug);
-            packetLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
-        }
+        auto create_rotating_logger = [&](const std::string& loggerName, const std::string& fileName) {
+            auto logger = spdlog::get(loggerName);
+            if (!logger) {
+                logger = spdlog::rotating_logger_mt(loggerName, "logs/" + fileName, siMaxSize, siMaxFiles);
+                logger->set_level(spdlog::level::trace);
+                logger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
+            }
+        };
 
-        // maliciousLogger 로거 생성 또는 가져오기
-        if (!spdlog::get("maliciousLogger")) {
-            auto maliciousLogger = spdlog::rotating_logger_mt("maliciousLogger", "logs/malicious_ips.log", siMaxSize, siMaxFiles);
-            maliciousLogger->set_level(spdlog::level::debug);
-            maliciousLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
-        }
-
-        // detailedLogger 로거 생성 또는 가져오기
-        if (!spdlog::get("detailedLogger")) {
-            auto detailedLogger = spdlog::rotating_logger_mt("detailedLogger", "logs/detailed_logs.log", siMaxSize, siMaxFiles);
-            detailedLogger->set_level(spdlog::level::debug);
-            detailedLogger->set_pattern("[%Y-%m-%d %H:%M:%S] [%l] %v");
-        }
+        create_rotating_logger("packetLogger", "packet_transmission.log");
+        create_rotating_logger("maliciousLogger", "malicious_ips.log");
+        create_rotating_logger("detailedLogger", "detailed_logs.log");
 
         return SUCCESS_CODE;
     } catch (const std::exception& ex) {
@@ -190,8 +182,8 @@ int CLoggingManager::MeasureAsyncLogPerformance() {
             spdlog::error("Logger not found");
             return ERROR_UNKNOWN;
         }
-        const int nLogs = 10000;
 
+        const int nLogs = 10000;
         auto start = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < nLogs; ++i) {
             logger->info("This is an asynchronous log message number {}", i);
@@ -201,7 +193,6 @@ int CLoggingManager::MeasureAsyncLogPerformance() {
 
         std::cout << " " << "\n";
         std::cout << "Logging " << nLogs << " messages took " << elapsed.count() << " seconds using asynchronous logging." << std::endl;
-
         logger->flush();
 
         return SUCCESS_CODE;
@@ -233,8 +224,8 @@ int CLoggingManager::MeasureSyncLogPerformance() {
             spdlog::error("Logger not found");
             return ERROR_UNKNOWN;
         }
-        const int nLogs = 10000;
 
+        const int nLogs = 10000;
         auto start = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < nLogs; ++i) {
             logger->info("This is a synchronous log message number {}", i);
@@ -243,7 +234,6 @@ int CLoggingManager::MeasureSyncLogPerformance() {
         std::chrono::duration<double> elapsed = end - start;
 
         std::cout << "Logging " << nLogs << " messages took " << elapsed.count() << " seconds using synchronous logging." << std::endl;
-
         logger->flush();
 
         return SUCCESS_CODE;
@@ -289,7 +279,7 @@ int CLoggingManager::StartRotation(){
 // 전체 로깅 시스템을 설정하고 다양한 로깅 테스트를 수행하는 함수
 int CLoggingManager::TestLogging() {
     try{
-        int result = CLoggingManager::StartRotation();
+        int nRotationResult = CLoggingManager::StartRotation();
 
         CLoggingManager instance;
 

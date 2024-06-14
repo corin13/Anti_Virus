@@ -4,7 +4,11 @@
 #include <fstream>
 #include <netinet/in.h>
 #include "ansi_color.h"
+#include "error_codes.h"
+#include "logfile_manager.h"
 
+#define HALF_WORD_SIZE 16
+#define HALF_WORD_MASK 0xFFFF
 #define PACKET_BUFFER_SIZE 4096
 #define IP_HEADER_LENGTH 5
 #define IP_VERSION 4
@@ -20,5 +24,8 @@
 #define TRANSMISSION_INTERVAL 250
 
 
-void GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPacketsSent);
-void SendMaliciousPacket(const char* src_ip, const char* dst_ip, int packet_count, std::ofstream& logFile);
+class CPacketGenerator {
+public: 
+    int GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPacketsSent);
+    int SendMaliciousPacket(const char* src_ip, const char* dst_ip, int packet_count, std::ofstream& logFile);
+};

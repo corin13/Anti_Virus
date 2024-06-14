@@ -46,6 +46,22 @@ std::string GetErrorMessage(int code) {
             return "Failed to open device";
         case ERROR_DATABASE_GENERAL:
             return "Database error";
+        case ERROR_INVALID_CHOICE:
+            return "Invalid choice error";
+        case ERROR_CANNOT_DISPLAY:
+            return "Error occured during display";
+        case ERROR_DETECTED_MALICIOUS_ACTIVITY:
+            return "Failed to detect malicious activities";
+        case ERROR_CANNOT_CAPTURE_PACKETS:
+            return "Failed to capture packets";
+        case ERROR_CANNOT_ANALYZE_PACKETS:
+            return "Failed to analyze packets";
+        case ERROR_CANNOT_PROMPT_USER:
+            return "Failed to prompt user";
+        case ERROR_CANNOT_BLOCK_IP:
+            return "Failed to block ips";
+        case ERROR_INVALID_INPUT:
+            return "INVALID_INPUT";
         case ERROR_UNKNOWN:
         default:
             return "Unknown error";

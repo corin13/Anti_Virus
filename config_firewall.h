@@ -21,6 +21,7 @@ private:
     INIReader m_reader;
     INIWriter m_writer;
     std::map<std::string, std::map<std::string, std::string>> m_iniData;
+    std::vector<std::string> m_sectionOrder;
     std::string generateRuleNumber();
     bool writeIniFile();
 };

@@ -20,16 +20,20 @@
 #include "log_parser.h"
 
 
-CEventMonitor::CEventMonitor() : m_inotifyFd(-1), m_vecWatchList(*(new std::vector<std::string>)), m_dbManager(new CDatabaseManager()) {}
+CEventMonitor::CEventMonitor() : m_inotifyFd(-1), m_vecWatchList(*(new std::vector<std::string>)), m_dbManager(nullptr) {}
 
 CEventMonitor::~CEventMonitor() {
     if (m_inotifyFd != -1) {
         close(m_inotifyFd);
     }
-    delete m_dbManager;
+    if (m_dbManager) {
+        delete m_dbManager;
+        m_dbManager = nullptr;
+    }
 }
 
 int CEventMonitor::StartMonitoring() {
+    m_dbManager = new CDatabaseManager();
     std::cout << "\nPlease select the task you'd like to perform:\n\n"
         << "1. Perform a file event monitoring (Default)\n"
         << "2. Send today's log file to an email\n\n"
