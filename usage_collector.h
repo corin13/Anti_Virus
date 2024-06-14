@@ -3,6 +3,8 @@
 #include <string>
 #include "error_codes.h"
 
+#define BUFFER_SIZE 128
+
 class CUsageCollector {
 public:
     int RunCommand(const char* pCommand, std::string& strResult);

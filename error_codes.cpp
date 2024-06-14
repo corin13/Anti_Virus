@@ -36,6 +36,18 @@ std::string GetErrorMessage(int code) {
             return "Failed to remove file";
         case ERROR_CANNOT_SEND_EMAIL:
             return "Failed to send email";
+        case ERROR_IPTABLES_COMMAND:
+            return "Failed to execute iptables";
+        case ERROR_LOG_OPERATION_FAILED:
+            return "Failed logging operation";
+        case ERROR_CANNOT_FIND_INTERFACE:
+            return "Failed to find interface";
+        case ERROR_CANNOT_OPEN_DEVICE:
+            return "Failed to open device";
+        case ERROR_DATABASE_GENERAL:
+            return "Database error";
+        case ERROR_INVALID_INPUT:
+            return "INVALID_INPUT";
         case ERROR_UNKNOWN:
         default:
             return "Unknown error";

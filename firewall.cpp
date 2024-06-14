@@ -1,22 +1,25 @@
 #include "firewall.h"
 
-
 int Firewall() {
-    int option = 0;
-
     while (true) {
+        int option;
+        int status;
+
+
         std::cout <<
-            "Select Firewall Option \n\n"
+            "\nSelect Firewall Option \n\n"
             "1. Run Firewall \n"
             "2. Configure Firewall \n"
             "3. View Logs \n\n"
             "Please enter the option : ";
 
-
-        std::cin >> option;
-        std::cin.ignore();
+        std::string input;
+        std::getline(std::cin, input);
         std::cout << std::endl;
-        int status;
+
+        if (isValidNumber(input)){
+            option = std::stoi(input);
+        }
 
         switch (option) {
             case 1:
@@ -24,8 +27,7 @@ int Firewall() {
                 break;
 
             case 2:
-                status = ConfigureFirewall();
-                std::cout << GetErrorMessage(status) << std::endl;
+                ConfigureFirewall();
                 break;
 
             case 3:
@@ -43,17 +45,14 @@ int Firewall() {
 
 
 int RunFirewall(){
+
     if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
         std::cerr << "Failed to load firewall rules in StartFirewall\n";
         return ERROR_INVALID_FUNCTION;
     }
 
-    
     signal(SIGINT, handle_exit);
     signal(SIGTERM, handle_exit);
-    
-    ExecCommand("iptables -A INPUT -j LOG --log-prefix \"INPUT packet: \" --log-level 1");
-    ExecCommand("iptables -A OUTPUT -j LOG --log-prefix \"OUTPUT packet: \" --log-level 1");
     
     auto& iniData = FirewallConfig::Instance().GetIniData();
     for (auto id : iniData){
@@ -65,15 +64,11 @@ int RunFirewall(){
         RunIptables(iniList[DIRECTION], iniList[IP], iniList[PORT],iniList[ACTION]);
     }
 
-    while (true){
-        std::cout << "run" << std::endl;
-        sleep(1);
-    }
+    ExecCommand("./firewall_logs.sh");
 
     return SUCCESS_CODE;
     
 }
-
 
 
 int ConfigureFirewall(){
@@ -138,9 +133,69 @@ int ConfigureFirewall(){
 }
 
 
+int ViewLogs(){
+    std::vector<std::string> filesPath;
+    std::vector<std::string> files;
+    int number;
+    int cnt=1;
 
+    if (std::filesystem::exists(LOG_FILE_PATH)) {
+        for (const auto& entry : std::filesystem::directory_iterator(LOG_FILE_PATH)) {
+            if (std::filesystem::is_regular_file(entry.status())) {
+                filesPath.push_back(entry.path().string());
+                files.push_back(entry.path().filename().string());
+            }
+        }   
+    }
+    else {
+        std::cerr << "Path does not exist or is not a directory." << std::endl;
+    }
+    
+    VariadicTable<int, std::string> vt({"No", "Name"}, 10);
+    
+
+    for (std::string file : files){
+        vt.addRow(cnt, file);
+        cnt++;
+    }
+
+    vt.print(std::cout);
+
+    std::cout << "\nPlease enter the number of the log file to read" <<std::endl;
+    std::cout << "NUMBER : " ;
+    
+    std::string input;
+    std::getline(std::cin, input);
+
+    // 입력값 검증
+    if (isValidNumber(input)){
+        number = std::stoi(input);
+    }
+    else {
+        PrintInputError(input);
+        return ERROR_INVALID_INPUT;
+    }
+
+    if (number < 1 || number > files.size()) {
+        PrintError("Invalid number");
+        return ERROR_INVALID_INPUT;
+    }
+
+    std::string cmd = "more " + filesPath[number - 1];
+
+    //터미널 환경 제어를 위한 system함수 사용
+    system(cmd.c_str());
+
+
+
+    return SUCCESS_CODE;
+}
+
+
+//iptables 실행 함수
 int RunIptables(std::string direction, std::string ip, std::string port, std::string action){
     std::string iptablesCmd="iptables -A";
+    std::string iptablesLogCmd ="";
 
     if (direction == "INPUT"){
         iptablesCmd += " INPUT ";
@@ -158,9 +213,11 @@ int RunIptables(std::string direction, std::string ip, std::string port, std::st
     iptablesCmd += port == "ANY" ? "" : " -p tcp --dport "+port;
 
     if (action =="DROP"){
+        iptablesLogCmd = iptablesCmd + " -j LOG --log-prefix \"BLOCK \"";
         iptablesCmd += " -j DROP";
     }
     else if (action == "ACCEPT"){
+        iptablesLogCmd = iptablesCmd + " -j LOG --log-prefix \"ALLOW \"";
         iptablesCmd += " -j ACCEPT";
     }
     else {
@@ -171,47 +228,21 @@ int RunIptables(std::string direction, std::string ip, std::string port, std::st
 
     std::cout << iptablesCmd << std::endl;
 
-    FILE* pipe = popen(iptablesCmd.c_str(), "r");
-    if (!pipe) {
-        std::cerr << "ERROR : popen() failed" << std::endl;
-        return ERROR_UNKNOWN;
-    }
-    
-    char buffer[128];
-
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-        std::cout << buffer;
-    }
-
-    pclose(pipe);
+    ExecCommand(iptablesLogCmd);
+    ExecCommand(iptablesCmd);
 
     return SUCCESS_CODE;
 }
 
-void ExecCommand(std::string cmd){
-    FILE* pipe = popen(cmd.c_str(), "r");
-    if (!pipe) {
-        std::cerr << "ERROR : popen() failed" << std::endl;
-        return;
-    }
-    
-    char buffer[128];
-
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-        std::cout << buffer;
-    }
-
-    pclose(pipe);
-}
 
 
+//사용자의 입력 전처리 함수
 std::vector<std::string> ConfigureUserInput(std::string& input){
     std::istringstream iss(input);
     std::vector<std::string> words;
     std::string word;
 
     while(iss >> word){
-        //소문자로 변경
         std::transform(word.begin(),word.end(),word.begin(),::tolower); 
 
         //iptables 형식에 맞게 변환
@@ -238,7 +269,7 @@ std::vector<std::string> ConfigureUserInput(std::string& input){
 }
 
 
-
+//사용자 입력 검증 함수
 int isVaildInput(std::vector<std::string>& words) {
     if (!FirewallConfig::Instance().Load("firewall_rules.ini")) {
         std::cerr << "Failed to load firewall rules in ConfigureFirewall\n";
@@ -384,6 +415,7 @@ int isVaildInput(std::vector<std::string>& words) {
     return ERROR_UNKNOWN;
 }
 
+//새로운 룰 추가 함수
 int AddRule(std::vector<std::string>& words){
     try{
         FirewallConfig::Instance().AddRule(
@@ -484,13 +516,24 @@ int RuleList(){
     return SUCCESS_CODE;
 }
 
-int ViewLogs(){
-    return SUCCESS_CODE;
+//명령어 실행 함수
+void ExecCommand(std::string cmd){
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe) {
+        std::cerr << "ERROR : popen() failed" << std::endl;
+        return;
+    }
+    
+    char buffer[128];
+
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        std::cout << buffer;
+    }
+
+    pclose(pipe);
 }
 
-
-
-
+//n번째 섹션의 이름을 가져오는 함수
 std::string GetSectionName(auto& iniData, int number){
     int cnt =1;
     for (auto& id : iniData){
@@ -532,49 +575,84 @@ bool isValidNumber(const std::string& number){
 // 2번 기능 메뉴얼 출력 함수
 void PrintConfigMenual(){
     std::cout << 
-        "\033[1;34m[ADD]    : \033[0m [A/add] [TO/FROM] [IP] [PORT] [ACCEPT(o)/DROP(x)] \n"
-        "\033[1;32m[UPDATE] : \033[0m [U/update] [Rule Number] [OPTION] [>] [Change Value]\n"
-        "\033[1;31m[DELETE] : \033[0m [D/delete] [Rule Number] \n"
-        "\033[1;33m[LIST]   : \033[0m [L/list] \n\n" 
+        COLOR_BLUE"[ADD]    : "COLOR_RESET" [A/add] [TO/FROM] [IP] [PORT] [ACCEPT(o)/DROP(x)] \n"
+        COLOR_GREEN"[UPDATE] : "COLOR_RESET" [U/update] [Rule Number] [OPTION] [>] [Change Value]\n"
+        COLOR_RED"[DELETE] : "COLOR_RESET" [D/delete] [Rule Number] \n"
+        COLOR_YELLOW"[LIST]   : "COLOR_RESET" [L/list] \n\n" 
 
-        "\033[36m[EXIT]\033[0m "
-        "\033[35m[HELP]\033[0m \n\n"
+        COLOR_CYAN"[EXIT]"COLOR_RESET
+        COLOR_MAGENTA"[HELP]"COLOR_RESET"\n\n"
 
         "COMMAND : ";
 }
 
-void PrintInputError(std::string error){
-    std::cerr << "Invalid Input : \"" << error << "\"" << std::endl;
-}
 
-// 프로그램 종료 시 iptables 룰 초기화 함수
+// 프로그램 종료 시 초기화 함수
 void handle_exit(int signum) {
     std::cout << "\nProgram is terminating\n" << std::endl;
-    std::string cmd = "iptables -F";
-    system(cmd.c_str());
+    std::vector<std::string> cmdList ={"iptables -F","pkill -f firewall_logs.sh"};
+    for(std::string& cmd : cmdList){
+        ExecCommand(cmd);
+    }
+
     exit(signum);
 }
 
+//설정 옵션 상세 설명 함수
 int FirewallHelp() {
     std::cout << 
-        "A, add     -Rule Add Command\n"       
-        "-[TO]    : Outbound network\n"
-        "-[FROM]  : Inbound network\n"
-        "-[DROP]  : Blocking the network\n"
-        "-[ACCEPT]: Allow the network\n\n"
+        "A, add     -Rule Add Command       -[TO]    : Settings for outgoing packets\n"       
+        "                                   -[FROM]  : Settings for incoming packets\n"
+        "                                   -[DROP]  : Packet blocking settings\n"
+        "                                   -[ACCEPT]: Packet allow settings\n\n"
 
-        "U, update  -Rule Update Command \n"
-        "-[Rule Number] : Rule Index Number\n"
-        "-[OPTION]: The title of the value you want to change\n"
-        "-[>]     : Must use '>' \n"
-        "-[Change Value]: Value to change\n\n"
+        "U, update  -Rule Update Command    -[Rule Number]  : Rule Index Number\n"
+        "                                   -[OPTION]       : The title of the value you want to change\n"
+        "                                   -[>]            : Must use '>' \n"
+        "                                   -[Change Value] : Value to change\n\n"
 
-        "D, delete  -Rule Delete Command \n"    
-        "-[Rule Number] : Rule Index Number\n\n"
+        "D, delete  -Rule Delete Command    -[Rule Number] : Rule Index Number\n\n"    
 
         "L, list    -Rule Inquiry Command\n\n"
         
         "EXIT       -End Rule Set Commands\n" 
         << std::endl;  
     return SUCCESS_CODE;
+}
+
+//메일 전송 함수
+void SendEmailWithFireWallLogData(const std::string& logFilePath){
+    LogParser logParser;
+    auto logData =logParser.ParseFirewallLog(logFilePath);
+
+    std::string subject = "일간 방화벽 로그 요약 보고서";
+
+    std::string emailBody = 
+    "[Alert] 일간 방화벽 로그 요약 보고서\n\n"
+    
+    "안녕하세요\n"
+    "아래는 하루 동안의 방화벽 로그 요약 보고서 입니다.\n\n"
+    
+    "[요약 보고서]\n"
+    "날짜 : " +logData["날짜"] + "\n"
+    "총 이벤트 수 : " + logData["총 이벤트 수"] + "\n"
+    "허용된 트래픽 : " +logData["허용된 트래픽"] + "\n"
+    "차단된 트래픽 : " +logData["차단된 트래픽"] + "\n\n"
+
+    "[연락처 정보]\n"
+    "시스템 관리자 : 이름 (이메일, 전화번호)\n\n"
+
+    "감사합니다.";
+    
+    std::string recipientEmailAddress = Config::Instance().GetEmailAddress();
+    if (!recipientEmailAddress.empty()) {
+        EmailSender emailSender("smtps://smtp.gmail.com", 465, recipientEmailAddress);
+        if (emailSender.SendEmailWithAttachment(subject, emailBody, logFilePath) == 0) {
+            std::cout << "\n" << COLOR_GREEN << "Email sent successfully." << COLOR_RESET << "\n";
+        } else {
+            HandleError(ERROR_CANNOT_SEND_EMAIL);
+        }
+    } else {
+        std::cerr << "Email address is not configured.\n";
+    }
 }

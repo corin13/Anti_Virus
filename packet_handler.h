@@ -1,40 +1,70 @@
 #pragma once
 
-#include <netinet/ip.h> 
-#include <pcap.h> 
-#include <set> 
-#include <string> 
-#include <unordered_map> 
-#include <unordered_set> 
+#include <netinet/ip.h>
+#include <pcap.h>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <Packet.h>
 #include <PcapLiveDevice.h>
 #include <PcapLiveDeviceList.h>
 #include <vector>
-#include "ansi_color.h" 
-#include "error_codes.h" 
+#include "ansi_color.h"
+#include "error_codes.h"
+#include "VariadicTable.h"
+#include "logfile_manager.h"
+#include "firewall.h"
+#include "packet_generator.h"
+#include "user_program.h"
+#include "email_sender.h"
+#include "log_parser.h"
+#include "config.h"
 
-#define MAX_PACKET_SIZE 1000 
-#define UDP_PORT_HTTP 80 
-#define PAYLOAD_PATTERN "XXXXXXXXXX" 
-#define MTU_SIZE 1500 
+
+#define COLUMN_WIDTH 30
+#define HALF_WORD_SIZE 16
+#define HALF_WORD_MASK 0xFFFF
+#define ETHERNET_HEADER_LENGTH 14
+#define IP_HEADER_LENGTH_UNIT 4
+#define BITS_PER_BYTE 8
+#define PACKET_IP_TTL 255
+#define MAX_PACKET_SIZE 1472
+#define MAX_SNAP_LEN 65536
+#define PAYLOAD_PATTERN "AAAAAAAAAA"
+#define MTU_SIZE 1500
+#define FLOODING_THRESHOLD 10
+#define RANDOM_IP_THRESHOLD 50
+#define ABNORMAL_PACKET_RATIO 2
 
 class CPacketHandler {
 public:
+    CPacketHandler();
+    ~CPacketHandler();
+
     int AnalyzeNetworkTraffic(const char *pcap_file);
     static void PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket);
     static void LogPacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* userCookie);
     static void MonitorBandwidth();
-    static void SendMaliciousPacket(const char* src_ip, const char* dst_ip, int packet_count, std::ofstream& logFile);
-    static void GenerateMaliciousPackets();
     static void SigintHandler(int signum);
     static int RunSystem(const char* interfaceName);
-
-private:
+    int RunIptables(std::string direction, std::string ip, std::string port, std::string action);
+    void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP);
+    bool PromptUserForPacketCapture();
+    bool PromptUserForPacketAnalysis();
+    void CapturePackets(const char* interfaceName);
+    void AnalyzeCapturedPackets();
     int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP);
-    bool CheckPayload(const u_char *pPayload, int nSize);
-    bool CheckRandomIPs(const std::string& strSrcIP);
-    bool CheckIPFlooding(const std::string& strSrcIP);
+    bool PromptUserForBlockingIPs();
+    void BlockDetectedIPs();
 
+    //이메일
+    void SendEmailWithLogPacketData(const std::string& logFilePath);
+private:
+    int m_DuplicateIPCount;
+    int m_LargePacketCount;
+    int m_MaliciousPayloadCount;
+    int m_MaliciousPacketCount;
     std::unordered_set<std::string> strRecentIPs;
     std::unordered_map<std::string, std::unordered_set<int>> strIpProtocolHistory;
     std::unordered_map<std::string, int> nIpFloodingCount;
@@ -44,8 +74,7 @@ private:
     std::unordered_set<int> nLargePacketSizes;
     std::unordered_set<std::string> strLoggedSuspiciousIPs;
     std::unordered_set<std::string> strLoggedIPs;
-    int nDuplicateIPCount = 0;
-    int nLargePacketCount = 0;
-    int nMaliciousPayloadCount = 0;
-    int nMaliciousPacketCount = 0;
+
+    VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;
+
 };

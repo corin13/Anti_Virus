@@ -7,7 +7,7 @@
 class CYaraChecker {
 public:
     CYaraChecker(const std::string& rulesDirectory);
-    int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& strDetectionCause);
+    int CheckYaraRule(const std::string& filePath, std::vector<std::string>& detectedMalware, std::string& detectionCause);
 
 private:
     struct ST_YaraData {
@@ -16,8 +16,9 @@ private:
         std::string NameOfYaraRule;
     };
 
-    std::string rulesDirectory;
-    std::vector<std::string> ruleFiles;
+    std::string m_strRulesDirectory;
+    std::vector<std::string> m_vecRuleFiles;
+
     static int YaraCallbackFunction(YR_SCAN_CONTEXT* context, int message, void* messageData, void* yaraData);
-    int GetRuleFiles(const std::string& directory, std::vector<std::string>& ruleFiles);    
+    int GetRuleFiles();    
 };

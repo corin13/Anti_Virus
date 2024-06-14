@@ -11,8 +11,7 @@ CFileScanner IFileScanner;
 void CheckOption(int &argc, char** &argv){
     int nOptionIndex= 0;
     int nOpt;
-
-    const char* pOption="c:dhilmsufn:";  // 'f' 옵션 추가
+    const char* pOption="c:dhilmsunf"; 
     bool networkOption = false;
     std::string configPath;
 
@@ -52,9 +51,10 @@ void CheckOption(int &argc, char** &argv){
                 break;
 
             case 'n':
-                INetworkingOption.RunSystem(optarg);
+                SelectInterface();
                 networkOption = true;
                 break;
+
             case 'c':
                 LoadConfig(optarg);
                 IFileScanner.StartIniScan();

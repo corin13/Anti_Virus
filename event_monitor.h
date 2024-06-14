@@ -5,34 +5,56 @@
 #include <string>
 #include <sstream>
 #include <sys/inotify.h>
+#include "database_manager.h"
+#include "log_parser.h"
 
-struct MonitorData {
-    std::string eventDescription;
+#define SETTING_FILE "settings.ini"
+#define LOG_SAVE_PATH "logs/file_event_monitor_"
+
+#define LOG_FILE_PATH "logs/file_scanner.log" // 이 파일을 파싱해서 메일로 보냄
+
+#define PERFORM_MONITORING 1
+#define SEND_EMAIL 2
+
+#define EVENT_SIZE (sizeof(struct inotify_event)) // 이벤트 구조체 크기
+#define EVENT_BUFFER_SIZE (1024 * (EVENT_SIZE + 16)) // 한 번에 읽을 수 있는 최대 바이트 수
+
+struct ST_MonitorData {
+    std::string eventType;
     std::string filePath;
-    std::string integrityResult;
     std::string newHash;
     std::string oldHash;
     std::string timestamp;
+    int64_t fileSize;
+    std::string user;
+    int processId;
 };
+
+class CDatabaseManager; //전방 선언
 
 class CEventMonitor {
 public:
     CEventMonitor();
+    ~CEventMonitor();
     int StartMonitoring();
+
+    // 이메일
+    void SendEmailWithLogData(const std::string& logFilePath); 
+
 
 private:
     int m_inotifyFd;
-    std::unordered_map<int, std::string> m_watchDescriptors;
-    std::vector<std::string> m_watchList;
+    std::unordered_map<int, std::string> m_mapWatchDescriptors;
+    std::vector<std::string> m_vecWatchList;
+    CDatabaseManager* m_dbManager;
 
-    std::vector<std::string> readWatchList(const std::string& watchListfilePath);
-    void initializeWatchList();
-    int createInotifyInstance();
+    void readWatchList();
+    void createInotifyInstance();
     void addWatchListToInotify();
     void runEventLoop();
     void processEvent(struct inotify_event *event);
-    void printEventsInfo(MonitorData& data);
-    void verifyFileIntegrity(MonitorData& data);
-    void logEvent(MonitorData& data);
+    std::string CalculateFileHash(std::string filePath);
+    void printEventsInfo(ST_MonitorData& data);
+    void logEvent(ST_MonitorData& data);
     std::string getLogFilePath();
 };

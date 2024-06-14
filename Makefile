@@ -7,7 +7,7 @@ CXX=g++
 CXXFLAGS=-Wall -Wextra -O2 -std=c++17 -I/usr/local/include/pcapplusplus
 
 # 링커 플래그 설정
-LDFLAGS=-lssl -lcrypto -lyara -lpthread -ljsoncpp -lcurl -lpcap -L/usr/local/lib -lPcap++ -lPacket++ -lCommon++
+LDFLAGS=-lssl -lcrypto -lyara -lpthread -ljsoncpp -lcurl -lpcap -L/usr/local/lib -lPcap++ -lPacket++ -lCommon++ -lsqlite3 -lstdc++fs
 
 # 최종 타겟 설정
 TARGET=UdkdAgent
@@ -21,7 +21,7 @@ OBJECTS=$(SOURCES:.cpp=.o)
 all: $(TARGET)
 	@echo "Build successful!"
 	@$(MAKE) clean
-
+	
 # 최종 실행 파일 생성 규칙
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) || (echo "Build failed!"; exit 1)
@@ -37,4 +37,4 @@ clean:
 # 라이브러리 설치 규칙
 install:
 	sudo apt-get update
-	sudo apt-get install -y libjsoncpp-dev libcurl4-openssl-dev libspdlog-dev sysstat ifstat yara libyara-dev libpcap-dev cmake
+	sudo apt-get install -y libjsoncpp-dev libcurl4-openssl-dev libspdlog-dev sysstat ifstat yara libyara-dev libpcap-dev cmake libsqlite3-dev

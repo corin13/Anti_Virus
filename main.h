@@ -11,6 +11,8 @@
 #include "packet_handler.h"
 #include "config.h"
 #include "firewall.h"
+#include "packet_generator.h"
+#include "user_program.h"
 
 using namespace std;
 
@@ -23,11 +25,11 @@ struct option options[]={
     {"usage", no_argument, 0, 'u'},
     {"log", no_argument, 0, 'l'},
     {"monitor", no_argument, 0, 'm'},
-    {"network", required_argument, 0, 'n'},
+    {"network", no_argument, 0, 'n'},
     {"config", required_argument, 0, 'c'},
     {"firewall", no_argument, 0, 'f'},
     {0,0,0,0}
 };
 
-void CheckOpt(int argc, char** argv);
+void CheckOption(int &argc, char** &argv);
 void LoadConfig(const std::string& configPath);

@@ -1,4 +1,4 @@
-# Install script for directory: /home/hun/Desktop/Anti_Virus/PcapPlusPlus-23.09/Tests/Packet++Test
+# Install script for directory: /home/choeun/Anti_Virus/PcapPlusPlus-23.09/Tests/Packet++Test
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
