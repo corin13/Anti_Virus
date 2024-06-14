@@ -26,6 +26,8 @@ bool Config::Load(const std::string& filename) {
     }
 }
 
+
+
 std::string Config::GetScanPath() const {
     return m_reader.Get("SCAN", "path", "/");
 }
@@ -53,5 +55,3 @@ int Config::GetNetworkPort() const {
 std::string Config::GetFileExtension() const {
     return m_reader.Get("SCAN", "extension", "");
 }
-
-

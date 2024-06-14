@@ -1,12 +1,17 @@
 #pragma once
 
-#include <pcap.h>
-#include <vector>
-#include <string>
 #include <atomic>
+#include <pcap.h>
+#include <string>
+#include <vector>
+#include "error_codes.h"
+#include "logfile_manager.h"
 #include "packet_generator.h"
 #include "packet_handler.h"
 
-std::string selectNetworkInterface();
-void displayPacketCount(std::atomic<int>& totalMaliciousPacketsSent);
-int SelectInterface();
+class CNetworkInterface{
+public:
+    std::string SelectNetworkInterface();
+    void DisplayPacketCount(std::atomic<int>& totalMaliciousPacketsSent, std::atomic<bool>& sendingComplete);
+    int ManageInterface();
+};

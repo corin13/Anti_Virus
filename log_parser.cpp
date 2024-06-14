@@ -17,7 +17,8 @@ std::unordered_map<std::string, std::string> LogParser::ParseLogFile(const std::
     std::regex ipFloodingPattern("IP Flooding detected in (.+)");
     std::regex maliciousPacketPattern("Malicious packet detected: (.+)");
     std::regex reasonPattern("- Reason: (.+)");
-   // std::regex largePacketPattern("Large packet detected in (.+): (\\d+) bytes");
+    std::regex largePacketPattern("Large packet detected in (.+): (\\d+) bytes");
+    std::regex loggedMessagePattern("\\[.+\\] \\[info\\] Logged message");
    // std::regex timestampPattern("\\[(.+)\\] \\[info\\] Logged message");
    // std::regex destinationIpPattern("Destination IP address: (.+)");
    // std::regex sourcePortPattern("Source port: (.+)");
