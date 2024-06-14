@@ -11,8 +11,6 @@
 #define SETTING_FILE "settings.ini"
 #define LOG_SAVE_PATH "logs/file_event_monitor_"
 
-#define LOG_FILE_PATH "logs/file_scanner.log" // 이 파일을 파싱해서 메일로 보냄
-
 #define PERFORM_MONITORING 1
 #define SEND_EMAIL 2
 
