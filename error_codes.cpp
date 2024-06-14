@@ -60,6 +60,8 @@ std::string GetErrorMessage(int code) {
             return "Failed to prompt user";
         case ERROR_CANNOT_BLOCK_IP:
             return "Failed to block ips";
+        case ERROR_INVALID_INPUT:
+            return "INVALID_INPUT";
         case ERROR_UNKNOWN:
         default:
             return "Unknown error";

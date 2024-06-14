@@ -232,3 +232,23 @@ Malicious packet detected: 192.168.64.2
 Large packet detected in 192.168.64.2: 1500 bytes
 Large packet detected in 192.168.64.1: 1500 bytes
 [2024-06-14 13:20:19] [info] Logged message.
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+[2024-06-14 13:29:07] [info] Logged message.
+Large packet detected in 189.100.192.168: 2048 bytes
+Packet fragmentation detected: 189.100.192.168
+Malicious packet detected: 189.100.192.168
+- Reason: Packet fragmentation
+Large packet detected in 137.107.192.168: 2048 bytes
+Packet fragmentation detected: 137.107.192.168
+Malicious packet detected: 137.107.192.168
+- Reason: Packet fragmentation
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+[2024-06-14 13:29:36] [info] Logged message.
+[2024-06-14 13:30:39] [info] Logged message.

@@ -24,6 +24,10 @@ void PrintError(const std::string& message) {
     std::cerr << "\n" << COLOR_RED << message << COLOR_RESET << "\n";
 }
 
+void PrintInputError(std::string& error){
+    std::cerr << "Invalid Input : " << COLOR_RED << "\""<< error << "\"" << COLOR_RESET << std::endl;
+}
+
 void PrintErrorMessage(int code, const std::string& context) {
     if (code != SUCCESS_CODE) {
         std::cerr << "\n" << COLOR_RED << "[Error] " << GetErrorMessage(code) << COLOR_RESET;
