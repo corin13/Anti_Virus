@@ -35,7 +35,7 @@ void CheckOption(int &argc, char** &argv){
 
             case 'm':
                 if (configPath.empty()) {
-                    configPath = "./config.ini"; // 기본 설정 파일 경로
+                    configPath = CONFIGPATH; // 기본 설정 파일 경로
                 }
                 std::cout << "Configuration path for -m: " << configPath << std::endl;
                 LoadConfig(configPath);
