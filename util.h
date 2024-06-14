@@ -8,6 +8,7 @@
 #define BUFFER_SIZE 8192
 
 bool IsDirectory(const std::string& path);
+void PrintInputError(std::string& error);
 void PrintError(const std::string& message);
 void PrintErrorMessage(int code, const std::string& context = "");
 void HandleError(int code, const std::string& context = "");

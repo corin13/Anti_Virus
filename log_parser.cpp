@@ -106,12 +106,20 @@ std::unordered_map<std::string, std::string> LogParser::ParseFirewallLog(const s
 
     while (std::getline(logFile, line)) {
         std::istringstream iss(line);
-        std::string logDate, action;
-        iss >> logDate >> action;
+        std::string month, day, time, hostname, kernel, timestamp, action;
+
+        iss >> month >> day >> time >> hostname >> kernel;
+
+        std::getline(iss, timestamp, ']');
+        timestamp += "]"; 
+        iss >> action;
 
         if (date.empty()) {
-            date = logDate;
+            date = month + " " + day;  
         }
+
+
+
 
         totalEvents++;
         if (action == "ALLOW") {

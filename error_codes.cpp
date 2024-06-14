@@ -46,6 +46,8 @@ std::string GetErrorMessage(int code) {
             return "Failed to open device";
         case ERROR_DATABASE_GENERAL:
             return "Database error";
+        case ERROR_INVALID_INPUT:
+            return "INVALID_INPUT";
         case ERROR_UNKNOWN:
         default:
             return "Unknown error";
