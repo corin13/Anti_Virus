@@ -10,6 +10,22 @@ Config& Config::Instance() {
     return instance;
 }
 
+/*// 정적 포인터 초기화
+config 사용하는 곳 모두 파악 후 수정 예정
+Config* Config::instance = nullptr;
+
+Config& Config::Instance() {
+    if (instance == nullptr) {
+        instance = new Config();
+    }
+    return *instance;
+}
+
+void Config::Destroy() {
+    delete instance;
+    instance = nullptr;
+}*/
+
 bool Config::Load(const std::string& filename) {
     std::cout << "Config::Load called with filename: " << filename << std::endl;
     try {
@@ -54,4 +70,8 @@ int Config::GetNetworkPort() const {
 
 std::string Config::GetFileExtension() const {
     return m_reader.Get("SCAN", "extension", "");
+}
+
+std::string Config::GetSpecificExtension() const {
+    return m_reader.Get("SCAN", "specific_extension", "txt");
 }

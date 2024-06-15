@@ -16,6 +16,8 @@ public:
     std::string GetNetworkInterface() const;
     int GetNetworkPort() const;
     std::string GetFileExtension() const;
+    std::string GetSpecificExtension() const;
+
 
 private:
     Config() = default;

@@ -36,12 +36,20 @@ int CFileScanner::StartScan(){
     return SUCCESS_CODE;
 }
 
+
 int CFileScanner::StartIniScan(){
     //INI 파일에서 설정 값을 읽어옵니다.
     m_strScanTargetPath = Config::Instance().GetScanPath();
     m_nScanTypeOption = Config::Instance().GetScanType();
     m_strExtension = Config::Instance().GetFileExtension(); // 설정 파일에서 확장자 값을 읽어옴
-    m_nFileTypeOption = m_strExtension.empty() ? 1 : 3;
+      if (m_strExtension.empty()) {
+        m_nFileTypeOption = 1; // 모든 파일 스캔
+    } else if (std::stoi(m_strExtension) == 3) {
+        m_strExtension = Config::Instance().GetSpecificExtension();
+        m_nFileTypeOption = 3; // 특정 확장자 파일 스캔
+    } else {
+        m_nFileTypeOption = std::stoi(m_strExtension); // 다른 값인 경우, 해당 값을 사용
+    }
     
     std::cout << "Starting scan on path: " << m_strScanTargetPath << " with scan type: " << m_nScanTypeOption << " and extension: " << m_strExtension << "\n";
 
