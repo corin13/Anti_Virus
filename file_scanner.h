@@ -11,7 +11,7 @@
 #define YARA_RULE 1
 #define HASH_COMPARISON 2
 
-#define DEFAULT_PATH "/"
+#define DEFAULT_PATH "./"
 #define DEFAULT_EXTENSION "exe"
 
 #define YARA_RULES_PATH "yara-rules"
