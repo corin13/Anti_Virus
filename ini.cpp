@@ -14,7 +14,6 @@
 using namespace std;
 
 INIReader::INIReader(const string& filename) {
-    std::cout << "INIReader constructor called with filename: " << filename << std::endl;
     m_error = parse(filename);
 }
 
