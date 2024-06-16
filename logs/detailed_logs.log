@@ -19065,3 +19065,10 @@ Malicious packet detected: 62.81.192.168
 [2024-06-16 06:40:09] [info] Logged message.
 [2024-06-16 06:40:15] [info] Logged message.
 [2024-06-16 06:40:17] [info] Logged message.
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+[2024-06-16 07:12:38] [info] Logged message.
