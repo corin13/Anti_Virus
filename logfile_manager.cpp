@@ -96,7 +96,7 @@ int CLoggingManager::MultiSinkLogger() {
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         consoleSink->set_level(spdlog::level::info);
 
-        auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/detailed.log", true);
+        auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multi_sink.log", true);
         fileSink->set_level(spdlog::level::trace);  
 
         std::vector<spdlog::sink_ptr> sinks {consoleSink, fileSink};
