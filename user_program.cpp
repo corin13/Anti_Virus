@@ -72,37 +72,63 @@ int CNetworkInterface::ManageInterface() {
         return ERROR_LOG_OPERATION_FAILED;
     }
 
-    std::string strInterfaceName = SelectNetworkInterface();
-    if (strInterfaceName.empty()) {
-        return ERROR_CANNOT_OPEN_DEVICE;
-    }
+    int nChoice;
+    std::cout << "\n## Select an option:\n";
+    std::cout << "\n1. Generate and capture packets in real-time\n";
+    std::cout << "2. Analyze existing pcap file\n";
+    std::cout << "\nEnter your choice: ";
+    std::cin >> nChoice;
 
-    CPacketHandler handler;
-    CPacketGenerator packetGenerator;
-
-    std::atomic<int> totalMaliciousPacketsSent(0);
-    std::atomic<bool> sendingComplete(false);
-
-    std::thread packetThread([&]() {
-        packetGenerator.GenerateMaliciousPackets(totalMaliciousPacketsSent);
-        sendingComplete.store(true);
-    });
-
-    std::thread displayThread([&]() {
-        DisplayPacketCount(totalMaliciousPacketsSent, sendingComplete);
-    });
-
-    packetThread.join();
-    displayThread.join();
-
-    std::lock_guard<std::mutex> lock(print_mutex);
-    if (handler.PromptUserForPacketCapture()) {
-        handler.CapturePackets(strInterfaceName.c_str());
-        if (handler.PromptUserForPacketAnalysis()) {
-            handler.AnalyzeCapturedPackets();
+    if (nChoice == 1) {
+        std::string strInterfaceName = SelectNetworkInterface();
+        if (strInterfaceName.empty()) {
+            return ERROR_CANNOT_OPEN_DEVICE;
         }
+
+        CPacketHandler handler;
+        CPacketGenerator packetGenerator;
+
+        std::atomic<int> totalMaliciousPacketsSent(0);
+        std::atomic<bool> sendingComplete(false);
+
+        std::thread packetThread([&]() {
+            packetGenerator.GenerateMaliciousPackets(totalMaliciousPacketsSent);
+            sendingComplete.store(true);
+        });
+
+        std::thread displayThread([&]() {
+            DisplayPacketCount(totalMaliciousPacketsSent, sendingComplete);
+        });
+
+        packetThread.join();
+        displayThread.join();
+
+        std::lock_guard<std::mutex> lock(print_mutex);
+        if (handler.PromptUserForPacketCapture()) {
+            handler.CapturePackets(strInterfaceName.c_str());
+            if (handler.PromptUserForPacketAnalysis()) {
+                handler.AnalyzeCapturedPackets();
+            }
+        } else {
+            std::cout << "No packets captured." << std::endl;
+        }
+    } else if (nChoice == 2) {
+        std::string pcapFilePath;
+        std::cout << "\n## Enter the pcap file path (ex. packets/packet1.pcap): ";
+        std::cin >> pcapFilePath;
+
+        CPacketHandler handler;
+        auto result = handler.AnalyzeNetworkTraffic(pcapFilePath.c_str());
+        if (result == SUCCESS_CODE) {
+            std::cout << COLOR_GREEN "\nPacket analysis completed successfully." << COLOR_RESET << std::endl;
+        } else {
+            std::cerr << "Packet analysis failed with error code: " << result << std::endl;
+        }
+        std::cout << COLOR_RED "Number of malicious packets detected: " << handler.m_DetectionCount << COLOR_RESET << std::endl;
+
     } else {
-        std::cout << "No packets captured." << std::endl;
+        std::cerr << "Invalid choice." << std::endl;
+        return ERROR_INVALID_CHOICE;
     }
     return SUCCESS_CODE;
 }

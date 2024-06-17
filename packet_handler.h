@@ -58,8 +58,10 @@ public:
     int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP);
     void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP);
 
-private:
     int m_DetectionCount;
+    VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;
+
+private:
     int m_DuplicateIPCount;
     int m_LargePacketCount;
     int m_NormalPacketCount;
@@ -77,6 +79,4 @@ private:
     std::unordered_set<std::string> strUniqueMaliciousIPs;
     std::unordered_map<std::string, int> nIpFloodingCount;
     std::unordered_map<std::string, std::unordered_set<std::string>> strIpAddressesForPayload;
-
-    VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;
 };
