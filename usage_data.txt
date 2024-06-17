@@ -1,1947 +1,423 @@
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-06:36:40 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-06:36:41 AM  all    0.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-06:36:41 AM    0    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
-06:36:41 AM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-Average:       0    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
-Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.06     0.00   0.00    0.46     1.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.17     8.22    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.03     0.00   0.00    0.29    14.17    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.13     7.43    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.13     8.67    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.15     6.70    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.39      0.40     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.76     27.41     0.22  22.65    0.26    35.84    4.13     56.78     1.22  22.77    0.68    13.73    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.25
-
-## Network Usage:
-enp0s1:
-06:36:42 AM    enp0s1      3.00      2.00      0.28      0.32      0.00      0.00      0.00      0.00
-Average:       enp0s1      3.00      2.00      0.28      0.32      0.00      0.00      0.00      0.00
-
-lo:
-06:36:43 AM        lo     13.00     13.00      1.17      1.17      0.00      0.00      0.00      0.00
-Average:           lo     13.00     13.00      1.17      1.17      0.00      0.00      0.00      0.00
 
 ********************************************************************************* Usage Information *********************************************************************************
 
 ## CPU Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
-06:37:12 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-06:37:13 AM  all    0.50    0.00    0.00    0.00    0.00    0.50    0.00    0.00    0.00   98.99
-06:37:13 AM    0    0.00    0.00    0.00    0.00    0.00    1.01    0.00    0.00    0.00   98.99
-06:37:13 AM    1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+03:18:23 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:18:24 PM  all    2.97    0.00    2.48    0.00    0.00    0.50    0.00    0.00    0.00   94.06
+03:18:24 PM    0    3.88    0.00    1.94    0.00    0.00    0.97    0.00    0.00    0.00   93.20
+03:18:24 PM    1    2.02    0.00    3.03    0.00    0.00    0.00    0.00    0.00    0.00   94.95
 
 Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    0.00    0.00    0.00    0.50    0.00    0.00    0.00   98.99
-Average:       0    0.00    0.00    0.00    0.00    0.00    1.01    0.00    0.00    0.00   98.99
-Average:       1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+Average:     all    2.97    0.00    2.48    0.00    0.00    0.50    0.00    0.00    0.00   94.06
+Average:       0    3.88    0.00    1.94    0.00    0.00    0.97    0.00    0.00    0.00   93.20
+Average:       1    2.02    0.00    3.03    0.00    0.00    0.00    0.00    0.00    0.00   94.95
 
 ## Disk Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
 Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.06     0.00   0.00    0.46     1.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.17     8.22    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.03     0.00   0.00    0.29    14.17    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.13     7.43    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.13     8.67    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.15     6.70    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.39      0.40     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.76     27.39     0.22  22.65    0.26    35.84    4.15     56.84     1.22  22.72    0.68    13.71    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.25
-
-********************************************************************************* Usage Information *********************************************************************************
-## Network Usage:
-enp0s1:
-06:37:23 AM    enp0s1      8.00      5.00      0.86      0.69      0.00      0.00      0.00      0.00
-Average:       enp0s1      8.00      5.00      0.86      0.69      0.00      0.00      0.00      0.00
-
-lo:
-06:37:24 AM        lo     15.00     15.00      1.15      1.15      0.00      0.00      0.00      0.00
-Average:           lo     15.00     15.00      1.15      1.15      0.00      0.00      0.00      0.00
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.06     0.00   0.00    0.46     1.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.17     8.22    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.03     0.00   0.00    0.29    14.17    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.13     7.43    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.13     8.67    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.15     6.70    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.38      0.39     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.75     26.75     0.22  22.59    0.26    35.79    4.53     64.61     1.25  21.64    0.67    14.27    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.25
-
-********************************************************************************* Usage Information *********************************************************************************
-## Network Usage:
-enp0s1:
-07:26:25 AM    enp0s1      6.00      4.00      0.57      0.63      0.00      0.00      0.00      0.00
-Average:       enp0s1      6.00      4.00      0.57      0.63      0.00      0.00      0.00      0.00
-
-lo:
-07:26:26 AM        lo     16.00     16.00      1.62      1.62      0.00      0.00      0.00      0.00
-Average:           lo     16.00     16.00      1.62      1.62      0.00      0.00      0.00      0.00
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-07:39:55 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-07:39:56 AM  all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:39:56 AM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:39:56 AM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.03     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.01      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.01      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.36      0.37     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.25      0.25     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.87     26.66     0.33  27.32    0.24    30.79    4.79     67.71     1.28  21.07    0.68    14.13    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
+vda              0.84     27.35     0.27  24.27    0.25    32.69    7.99    144.87     3.03  27.49    0.72    18.12    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.32
+
 
 ## Network Usage:
 enp0s1:
-07:39:57 AM    enp0s1      6.00      6.00      0.66      0.73      0.00      0.00      0.00      0.00
-Average:       enp0s1      6.00      6.00      0.66      0.73      0.00      0.00      0.00      0.00
+03:18:25 PM    enp0s1     84.00     57.00     13.16     12.99      0.00      0.00      0.00      0.00
+Average:       enp0s1     84.00     57.00     13.16     12.99      0.00      0.00      0.00      0.00
 
 lo:
-07:39:58 AM        lo      6.00      6.00      0.47      0.47      0.00      0.00      0.00      0.00
-Average:           lo      6.00      6.00      0.47      0.47      0.00      0.00      0.00      0.00
+03:18:26 PM        lo     63.00     63.00      5.35      5.35      0.00      0.00      0.00      0.00
+Average:           lo     63.00     63.00      5.35      5.35      0.00      0.00      0.00      0.00
 
-********************************************************************************* Usage Information *********************************************************************************
-## Network Usage:
-enp0s1:
-07:42:47 AM    enp0s1     26.00     20.00      3.05      2.74      0.00      0.00      0.00      0.00
-Average:       enp0s1     26.00     20.00      3.05      2.74      0.00      0.00      0.00      0.00
-
-lo:
-07:42:48 AM        lo     19.00     19.00      1.69      1.69      0.00      0.00      0.00      0.00
-Average:           lo     19.00     19.00      1.69      1.69      0.00      0.00      0.00      0.00
 
 ********************************************************************************* Usage Information *********************************************************************************
 
 ## CPU Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
-07:55:42 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-07:55:43 AM  all    0.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-07:55:43 AM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-07:55:43 AM    1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+03:19:16 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:19:17 PM  all    2.96    0.00    2.96    0.00    0.00    0.99    0.00    0.00    0.00   93.10
+03:19:17 PM    0    2.97    0.00    2.97    0.00    0.00    0.99    0.00    0.00    0.00   93.07
+03:19:17 PM    1    2.94    0.00    2.94    0.00    0.00    0.98    0.00    0.00    0.00   93.14
 
 Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
+Average:     all    2.96    0.00    2.96    0.00    0.00    0.99    0.00    0.00    0.00   93.10
+Average:       0    2.97    0.00    2.97    0.00    0.00    0.99    0.00    0.00    0.00   93.07
+Average:       1    2.94    0.00    2.94    0.00    0.00    0.98    0.00    0.00    0.00   93.14
+
+## Disk Usage:
+Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.25      0.25     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+vda              0.84     27.32     0.27  24.27    0.25    32.69    8.01    144.89     3.03  27.45    0.72    18.09    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.32
+
+
 ## Network Usage:
 enp0s1:
-07:55:44 AM    enp0s1      4.00      4.00      0.48      0.45      0.00      0.00      0.00      0.00
+03:19:18 PM    enp0s1      4.00      4.00      0.48      0.45      0.00      0.00      0.00      0.00
 Average:       enp0s1      4.00      4.00      0.48      0.45      0.00      0.00      0.00      0.00
 
 lo:
-07:55:45 AM        lo      7.00      7.00      0.58      0.58      0.00      0.00      0.00      0.00
-Average:           lo      7.00      7.00      0.58      0.58      0.00      0.00      0.00      0.00
+03:19:19 PM        lo     12.00     12.00      0.83      0.83      0.00      0.00      0.00      0.00
+Average:           lo     12.00     12.00      0.83      0.83      0.00      0.00      0.00      0.00
+
 
 ********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-10:44:38 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-10:44:39 AM  all    3.96    0.00    1.98    0.00    0.00    0.00    0.00    0.00    0.00   94.06
-10:44:39 AM    0    6.93    0.00    1.98    0.00    0.00    0.00    0.00    0.00    0.00   91.09
-10:44:39 AM    1    0.99    0.00    1.98    0.00    0.00    0.00    0.00    0.00    0.00   97.03
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    3.96    0.00    1.98    0.00    0.00    0.00    0.00    0.00    0.00   94.06
-Average:       0    6.93    0.00    1.98    0.00    0.00    0.00    0.00    0.00    0.00   91.09
-Average:       1    0.99    0.00    1.98    0.00    0.00    0.00    0.00    0.00    0.00   97.03
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.01      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.34      0.34     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.84     27.23     0.31  26.65    0.24    32.44    4.80     65.74     1.29  21.19    0.69    13.71    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
 
 ## Network Usage:
 enp0s1:
-10:44:40 AM    enp0s1     97.00     56.00     15.66      9.55      0.00      0.00      0.00      0.00
-Average:       enp0s1     97.00     56.00     15.66      9.55      0.00      0.00      0.00      0.00
+03:19:25 PM    enp0s1     17.00     16.00      2.77      2.84      0.00      0.00      0.00      0.00
+Average:       enp0s1     17.00     16.00      2.77      2.84      0.00      0.00      0.00      0.00
 
 lo:
-10:44:41 AM        lo     28.00     28.00      2.62      2.62      0.00      0.00      0.00      0.00
-Average:           lo     28.00     28.00      2.62      2.62      0.00      0.00      0.00      0.00
+03:19:26 PM        lo      9.00      9.00      1.16      1.16      0.00      0.00      0.00      0.00
+Average:           lo      9.00      9.00      1.16      1.16      0.00      0.00      0.00      0.00
+
 
 ********************************************************************************* Usage Information *********************************************************************************
 
 ## CPU Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
-11:02:05 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:02:06 AM  all    0.51    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.49
-11:02:06 AM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-11:02:06 AM    1    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
+03:20:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:20:33 PM  all    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
+03:20:33 PM    0    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
+03:20:33 PM    1    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
 
 Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.51    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.49
-Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:     all    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
+Average:       0    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
 Average:       1    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
 
 ## Disk Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
 Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.01      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.33      0.34     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.25      0.25     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.82     26.63     0.30  26.65    0.24    32.44    5.00     67.21     1.32  20.92    0.68    13.45    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
+vda              0.84     27.29     0.27  24.27    0.25    32.68    8.02    144.82     3.03  27.42    0.72    18.07    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.32
 
 
 ## Network Usage:
 enp0s1:
-11:02:07 AM    enp0s1     51.00     32.00      6.40      5.14      0.00      0.00      0.00      0.00
-Average:       enp0s1     51.00     32.00      6.40      5.14      0.00      0.00      0.00      0.00
+03:20:34 PM    enp0s1      5.00      5.00      0.41      0.67      0.00      0.00      0.00      0.00
+Average:       enp0s1      5.00      5.00      0.41      0.67      0.00      0.00      0.00      0.00
 
 lo:
-11:02:08 AM        lo     19.80     19.80      1.77      1.77      0.00      0.00      0.00      0.00
-Average:           lo     19.80     19.80      1.77      1.77      0.00      0.00      0.00      0.00
+03:20:35 PM        lo     14.00     14.00      1.08      1.08      0.00      0.00      0.00      0.00
+Average:           lo     14.00     14.00      1.08      1.08      0.00      0.00      0.00      0.00
 
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1458        1912          16        2411        4114
-Swap:          4095           0        4095USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-soyoung    33633  2.1  3.9 5381336 234048 ?      Sl   10:44   0:23 /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/node --dns-result-order=ipv4first /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
-soyoung    33689  1.9  1.1 116020 70708 ?        Sl   10:44   0:21 /home/soyoung/.vscode-server/extensions/ms-vscode.cpptools-1.20.5-linux-arm64/bin/cpptools
-soyoung     1515  0.7  6.0 4193232 356240 ?      Ssl  Jun15   6:13 /usr/bin/gnome-shell
-soyoung    33609  0.5  0.2  28388 14184 ?        Sl   10:44   0:05 /home/soyoung/.vscode-server/code-611f9bfce64f25108829dd295f54a6894e87339d command-shell --cli-data-dir /home/soyoung/.vscode-server/cli --parent-process-id 33590 --on-port --on-host=127.0.0.1
-soyoung    34263  0.4  1.4 4270768 87732 ?       Sl   10:55   0:01 /home/soyoung/.vscode-server/extensions/ms-vscode.cpptools-1.20.5-linux-arm64/bin/cpptools-srv 33689 {8E29BD81-7E0A-4499-A763-C511FAA62924}
-soyoung    33644  0.4  0.9 974064 58448 ?        Sl   10:44   0:05 /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/node /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/out/bootstrap-fork --type=fileWatcher
-soyoung    33584  0.3  0.0  15852  4900 ?        S    10:44   0:03 sshd: soyoung@notty
-soyoung    10791  0.2  1.4 1048840 88556 ?       Sl   06:03   0:47 /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/node /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/out/server-main.js --connection-token=remotessh --accept-server-license-terms --start-server --enable-remote-auto-shutdown --socket-path=/tmp/code-c333f952-fa51-4e84-8282-55802f1f9caf
-soyoung    10836  0.2  1.1 1013404 66924 ?       Sl   06:03   0:41 /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/node /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/out/bootstrap-fork --type=ptyHost --logsPath /home/soyoung/.vscode-server/data/logs/20240616T034713
-soyoung    10812  0.1  0.9 973808 57372 ?        Sl   06:03   0:31 /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/node /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/out/bootstrap-fork --type=fileWatcher
-root         399  0.1  0.6  85916 40984 ?        S<s  Jun15   0:55 /lib/systemd/systemd-journald
-soyoung    14581  0.0  4.9 307240 293904 pts/4   T    08:13   0:02 /usr/lib/gcc/aarch64-linux-gnu/9/cc1plus -quiet -I /usr/local/include/pcapplusplus -imultiarch aarch64-linux-gnu -D_GNU_SOURCE ini.cpp -quiet -dumpbase ini.cpp -mlittle-endian -mabi=lp64 -auxbase-strip ini.o -O2 -Wall -Wextra -std=c++17 -fasynchronous-unwind-tables -fstack-protector-strong -Wformat-security -fstack-clash-protection -o /tmp/cc9IjX4G.s
-soyoung     1374  0.0  1.6 554324 96760 tty2     Sl+  Jun15   0:28 /usr/lib/xorg/Xorg vt2 -displayfd 3 -auth /run/user/1000/gdm/Xauthority -background none -noreset -keeptty -verbose 3
-soyoung     1810  0.0  0.9 716844 54468 ?        Sl   Jun15   0:00 /usr/libexec/evolution-data-server/evolution-alarm-notify
-soyoung     1882  0.0  0.8 810556 48184 ?        Ssl  Jun15   0:11 /usr/libexec/gnome-terminal-server
-soyoung     2448  0.0  0.7 727656 43292 ?        Sl   Jun15   0:02 update-notifier
-soyoung     1598  0.0  0.5 623212 32464 ?        Sl   Jun15   0:00 /usr/libexec/goa-daemon
-soyoung     1556  0.0  0.5 273120 30332 ?        Sl   Jun15   0:00 /usr/libexec/ibus-extension-gtk3
-soyoung     1687  0.0  0.4 1093864 29396 ?       Ssl  Jun15   0:00 /usr/libexec/gsd-media-keys
-root         727  0.0  0.4 1318532 29160 ?       Ssl  Jun15   0:03 /usr/lib/snapd/snapd
-soyoung     1683  0.0  0.4 576204 28468 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-color
-soyoung     1706  0.0  0.4 344016 28196 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-xsettings
-soyoung     1762  0.0  0.4 199112 27948 ?        Ssl  Jun15   0:00 /usr/bin/spice-vdagent
-soyoung     1603  0.0  0.4 854688 27940 ?        Ssl  Jun15   0:00 /usr/libexec/evolution-calendar-factory
-soyoung     1688  0.0  0.4 344148 27808 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-power
-soyoung     1638  0.0  0.4 747000 27692 ?        Ssl  Jun15   0:00 /usr/libexec/evolution-addressbook-factory
-soyoung     1686  0.0  0.4 343516 27256 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-keyboard
-soyoung     1560  0.0  0.4 195264 26756 ?        Sl   Jun15   0:00 /usr/libexec/ibus-x11 --kill-daemon
-soyoung     1698  0.0  0.4 342928 26624 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-wacom
-soyoung     1668  0.0  0.4 2593512 24780 ?       Sl   Jun15   0:00 /usr/bin/gjs /usr/share/gnome-shell/org.gnome.Shell.Notifications
-soyoung     1591  0.0  0.3 938764 23088 ?        Ssl  Jun15   0:00 /usr/libexec/evolution-source-registry
-soyoung     1843  0.0  0.3 509684 22968 ?        SNsl Jun15   0:00 /usr/libexec/tracker-miner-fs
-root         771  0.0  0.3 113788 21180 ?        Ssl  Jun15   0:00 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
-root         722  0.0  0.3  35760 19216 ?        Ss   Jun15   0:00 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
-soyoung     1360  0.0  0.3 1741820 18076 ?       S<sl Jun15   0:00 /usr/bin/pulseaudio --daemonize=no --log-target=journal
-root         717  0.0  0.2 261140 17412 ?        Ssl  Jun15   0:02 /usr/sbin/NetworkManager --no-daemon
-root         581  0.0  0.2 279916 16300 ?        SLsl Jun15   0:11 /sbin/multipathd -d -s
-soyoung     1581  0.0  0.2 582252 15860 ?        Sl   Jun15   0:00 /usr/libexec/gnome-shell-calendar-server
-soyoung     1684  0.0  0.2 371588 14060 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-datetime
-whoopsie     819  0.0  0.2 328336 13932 ?        Ssl  Jun15   0:00 /usr/bin/whoopsie -f
-soyoung     1501  0.0  0.2 555076 13832 ?        Ssl  Jun15   0:00 /usr/libexec/gnome-session-binary --systemd-service --session=ubuntu
-colord      1315  0.0  0.2 243800 13540 ?        Ssl  Jun15   0:00 /usr/libexec/colord
-root        2774  0.0  0.2 110608 12512 pts/0    T    Jun15   0:01 ./UdkdAgent -n
-soyoung     1779  0.0  0.2 339924 12404 ?        Sl   Jun15   0:00 /usr/libexec/gsd-printer
-soyoung     1386  0.0  0.2 185284 11888 tty2     Sl+  Jun15   0:00 /usr/libexec/gnome-session-binary --systemd --systemd --session=ubuntu
-root       10400  0.0  0.1 177496 11200 ?        Ssl  03:02   0:00 /usr/sbin/cups-browsed
-root         731  0.0  0.1 391568 10948 ?        Ssl  Jun15   0:00 /usr/lib/udisks2/udisksd
-systemd+     691  0.0  0.1  23996 10824 ?        Ss   Jun15   0:01 /lib/systemd/systemd-resolved
-root         763  0.0  0.1 318068 10604 ?        Ssl  Jun15   0:00 /usr/sbin/ModemManager
-root           1  0.0  0.1 169244 10496 ?        Ss   Jun15   0:02 /sbin/init
-root         723  0.0  0.1 239332 10384 ?        Ssl  Jun15   0:01 /usr/lib/policykit-1/polkitd --no-debug
-soyoung    35699  0.0  0.1  26912 10360 pts/4    S+   11:01   0:00 ./UdkdAgent -u
-soyoung     1690  0.0  0.1 246272 10224 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-print-notifications
-soyoung    18417  0.0  0.1  26784  9860 pts/4    T    08:39   0:00 ./UdkdAgent -u
-soyoung    15058  0.0  0.1  26780  9816 pts/4    T    08:18   0:00 ./UdkdAgent -u
-soyoung    15890  0.0  0.1  26940  9732 pts/4    T    08:24   0:00 ./UdkdAgent -u
-soyoung    18938  0.0  0.1  26784  9716 pts/4    T    08:40   0:00 ./UdkdAgent -u
-soyoung     1354  0.0  0.1  18568  9352 ?        Ss   Jun15   0:01 /lib/systemd/systemd --user
-soyoung     1693  0.0  0.1 462956  9012 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-sharing
-root        1344  0.0  0.1 166736  8760 ?        Sl   Jun15   0:00 gdm-session-worker [pam/gdm-password]
-root        1132  0.0  0.1 250232  8700 ?        Ssl  Jun15   0:00 /usr/lib/upower/upowerd
-soyoung     1606  0.0  0.1 311696  8432 ?        Ssl  Jun15   0:00 /usr/libexec/gvfs-udisks2-volume-monitor
-soyoung     1618  0.0  0.1 312636  8208 ?        Sl   Jun15   0:00 /usr/libexec/goa-identity-service
-root       10399  0.0  0.1  28176  7956 ?        Ss   03:02   0:00 /usr/sbin/cupsd -l
-root       33473  0.0  0.1  15720  7860 ?        Ss   10:44   0:00 sshd: soyoung [priv]
-soyoung     1695  0.0  0.1 315084  7840 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-sound
-root         844  0.0  0.1 237560  7792 ?        Ssl  Jun15   0:00 /usr/sbin/gdm3
-soyoung     1635  0.0  0.1 314600  7664 ?        Ssl  Jun15   0:03 /usr/libexec/gvfs-afc-volume-monitor
-soyoung     1694  0.0  0.1 386372  7588 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-smartcard
-soyoung     1551  0.0  0.1 308708  7512 ?        Sl   Jun15   0:00 ibus-daemon --panel disable --xim
-root         730  0.0  0.1  16532  7316 ?        Ss   Jun15   0:00 /lib/systemd/systemd-logind
-soyoung     1699  0.0  0.1 385528  7308 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-wwan
-soyoung     1363  0.0  0.1 237732  7208 ?        Sl   Jun15   0:00 /usr/bin/gnome-keyring-daemon --daemonize --login
-soyoung     1666  0.0  0.1 311512  7168 ?        Sl   Jun15   0:00 /usr/libexec/gvfsd-trash --spawner :1.26 /org/gtk/gvfs/exec_spaw/0
-soyoung     1536  0.0  0.1 237476  7084 ?        Ssl  Jun15   0:00 /usr/libexec/gvfsd
-root         432  0.0  0.1  23676  6876 ?        Ss   Jun15   0:00 /lib/systemd/systemd-udevd
-soyoung     1574  0.0  0.1 161424  6828 ?        Sl   Jun15   0:00 /usr/libexec/at-spi2-registryd --use-gnome-session
-root         710  0.0  0.1 235896  6664 ?        Ssl  Jun15   0:20 /usr/lib/accountsservice/accounts-daemon
-soyoung     1555  0.0  0.1 234284  6648 ?        Sl   Jun15   0:00 /usr/libexec/ibus-dconf
-soyoung     1685  0.0  0.1 308980  6636 ?        Ssl  Jun15   0:01 /usr/libexec/gsd-housekeeping
-root         846  0.0  0.1  12232  6612 ?        Ss   Jun15   0:00 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
-soyoung     1793  0.0  0.1 160400  6520 ?        Sl   Jun15   0:00 /usr/libexec/ibus-engine-simple
-soyoung     1696  0.0  0.1 455852  6424 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-usb-protection
-soyoung     1652  0.0  0.1 235332  6336 ?        Ssl  Jun15   0:00 /usr/libexec/gvfs-gphoto2-volume-monitor
-systemd+     619  0.0  0.1  90016  6284 ?        Ssl  Jun15   0:00 /lib/systemd/systemd-timesyncd
-soyoung     1472  0.0  0.1 305860  6124 ?        Ssl  Jun15   0:00 /usr/libexec/at-spi-bus-launcher
-soyoung     1691  0.0  0.1 454856  6072 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-rfkill
-message+     714  0.0  0.1  10444  6024 ?        Ss   Jun15   0:01 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
-soyoung     1682  0.0  0.1 307364  6004 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-a11y-settings
-soyoung     1371  0.0  0.0 161552  5916 tty2     Ssl+ Jun15   0:00 /usr/lib/gdm3/gdm-x-session --run-script env GNOME_SHELL_SESSION_MODE=ubuntu /usr/bin/gnome-session --systemd --session=ubuntu
-soyoung    10870  0.0  0.0   9104  5904 pts/4    Ss   06:03   0:00 /bin/bash --init-file /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/out/vs/workbench/contrib/terminal/browser/media/shellIntegration-bash.sh
-soyoung     1563  0.0  0.0 234204  5888 ?        Sl   Jun15   0:00 /usr/libexec/ibus-portal
-systemd+     688  0.0  0.0  26148  5856 ?        Ss   Jun15   0:01 /lib/systemd/systemd-networkd
-soyoung     1643  0.0  0.0 233468  5828 ?        Ssl  Jun15   0:00 /usr/libexec/gvfs-goa-volume-monitor
-root         728  0.0  0.0 233360  5784 ?        Ssl  Jun15   0:00 /usr/libexec/switcheroo-control
-soyoung     1692  0.0  0.0 306900  5676 ?        Ssl  Jun15   0:00 /usr/libexec/gsd-screensaver-proxy
-soyoung     1812  0.0  0.0 231448  5588 ?        Sl   Jun15   0:00 /usr/libexec/gsd-disk-utility-notify
-soyoung     2445  0.0  0.0 159892  5568 ?        Ssl  Jun15   0:00 /usr/libexec/gvfsd-metadata
-soyoung     1541  0.0  0.0 378640  5488 ?        Sl   Jun15   0:00 /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -f -o big_writes
-soyoung     1602  0.0  0.0 156348  5292 ?        Sl   Jun15   0:00 /usr/libexec/dconf-service
-soyoung     1355  0.0  0.0 103868  5148 ?        S    Jun15   0:00 (sd-pam)
-soyoung     1890  0.0  0.0   8044  4848 pts/0    Ss+  Jun15   0:00 bash
-soyoung     1369  0.0  0.0   8696  4800 ?        Ss   Jun15   0:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
-syslog       725  0.0  0.0 220936  4788 ?        Ssl  Jun15   0:37 /usr/sbin/rsyslogd -n -iNONE
-root         872  0.0  0.0   7532  4740 ?        Ss   Jun15   0:04 /usr/sbin/apache2 -k start
-root         732  0.0  0.0  12404  4712 ?        Ss   Jun15   0:00 /sbin/wpa_supplicant -u -s -O /run/wpa_supplicant
-soyoung     1577  0.0  0.0 233200  4680 ?        Ssl  Jun15   0:00 /usr/libexec/xdg-permission-store
-soyoung     1623  0.0  0.0 233352  4556 ?        Ssl  Jun15   0:00 /usr/libexec/gvfs-mtp-volume-monitor
-www-data   10361  0.0  0.0 1213192 4488 ?        Sl   03:02   0:00 /usr/sbin/apache2 -k start
-www-data   10421  0.0  0.0 1213192 4488 ?        Sl   03:02   0:00 /usr/sbin/apache2 -k start
-soyoung     1477  0.0  0.0   7804  3892 ?        S    Jun15   0:00 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 3
-root        2773  0.0  0.0  10668  3852 pts/0    T    Jun15   0:00 sudo ./UdkdAgent -n
-root        9735  0.0  0.0   5348  3736 pts/0    T    Jun15   0:00 iptables -A INPUT -s 26.40.127.0 -p tcp --dport 80 -j DROP
-soyoung    33590  0.0  0.0   6868  3252 ?        S    10:44   0:00 bash
-soyoung    33585  0.0  0.0   6744  3128 ?        Ss   10:44   0:00 -bash
-soyoung    35798  0.0  0.0   8804  3108 pts/4    R+   11:02   0:00 ps aux --sort=-%cpu,-%mem
-root         721  0.0  0.0  80944  3100 ?        Ssl  Jun15   0:03 /usr/sbin/irqbalance --foreground
-avahi        712  0.0  0.0   7084  3048 ?        Ss   Jun15   0:00 avahi-daemon: running [ysbeam-2.local]
-root        1333  0.0  0.0   6992  2844 ?        Ss   Jun15   0:02 /usr/sbin/spice-vdagentd
-root         813  0.0  0.0   6616  2576 ?        Ss   Jun15   0:00 /usr/sbin/cron -f
-rtkit        945  0.0  0.0 152512  2576 ?        SNsl Jun15   0:01 /usr/libexec/rtkit-daemon
-soyoung     1494  0.0  0.0  87544  2240 ?        Ssl  Jun15   0:00 /usr/libexec/gnome-session-ctl --monitor
-soyoung    14510  0.0  0.0   5364  2192 pts/4    T    08:13   0:00 make
-daemon       825  0.0  0.0   3596  1916 ?        Ss   Jun15   0:00 /usr/sbin/atd -f
-kernoops     840  0.0  0.0  11464  1912 ?        Ss   Jun15   0:01 /usr/sbin/kerneloops
-kernoops     834  0.0  0.0  11464  1888 ?        Ss   Jun15   0:01 /usr/sbin/kerneloops --test
-root         833  0.0  0.0   5084  1856 ?        Ss+  Jun15   0:00 /sbin/agetty -o -p -- \u --keep-baud 115200,38400,9600 ttyAMA0 vt220
-soyoung    10787  0.0  0.0   2056   524 ?        S    06:03   0:00 sh /home/soyoung/.vscode-server/cli/servers/Stable-611f9bfce64f25108829dd295f54a6894e87339d/server/bin/code-server --connection-token=remotessh --accept-server-license-terms --start-server --enable-remote-auto-shutdown --socket-path=/tmp/code-c333f952-fa51-4e84-8282-55802f1f9caf
-soyoung    35797  0.0  0.0   2056   516 pts/4    S+   11:02   0:00 sh -c ps aux --sort=-%cpu,-%mem
-soyoung    14580  0.0  0.0   6132   504 pts/4    T    08:13   0:00 g++ -Wall -Wextra -O2 -std=c++17 -I/usr/local/include/pcapplusplus -c ini.cpp -o ini.o
-root        9734  0.0  0.0   2056   496 pts/0    T    Jun15   0:00 sh -c iptables -A INPUT -s 26.40.127.0 -p tcp --dport 80 -j DROP
-soyoung    14579  0.0  0.0   2056   468 pts/4    T    08:13   0:00 /bin/sh -c g++ -Wall -Wextra -O2 -std=c++17 -I/usr/local/include/pcapplusplus -c ini.cpp -o ini.o || (echo "Compilation failed on ini.cpp"; exit 1)
-soyoung    34887  0.0  0.0   4912   460 ?        S    10:59   0:00 sleep 180
-soyoung     1455  0.0  0.0   5304   432 ?        Ss   Jun15   0:00 /usr/bin/ssh-agent /usr/bin/im-launch env GNOME_SHELL_SESSION_MODE=ubuntu /usr/bin/gnome-session --systemd --session=ubuntu
-avahi        733  0.0  0.0   6892   324 ?        S    Jun15   0:00 avahi-daemon: chroot helper
-root           2  0.0  0.0      0     0 ?        S    Jun15   0:00 [kthreadd]
-root           3  0.0  0.0      0     0 ?        I<   Jun15   0:00 [rcu_gp]
-root           4  0.0  0.0      0     0 ?        I<   Jun15   0:00 [rcu_par_gp]
-root           6  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kworker/0:0H-kblockd]
-root           8  0.0  0.0      0     0 ?        I<   Jun15   0:00 [mm_percpu_wq]
-root           9  0.0  0.0      0     0 ?        S    Jun15   0:01 [ksoftirqd/0]
-root          10  0.0  0.0      0     0 ?        I    Jun15   0:42 [rcu_sched]
-root          11  0.0  0.0      0     0 ?        S    Jun15   0:00 [migration/0]
-root          12  0.0  0.0      0     0 ?        S    Jun15   0:00 [idle_inject/0]
-root          14  0.0  0.0      0     0 ?        S    Jun15   0:00 [cpuhp/0]
-root          15  0.0  0.0      0     0 ?        S    Jun15   0:00 [cpuhp/1]
-root          16  0.0  0.0      0     0 ?        S    Jun15   0:00 [idle_inject/1]
-root          17  0.0  0.0      0     0 ?        S    Jun15   0:00 [migration/1]
-root          18  0.0  0.0      0     0 ?        S    Jun15   0:01 [ksoftirqd/1]
-root          20  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kworker/1:0H-kblockd]
-root          21  0.0  0.0      0     0 ?        S    Jun15   0:00 [kdevtmpfs]
-root          22  0.0  0.0      0     0 ?        I<   Jun15   0:00 [netns]
-root          23  0.0  0.0      0     0 ?        S    Jun15   0:00 [rcu_tasks_kthre]
-root          24  0.0  0.0      0     0 ?        S    Jun15   0:00 [kauditd]
-root          25  0.0  0.0      0     0 ?        S    Jun15   0:00 [khungtaskd]
-root          26  0.0  0.0      0     0 ?        S    Jun15   0:00 [oom_reaper]
-root          27  0.0  0.0      0     0 ?        I<   Jun15   0:00 [writeback]
-root          28  0.0  0.0      0     0 ?        S    Jun15   0:00 [kcompactd0]
-root          29  0.0  0.0      0     0 ?        SN   Jun15   0:00 [ksmd]
-root          30  0.0  0.0      0     0 ?        SN   Jun15   0:00 [khugepaged]
-root          76  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kintegrityd]
-root          77  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kblockd]
-root          78  0.0  0.0      0     0 ?        I<   Jun15   0:00 [blkcg_punt_bio]
-root          79  0.0  0.0      0     0 ?        I<   Jun15   0:00 [tpm_dev_wq]
-root          80  0.0  0.0      0     0 ?        I<   Jun15   0:00 [ata_sff]
-root          81  0.0  0.0      0     0 ?        I<   Jun15   0:00 [md]
-root          82  0.0  0.0      0     0 ?        I<   Jun15   0:00 [edac-poller]
-root          83  0.0  0.0      0     0 ?        I<   Jun15   0:00 [devfreq_wq]
-root          85  0.0  0.0      0     0 ?        S    Jun15   0:00 [watchdogd]
-root          87  0.0  0.0      0     0 ?        S    Jun15   0:00 [kswapd0]
-root          88  0.0  0.0      0     0 ?        S    Jun15   0:00 [ecryptfs-kthrea]
-root          90  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kthrotld]
-root          91  0.0  0.0      0     0 ?        S    Jun15   0:00 [irq/41-ACPI:Ged]
-root          92  0.0  0.0      0     0 ?        I<   Jun15   0:00 [acpi_thermal_pm]
-root          93  0.0  0.0      0     0 ?        I<   Jun15   0:00 [ipv6_addrconf]
-root         102  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kstrp]
-root         105  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kworker/u5:0]
-root         113  0.0  0.0      0     0 ?        I<   Jun15   0:00 [cryptd]
-root         168  0.0  0.0      0     0 ?        I<   Jun15   0:00 [charger_manager]
-root         249  0.0  0.0      0     0 ?        I<   Jun15   0:00 [ttm_swap]
-root         281  0.0  0.0      0     0 ?        I<   Jun15   0:00 [raid5wq]
-root         322  0.0  0.0      0     0 ?        I<   Jun15   0:01 [kworker/1:1H-kblockd]
-root         323  0.0  0.0      0     0 ?        S    Jun15   0:02 [jbd2/vda2-8]
-root         324  0.0  0.0      0     0 ?        I<   Jun15   0:00 [ext4-rsv-conver]
-root         325  0.0  0.0      0     0 ?        I<   Jun15   0:01 [kworker/0:1H-kblockd]
-root         358  0.0  0.0      0     0 ?        S    Jun15   0:00 [hwrng]
-root         464  0.0  0.0      0     0 ?        S    Jun15   0:00 [scsi_eh_0]
-root         465  0.0  0.0      0     0 ?        I<   Jun15   0:00 [scsi_tmf_0]
-root         466  0.0  0.0      0     0 ?        S    Jun15   0:10 [usb-storage]
-root         467  0.0  0.0      0     0 ?        I<   Jun15   0:00 [uas]
-root         577  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kaluad]
-root         578  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kmpath_rdacd]
-root         579  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kmpathd]
-root         580  0.0  0.0      0     0 ?        I<   Jun15   0:00 [kmpath_handlerd]
-root         597  0.0  0.0      0     0 ?        S<   Jun15   0:00 [loop0]
-root         598  0.0  0.0      0     0 ?        S<   Jun15   0:00 [loop1]
-root         599  0.0  0.0      0     0 ?        S<   Jun15   0:00 [loop2]
-root         600  0.0  0.0      0     0 ?        S<   Jun15   0:00 [loop3]
-root         601  0.0  0.0      0     0 ?        S<   Jun15   0:00 [loop4]
-root         602  0.0  0.0      0     0 ?        S<   Jun15   0:00 [loop5]
-root         603  0.0  0.0      0     0 ?        S<   Jun15   0:00 [loop6]
-root       10419  0.0  0.0      0     0 ?        I    03:02   0:06 [kworker/0:0-mm_percpu_wq]
-root       31717  0.0  0.0      0     0 ?        I    09:52   0:00 [kworker/u4:1-events_unbound]
-root       31866  0.0  0.0      0     0 ?        I    09:53   0:00 [kworker/0:2]
-root       31868  0.0  0.0      0     0 ?        I    09:53   0:00 [kworker/1:1-events]
-root       33462  0.0  0.0      0     0 ?        I    10:41   0:00 [kworker/1:0-events]
-root       34035  0.0  0.0      0     0 ?        I    10:46   0:00 [kworker/u4:0-flush-252:0]
-root       35184  0.0  0.0      0     0 ?        I    11:00   0:00 [kworker/u4:2-events_unbound]Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   28K  579M   1% /run/user/1000********************************************************************************* Usage Information *********************************************************************************
+
+********************************************************************************* Usage Information *********************************************************************************
 
 ## CPU Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
-11:09:25 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:09:26 AM  all    0.00    0.00    0.51    0.00    0.00    0.00    0.00    0.00    0.00   99.49
-11:09:26 AM    0    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-11:09:26 AM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+03:29:41 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:29:42 PM  all    9.36    0.00    3.94    0.00    0.00    0.99    0.00    0.00    0.00   85.71
+03:29:42 PM    0   11.76    0.00    3.92    0.00    0.00    0.98    0.00    0.00    0.00   83.33
+03:29:42 PM    1    6.93    0.00    3.96    0.00    0.00    0.99    0.00    0.00    0.00   88.12
 
 Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.00    0.00    0.51    0.00    0.00    0.00    0.00    0.00    0.00   99.49
-Average:       0    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:     all    9.36    0.00    3.94    0.00    0.00    0.99    0.00    0.00    0.00   85.71
+Average:       0   11.76    0.00    3.92    0.00    0.00    0.98    0.00    0.00    0.00   83.33
+Average:       1    6.93    0.00    3.96    0.00    0.00    0.99    0.00    0.00    0.00   88.12
 
 ## Disk Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
 Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.01      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.33      0.33     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.31      0.31     0.00   0.00    0.47     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.81     26.39     0.30  26.65    0.24    32.43    5.10     68.25     1.33  20.71    0.68    13.39    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
+vda              1.18     40.28     0.39  24.65    0.27    34.02    8.20    157.52     3.76  31.46    0.73    19.21    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.35
 
 
 ## Network Usage:
 enp0s1:
-11:09:27 AM    enp0s1      3.00      4.00      0.28      0.45      0.00      0.00      0.00      0.00
-Average:       enp0s1      3.00      4.00      0.28      0.45      0.00      0.00      0.00      0.00
+03:29:43 PM    enp0s1      6.00      4.00      0.65      0.63      0.00      0.00      0.00      0.00
+Average:       enp0s1      6.00      4.00      0.65      0.63      0.00      0.00      0.00      0.00
 
 lo:
-11:09:28 AM        lo      8.00      8.00      0.67      0.67      0.00      0.00      0.00      0.00
-Average:           lo      8.00      8.00      0.67      0.67      0.00      0.00      0.00      0.00
+03:29:44 PM        lo      7.00      7.00      0.57      0.57      0.00      0.00      0.00      0.00
+Average:           lo      7.00      7.00      0.57      0.57      0.00      0.00      0.00      0.00
 
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1473        1878          16        2429        4099
-Swap:          4095           0        4095Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   28K  579M   1% /run/user/1000
+
 ********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-11:11:56 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:11:57 AM  all    1.01    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00   97.98
-11:11:57 AM    0    1.01    0.00    0.00    2.02    0.00    0.00    0.00    0.00    0.00   96.97
-11:11:57 AM    1    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    1.01    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00   97.98
-Average:       0    1.01    0.00    0.00    2.02    0.00    0.00    0.00    0.00    0.00   96.97
-Average:       1    1.01    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.99
 
 ## Disk Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
 Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.33      0.33     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.31      0.31     0.00   0.00    0.47     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.81     26.31     0.29  26.65    0.24    32.43    5.13     68.67     1.33  20.65    0.68    13.38    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
+vda              1.19     40.32     0.39  24.62    0.27    34.01    8.21    157.56     3.76  31.44    0.73    19.19    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.35
 
 
 ## Network Usage:
 enp0s1:
-11:11:58 AM    enp0s1      4.00      4.00      0.48      0.45      0.00      0.00      0.00      0.00
-Average:       enp0s1      4.00      4.00      0.48      0.45      0.00      0.00      0.00      0.00
+03:30:04 PM    enp0s1     49.00     37.00     10.01      9.91      0.00      0.00      0.00      0.00
+Average:       enp0s1     49.00     37.00     10.01      9.91      0.00      0.00      0.00      0.00
 
 lo:
-11:11:59 AM        lo      8.00      8.00      0.62      0.62      0.00      0.00      0.00      0.00
-Average:           lo      8.00      8.00      0.62      0.62      0.00      0.00      0.00      0.00
+03:30:05 PM        lo     61.00     61.00      5.72      5.72      0.00      0.00      0.00      0.00
+Average:           lo     61.00     61.00      5.72      5.72      0.00      0.00      0.00      0.00
 
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1477        1867          16        2437        4095
-Swap:          4095           0        4095Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   28K  579M   1% /run/user/1000
+
 ********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-11:15:34 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:15:35 AM  all    1.51    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   97.49
-11:15:35 AM    0    1.01    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   97.98
-11:15:35 AM    1    2.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   97.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    1.51    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   97.49
-Average:       0    1.01    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   97.98
-Average:       1    2.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   97.00
 
 ## Disk Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
 Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.32      0.33     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.31      0.31     0.00   0.00    0.47     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.81     26.20     0.29  26.64    0.24    32.42    5.17     69.18     1.34  20.57    0.67    13.38    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
+vda              1.40     42.22     0.44  24.03    0.26    30.16    8.23    159.36     3.89  32.13    0.73    19.37    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.36
+
+
+********************************************************************************* Usage Information *********************************************************************************
+
+## CPU Usage:
+Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
+
+03:30:35 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:30:36 PM  all    2.49    0.00    3.48    0.00    0.00    0.00    0.00    0.00    0.00   94.03
+03:30:36 PM    0    3.00    0.00    3.00    0.00    0.00    0.00    0.00    0.00    0.00   94.00
+03:30:36 PM    1    1.98    0.00    3.96    0.00    0.00    0.00    0.00    0.00    0.00   94.06
+
+Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+Average:     all    2.49    0.00    3.48    0.00    0.00    0.00    0.00    0.00    0.00   94.03
+Average:       0    3.00    0.00    3.00    0.00    0.00    0.00    0.00    0.00    0.00   94.00
+Average:       1    1.98    0.00    3.96    0.00    0.00    0.00    0.00    0.00    0.00   94.06
+
+********************************************************************************* Usage Information *********************************************************************************
+
+## Disk Usage:
+Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.31      0.31     0.00   0.00    0.47     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+vda              1.40     42.26     0.44  24.00    0.26    30.14    8.24    159.40     3.89  32.10    0.73    19.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.36
+
+
+********************************************************************************* Usage Information *********************************************************************************
+
+## CPU Usage:
+Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
+
+03:34:14 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:34:15 PM  all    1.52    0.00    1.52    0.00    0.00    0.51    0.00    0.00    0.00   96.46
+03:34:15 PM    0    1.00    0.00    3.00    0.00    0.00    1.00    0.00    0.00    0.00   95.00
+03:34:15 PM    1    2.04    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   97.96
+
+Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+Average:     all    1.52    0.00    1.52    0.00    0.00    0.51    0.00    0.00    0.00   96.46
+Average:       0    1.00    0.00    3.00    0.00    0.00    1.00    0.00    0.00    0.00   95.00
+Average:       1    2.04    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   97.96
+
+## Disk Usage:
+Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
+
+Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.32      0.33     0.00   0.00    0.46     1.01    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+vda              1.47     43.16     0.45  23.49    0.27    29.27    8.26    159.40     3.94  32.30    0.73    19.30    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.36
 
 
 ## Network Usage:
 enp0s1:
-11:15:36 AM    enp0s1      7.00      7.00      0.66      0.91      0.00      0.00      0.00      0.00
-Average:       enp0s1      7.00      7.00      0.66      0.91      0.00      0.00      0.00      0.00
+03:34:16 PM    enp0s1     23.00     14.00      2.35      2.21      0.00      0.00      0.00      0.00
+Average:       enp0s1     23.00     14.00      2.35      2.21      0.00      0.00      0.00      0.00
 
 lo:
-11:15:37 AM        lo     11.00     11.00      1.10      1.10      0.00      0.00      0.00      0.00
-Average:           lo     11.00     11.00      1.10      1.10      0.00      0.00      0.00      0.00
+03:34:17 PM        lo      8.00      8.00      0.69      0.69      0.00      0.00      0.00      0.00
+Average:           lo      8.00      8.00      0.69      0.69      0.00      0.00      0.00      0.00
 
-
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1462        1868          16        2450        4109
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   28K  579M   1% /run/user/1000
 
 ********************************************************************************* Usage Information *********************************************************************************
 
 ## CPU Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
-11:17:27 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:17:28 AM  all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-11:17:28 AM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-11:17:28 AM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+03:34:51 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:34:52 PM  all    3.52    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   96.48
+03:34:52 PM    0    4.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   96.00
+03:34:52 PM    1    3.03    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   96.97
 
 Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:     all    3.52    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   96.48
+Average:       0    4.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   96.00
+Average:       1    3.03    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   96.97
 
 ## Disk Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
 Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.32      0.33     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.32      0.33     0.00   0.00    0.46     1.01    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.81     26.13     0.29  26.64    0.24    32.42    5.19     69.47     1.34  20.55    0.67    13.39    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
+vda              1.48     43.28     0.45  23.46    0.27    29.24    8.27    159.41     3.94  32.27    0.73    19.28    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.36
 
 
 ## Network Usage:
 enp0s1:
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    5.22      5.22      4.53      3.60
+03:34:53 PM    enp0s1      7.00      7.00      0.67      0.88      0.00      0.00      0.00      0.00
+Average:       enp0s1      7.00      7.00      0.67      0.88      0.00      0.00      0.00      0.00
 
 lo:
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    3.25      3.25      2.59      1.63
+03:34:54 PM        lo     14.00     14.00      3.99      3.99      0.00      0.00      0.00      0.00
+Average:           lo     14.00     14.00      3.99      3.99      0.00      0.00      0.00      0.00
 
-
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1497        1828          16        2456        4075
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   28K  579M   1% /run/user/1000
 
 ********************************************************************************* Usage Information *********************************************************************************
 
 ## CPU Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
-11:19:38 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:19:39 AM  all    0.50    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.49
-11:19:39 AM    0    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-11:19:39 AM    1    1.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   98.00
+03:35:01 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:35:02 PM  all    2.53    0.00    2.53    0.00    0.00    0.00    0.00    0.00    0.00   94.95
+03:35:02 PM    0    1.00    0.00    3.00    0.00    0.00    0.00    0.00    0.00    0.00   96.00
+03:35:02 PM    1    4.08    0.00    2.04    0.00    0.00    0.00    0.00    0.00    0.00   93.88
 
 Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.49
-Average:       0    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-Average:       1    1.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   98.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.32      0.33     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.80     26.06     0.29  26.64    0.24    32.42    5.22     69.90     1.34  20.47    0.67    13.38    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
-
-
-## Network Usage:
-enp0s1:
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    0.43      0.43      0.28      0.38
-
-lo:
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    6.68      6.68      4.79      3.70
-
-
-## Memory Usage:
-         5781 M total memory
-         1506 M used memory
-         2310 M active memory
-         1312 M inactive memory
-         1804 M free memory
-          221 M buffer memory
-         2248 M swap cache
-         4095 M total swap
-            0 M used swap
-         4095 M free swap
-       208512 non-nice user cpu ticks
-          344 nice user cpu ticks
-        40730 system cpu ticks
-      9457192 idle cpu ticks
-         5403 IO-wait cpu ticks
-            0 IRQ cpu ticks
-         6122 softirq cpu ticks
-            0 stolen cpu ticks
-      1291571 pages paged in
-      3406388 pages paged out
-            0 pages swapped in
-            0 pages swapped out
-      8125633 interrupts
-     13474551 CPU context switches
-   1718488044 boot time
-        39605 forks
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   28K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-11:21:40 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:21:41 AM  all    1.52    0.00    0.51    0.00    0.00    0.51    0.00    0.00    0.00   97.47
-11:21:41 AM    0    2.04    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   97.96
-11:21:41 AM    1    1.00    0.00    1.00    0.00    0.00    1.00    0.00    0.00    0.00   97.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    1.52    0.00    0.51    0.00    0.00    0.51    0.00    0.00    0.00   97.47
-Average:       0    2.04    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   97.96
-Average:       1    1.00    0.00    1.00    0.00    0.00    1.00    0.00    0.00    0.00   97.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.32      0.33     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.80     26.00     0.29  26.64    0.24    32.42    5.25     70.25     1.35  20.42    0.67    13.38    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
-
-
-## Network Usage:
-enp0s1:
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    3.06      3.06      2.47      1.78
-
-lo:
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    5.29      5.29      3.46      3.17
-
-
-## Memory Usage:
-
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   28K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-11:22:41 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:22:42 AM  all    3.03    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   95.96
-11:22:42 AM    0    2.04    0.00    1.02    0.00    0.00    0.00    0.00    0.00    0.00   96.94
-11:22:42 AM    1    4.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   95.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    3.03    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   95.96
-Average:       0    2.04    0.00    1.02    0.00    0.00    0.00    0.00    0.00    0.00   96.94
-Average:       1    4.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   95.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.32      0.33     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.80     25.97     0.29  26.64    0.24    32.42    5.28     70.65     1.35  20.37    0.67    13.38    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.26
-
-
-## Network Usage:
-enp0s1:
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    0.67      0.67      0.57      0.51
-
-lo:
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    6.47      6.47      4.34      3.59
-
-
-## Memory Usage:
-         5781 M total memory
-         1476 M used memory
-         2278 M active memory
-         1293 M inactive memory
-         1854 M free memory
-          222 M buffer memory
-         2229 M swap cache
-         4095 M total swap
-            0 M used swap
-         4095 M free swap
-       215360 non-nice user cpu ticks
-          344 nice user cpu ticks
-        41378 system cpu ticks
-      9485885 idle cpu ticks
-         5436 IO-wait cpu ticks
-            0 IRQ cpu ticks
-         6237 softirq cpu ticks
-            0 stolen cpu ticks
-      1291571 pages paged in
-      3455620 pages paged out
-            0 pages swapped in
-            0 pages swapped out
-      8208469 interrupts
-     13621319 CPU context switches
-   1718488044 boot time
-        41106 forks
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   28K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-11:37:34 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:37:35 AM  all    0.51    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.49
-11:37:35 AM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-11:37:35 AM    1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.51    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.49
-Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.32      0.32     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.86     29.80     0.29  24.84    0.24    34.48    5.43     75.96     1.43  20.82    0.67    13.98    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.27
-
-
-## Network Usage:
-enp0s1:
-      enp0s1      
- KB/s in  KB/s out
-    5.99      7.16
-
-lo:
-        lo        
- KB/s in  KB/s out
-    6.35      6.35
-
-
-## Memory Usage:
-         5781 M total memory
-         1535 M used memory
-         2546 M active memory
-         1343 M inactive memory
-         1525 M free memory
-          224 M buffer memory
-         2497 M swap cache
-         4095 M total swap
-            0 M used swap
-         4095 M free swap
-       222482 non-nice user cpu ticks
-         1421 nice user cpu ticks
-        42982 system cpu ticks
-      9653409 idle cpu ticks
-         5652 IO-wait cpu ticks
-            0 IRQ cpu ticks
-         6454 softirq cpu ticks
-            0 stolen cpu ticks
-      1505635 pages paged in
-      3783456 pages paged out
-            0 pages swapped in
-            0 pages swapped out
-      8447885 interrupts
-     14025241 CPU context switches
-   1718488044 boot time
-        43528 forks
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-11:42:26 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:42:27 AM  all    0.50    0.00    0.50    0.50    0.00    0.50    0.00    0.00    0.00   98.02
-11:42:27 AM    0    0.00    0.00    0.99    0.99    0.00    0.00    0.00    0.00    0.00   98.02
-11:42:27 AM    1    0.99    0.00    0.00    0.00    0.00    0.99    0.00    0.00    0.00   98.02
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    0.50    0.50    0.00    0.50    0.00    0.00    0.00   98.02
-Average:       0    0.00    0.00    0.99    0.99    0.00    0.00    0.00    0.00    0.00   98.02
-Average:       1    0.99    0.00    0.00    0.00    0.00    0.99    0.00    0.00    0.00   98.02
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.31      0.32     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.86     29.75     0.28  24.81    0.24    34.57    5.50     76.58     1.44  20.71    0.67    13.93    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.27
-
-
-## Network Usage:
-enp0s1:
-      enp0s1      
- KB/s in  KB/s out
-    6.42      7.15
-
-lo:
-        lo        
- KB/s in  KB/s out
-    4.65      4.65
-
-
-## Memory Usage:
-         5781 M total memory
-         1540 M used memory
-         2552 M active memory
-         1354 M inactive memory
-         1506 M free memory
-          224 M buffer memory
-         2509 M swap cache
-         4095 M total swap
-            0 M used swap
-         4095 M free swap
-       228596 non-nice user cpu ticks
-         1421 nice user cpu ticks
-        43866 system cpu ticks
-      9704190 idle cpu ticks
-         5716 IO-wait cpu ticks
-            0 IRQ cpu ticks
-         6595 softirq cpu ticks
-            0 stolen cpu ticks
-      1511891 pages paged in
-      3836328 pages paged out
-            0 pages swapped in
-            0 pages swapped out
-      8556347 interrupts
-     14211676 CPU context switches
-   1718488044 boot time
-        44702 forks
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-11:57:24 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:57:25 AM  all    1.01    0.00    1.01    0.00    0.00    0.51    0.00    0.00    0.00   97.47
-11:57:25 AM    0    0.00    0.00    1.02    0.00    0.00    1.02    0.00    0.00    0.00   97.96
-11:57:25 AM    1    2.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   97.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    1.01    0.00    1.01    0.00    0.00    0.51    0.00    0.00    0.00   97.47
-Average:       0    0.00    0.00    1.02    0.00    0.00    1.02    0.00    0.00    0.00   97.96
-Average:       1    2.00    0.00    1.00    0.00    0.00    0.00    0.00    0.00    0.00   97.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.31      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.85     29.44     0.28  24.77    0.24    34.75    5.74     78.40     1.45  20.17    0.67    13.67    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.27
-
-
-## Network Usage:
-enp0s1:
-
-lo:
-
-
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1630        1373          16        2778        3942
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-11:59:49 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-11:59:50 AM  all    1.49    0.00    0.50    1.49    0.00    0.50    0.00    0.00    0.00   96.02
-11:59:50 AM    0    0.99    0.00    0.99    0.00    0.00    0.99    0.00    0.00    0.00   97.03
-11:59:50 AM    1    2.00    0.00    0.00    3.00    0.00    0.00    0.00    0.00    0.00   95.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    1.49    0.00    0.50    1.49    0.00    0.50    0.00    0.00    0.00   96.02
-Average:       0    0.99    0.00    0.99    0.00    0.00    0.99    0.00    0.00    0.00   97.03
-Average:       1    2.00    0.00    0.00    3.00    0.00    0.00    0.00    0.00    0.00   95.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.31      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.84     29.36     0.28  24.77    0.24    34.75    5.78     78.83     1.45  20.08    0.67    13.63    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.27
-
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    1.96      1.96      1.66      1.28
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1628        1368          16        2784        3943
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:02:56 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:02:57 PM  all    0.00    0.00    1.02    0.00    0.00    0.00    0.00    0.00    0.00   98.98
-12:02:57 PM    0    0.00    0.00    1.02    0.00    0.00    0.00    0.00    0.00    0.00   98.98
-12:02:57 PM    1    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.00    0.00    1.02    0.00    0.00    0.00    0.00    0.00    0.00   98.98
-Average:       0    0.00    0.00    1.02    0.00    0.00    0.00    0.00    0.00    0.00   98.98
-Average:       1    0.00    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   98.99
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.31      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.84     29.25     0.28  24.77    0.24    34.75    5.83     79.34     1.46  19.98    0.67    13.60    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    0.66      0.66      0.47      0.44
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1607        1391          16        2783        3965
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:05:55 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:05:56 PM  all    0.50    0.00    2.51    0.00    0.00    0.50    0.00    0.00    0.00   96.48
-12:05:56 PM    0    1.00    0.00    3.00    0.00    0.00    0.00    0.00    0.00    0.00   96.00
-12:05:56 PM    1    0.00    0.00    2.02    0.00    0.00    1.01    0.00    0.00    0.00   96.97
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    2.51    0.00    0.00    0.50    0.00    0.00    0.00   96.48
+Average:     all    2.53    0.00    2.53    0.00    0.00    0.00    0.00    0.00    0.00   94.95
 Average:       0    1.00    0.00    3.00    0.00    0.00    0.00    0.00    0.00    0.00   96.00
-Average:       1    0.00    0.00    2.02    0.00    0.00    1.01    0.00    0.00    0.00   96.97
+Average:       1    4.08    0.00    2.04    0.00    0.00    0.00    0.00    0.00    0.00   93.88
 
 ## Disk Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
 Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.32      0.33     0.00   0.00    0.46     1.01    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.84     29.15     0.28  24.77    0.24    34.75    5.89     79.94     1.46  19.86    0.67    13.56    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    0.42      0.42      0.28      0.32
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1630        1364          16        2786        3941
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:06:06 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:06:07 PM  all    1.02    0.00    0.51    0.00    0.00    0.00    0.00    0.00    0.00   98.48
-12:06:07 PM    0    1.01    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   97.98
-12:06:07 PM    1    1.02    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.98
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    1.02    0.00    0.51    0.00    0.00    0.00    0.00    0.00    0.00   98.48
-Average:       0    1.01    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   97.98
-Average:       1    1.02    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   98.98
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.84     29.14     0.28  24.77    0.24    34.75    5.89     79.92     1.46  19.86    0.67    13.56    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-        lo                enp0s1      
- KB/s in  KB/s out   KB/s in  KB/s out
-    1.13      1.13      0.85      0.73
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1625        1369          16        2786        3946
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:10:11 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:10:12 PM  all    0.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-12:10:12 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-12:10:12 PM    1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.83     29.00     0.27  24.77    0.24    34.75    5.97     80.51     1.46  19.71    0.67    13.49    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
+vda              1.48     43.28     0.45  23.47    0.27    29.24    8.27    159.39     3.94  32.28    0.73    19.28    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.36
 
 
 ## Network Usage:
 enp0s1:
-      enp0s1      
- KB/s in  KB/s out
-    2.06      1.57
+03:35:03 PM    enp0s1     13.00     12.00      6.13      3.50      0.00      0.00      0.00      0.00
+Average:       enp0s1     13.00     12.00      6.13      3.50      0.00      0.00      0.00      0.00
 
 lo:
-        lo        
- KB/s in  KB/s out
-    0.42      0.42
+03:35:04 PM        lo     14.00     14.00      1.08      1.08      0.00      0.00      0.00      0.00
+Average:           lo     14.00     14.00      1.08      1.08      0.00      0.00      0.00      0.00
 
-
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1649        1333          16        2799        3923
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
 
 ********************************************************************************* Usage Information *********************************************************************************
 
 ## CPU Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
-12:11:50 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:11:51 PM  all    0.50    0.00    1.50    0.00    0.00    0.50    0.00    0.00    0.00   97.50
-12:11:51 PM    0    0.00    0.00    1.00    0.00    0.00    1.00    0.00    0.00    0.00   98.00
-12:11:51 PM    1    1.00    0.00    2.00    0.00    0.00    0.00    0.00    0.00    0.00   97.00
+03:46:09 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:46:10 PM  all   15.00    0.00    3.00    0.00    0.00    0.50    0.00    0.00    0.00   81.50
+03:46:10 PM    0   14.85    0.00    4.95    0.00    0.00    0.99    0.00    0.00    0.00   79.21
+03:46:10 PM    1   15.15    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   83.84
 
 Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    1.50    0.00    0.00    0.50    0.00    0.00    0.00   97.50
-Average:       0    0.00    0.00    1.00    0.00    0.00    1.00    0.00    0.00    0.00   98.00
-Average:       1    1.00    0.00    2.00    0.00    0.00    0.00    0.00    0.00    0.00   97.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.83     28.95     0.27  24.77    0.24    34.75    6.00     80.93     1.47  19.65    0.67    13.49    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1656        1318          16        2806        3916
-Swap:          4095           0        4095
+Average:     all   15.00    0.00    3.00    0.00    0.00    0.50    0.00    0.00    0.00   81.50
+Average:       0   14.85    0.00    4.95    0.00    0.00    0.99    0.00    0.00    0.00   79.21
+Average:       1   15.15    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   83.84
 
 ********************************************************************************* Usage Information *********************************************************************************
 
 ## CPU Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
-12:12:01 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:12:02 PM  all    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-12:12:02 PM    0    0.00    0.00    0.99    0.00    0.00    0.00    0.00    0.00    0.00   99.01
-12:12:02 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+03:46:16 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+03:46:17 PM  all    1.03    0.00    2.58    0.00    0.00    0.52    0.00    0.00    0.00   95.88
+03:46:17 PM    0    0.00    0.00    1.05    0.00    0.00    0.00    0.00    0.00    0.00   98.95
+03:46:17 PM    1    2.02    0.00    4.04    0.00    0.00    1.01    0.00    0.00    0.00   92.93
 
 Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.00    0.00    0.50    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-Average:       0    0.00    0.00    0.99    0.00    0.00    0.00    0.00    0.00    0.00   99.01
-Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+Average:     all    1.03    0.00    2.58    0.00    0.00    0.52    0.00    0.00    0.00   95.88
+Average:       0    0.00    0.00    1.05    0.00    0.00    0.00    0.00    0.00    0.00   98.95
+Average:       1    2.02    0.00    4.04    0.00    0.00    1.01    0.00    0.00    0.00   92.93
 
 ## Disk Usage:
 Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
 
 Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop0            0.02      0.04     0.00   0.00    0.43     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop2            0.00      0.02     0.00   0.00    0.27    10.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
+loop6            0.33      0.34     0.00   0.00    0.47     1.01    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
 loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.83     28.94     0.27  24.77    0.24    34.75    6.01     81.02     1.47  19.63    0.67    13.48    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
+vda              2.00     50.85     0.58  22.38    0.27    25.41    8.35    163.50     4.98  37.37    0.73    19.58    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.39
 
 
 ## Network Usage:
 enp0s1:
-      enp0s1      
- KB/s in  KB/s out
-    0.48      0.44
+03:46:18 PM    enp0s1      8.00      6.00      0.82      0.85      0.00      0.00      0.00      0.00
+Average:       enp0s1      8.00      6.00      0.82      0.85      0.00      0.00      0.00      0.00
 
 lo:
-        lo        
- KB/s in  KB/s out
-    0.47      0.47
-
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:13:10 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:13:11 PM  all    1.00    0.00    2.00    0.00    0.00    0.00    0.00    0.00    0.00   97.00
-12:13:11 PM    0    2.00    0.00    2.00    0.00    0.00    0.00    0.00    0.00    0.00   96.00
-12:13:11 PM    1    0.00    0.00    2.00    0.00    0.00    0.00    0.00    0.00    0.00   98.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    1.00    0.00    2.00    0.00    0.00    0.00    0.00    0.00    0.00   97.00
-Average:       0    2.00    0.00    2.00    0.00    0.00    0.00    0.00    0.00    0.00   96.00
-Average:       1    0.00    0.00    2.00    0.00    0.00    0.00    0.00    0.00    0.00   98.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.83     28.90     0.27  24.77    0.24    34.75    6.04     81.32     1.47  19.58    0.67    13.47    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-
-## Network Usage:
-enp0s1:
-12:13:12 PM    enp0s1      3.00      2.00      0.28      0.32      0.00      0.00      0.00      0.00
-Average:       enp0s1      3.00      2.00      0.28      0.32      0.00      0.00      0.00      0.00
-
-lo:
-12:13:13 PM        lo     29.00     29.00      3.27      3.27      0.00      0.00      0.00      0.00
-Average:           lo     29.00     29.00      3.27      3.27      0.00      0.00      0.00      0.00
-
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:16:10 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:16:11 PM  all    2.53    0.00    2.02    0.00    0.00    0.00    0.00    0.00    0.00   95.45
-12:16:11 PM    0    2.02    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   96.97
-12:16:11 PM    1    3.03    0.00    3.03    0.00    0.00    0.00    0.00    0.00    0.00   93.94
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    2.53    0.00    2.02    0.00    0.00    0.00    0.00    0.00    0.00   95.45
-Average:       0    2.02    0.00    1.01    0.00    0.00    0.00    0.00    0.00    0.00   96.97
-Average:       1    3.03    0.00    3.03    0.00    0.00    0.00    0.00    0.00    0.00   93.94
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.83     28.80     0.27  24.77    0.24    34.75    6.08     81.71     1.47  19.48    0.66    13.43    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-
-## Network Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:16:11 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
-12:16:12 PM        lo      5.00      5.00      0.42      0.42      0.00      0.00      0.00      0.00
-12:16:12 PM    enp0s1      3.00      2.00      0.28      0.32      0.00      0.00      0.00      0.00
-
-12:16:11 PM     IFACE   rxerr/s   txerr/s    coll/s  rxdrop/s  txdrop/s  txcarr/s  rxfram/s  rxfifo/s  txfifo/s
-12:16:12 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-12:16:12 PM    enp0s1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM    call/s retrans/s    read/s   write/s  access/s  getatt/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM   scall/s badcall/s  packet/s     udp/s     tcp/s     hit/s    miss/s   sread/s  swrite/s saccess/s sgetatt/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM    totsck    tcpsck    udpsck    rawsck   ip-frag    tcp-tw
-12:16:12 PM       734         7         5         1         0         0
-
-12:16:11 PM    irec/s  fwddgm/s    idel/s     orq/s   asmrq/s   asmok/s  fragok/s fragcrt/s
-12:16:12 PM      8.00      0.00      8.00      7.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM ihdrerr/s iadrerr/s iukwnpr/s   idisc/s   odisc/s   onort/s    asmf/s   fragf/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM    imsg/s    omsg/s    iech/s   iechr/s    oech/s   oechr/s     itm/s    itmr/s     otm/s    otmr/s  iadrmk/s iadrmkr/s  oadrmk/s oadrmkr/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM    ierr/s    oerr/s idstunr/s odstunr/s   itmex/s   otmex/s iparmpb/s oparmpb/s   isrcq/s   osrcq/s  iredir/s  oredir/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM  active/s passive/s    iseg/s    oseg/s
-12:16:12 PM      0.00      0.00      8.00      7.00
-
-12:16:11 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM    idgm/s    odgm/s  noport/s idgmerr/s
-12:16:12 PM      0.00      0.00      0.00      0.00
-
-12:16:11 PM   tcp6sck   udp6sck   raw6sck  ip6-frag
-12:16:12 PM         3         2         1         0
-
-12:16:11 PM   irec6/s fwddgm6/s   idel6/s    orq6/s  asmrq6/s  asmok6/s imcpck6/s omcpck6/s fragok6/s fragcr6/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM ihdrer6/s iadrer6/s iukwnp6/s  i2big6/s  idisc6/s  odisc6/s  inort6/s  onort6/s   asmf6/s  fragf6/s itrpck6/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM   imsg6/s   omsg6/s   iech6/s  iechr6/s  oechr6/s  igmbq6/s  igmbr6/s  ogmbr6/s igmbrd6/s ogmbrd6/s irtsol6/s ortsol6/s  irtad6/s inbsol6/s onbsol6/s  inbad6/s  onbad6/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM   ierr6/s idtunr6/s odtunr6/s  itmex6/s  otmex6/s iprmpb6/s oprmpb6/s iredir6/s oredir6/s ipck2b6/s opck2b6/s
-12:16:12 PM      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-12:16:11 PM   idgm6/s   odgm6/s noport6/s idgmer6/s
-12:16:12 PM      0.00      0.00      0.00      0.00
-
-12:16:11 PM     CPU   total/s   dropd/s squeezd/s  rx_rps/s flw_lim/s
-12:16:12 PM     all      8.00      0.00      0.00      0.00      0.00
-
-Average:        IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
-Average:           lo      5.00      5.00      0.42      0.42      0.00      0.00      0.00      0.00
-Average:       enp0s1      3.00      2.00      0.28      0.32      0.00      0.00      0.00      0.00
-
-Average:        IFACE   rxerr/s   txerr/s    coll/s  rxdrop/s  txdrop/s  txcarr/s  rxfram/s  rxfifo/s  txfifo/s
-Average:           lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-Average:       enp0s1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:       call/s retrans/s    read/s   write/s  access/s  getatt/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:      scall/s badcall/s  packet/s     udp/s     tcp/s     hit/s    miss/s   sread/s  swrite/s saccess/s sgetatt/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:       totsck    tcpsck    udpsck    rawsck   ip-frag    tcp-tw
-Average:          734         7         5         1         0         0
-
-Average:       irec/s  fwddgm/s    idel/s     orq/s   asmrq/s   asmok/s  fragok/s fragcrt/s
-Average:         8.00      0.00      8.00      7.00      0.00      0.00      0.00      0.00
-
-Average:    ihdrerr/s iadrerr/s iukwnpr/s   idisc/s   odisc/s   onort/s    asmf/s   fragf/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:       imsg/s    omsg/s    iech/s   iechr/s    oech/s   oechr/s     itm/s    itmr/s     otm/s    otmr/s  iadrmk/s iadrmkr/s  oadrmk/s oadrmkr/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:       ierr/s    oerr/s idstunr/s odstunr/s   itmex/s   otmex/s iparmpb/s oparmpb/s   isrcq/s   osrcq/s  iredir/s  oredir/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:     active/s passive/s    iseg/s    oseg/s
-Average:         0.00      0.00      8.00      7.00
-
-Average:     atmptf/s  estres/s retrans/s isegerr/s   orsts/s
-Average:         0.00      0.00      0.00      0.00      0.00
-
-Average:       idgm/s    odgm/s  noport/s idgmerr/s
-Average:         0.00      0.00      0.00      0.00
-
-Average:      tcp6sck   udp6sck   raw6sck  ip6-frag
-Average:            3         2         1         0
-
-Average:      irec6/s fwddgm6/s   idel6/s    orq6/s  asmrq6/s  asmok6/s imcpck6/s omcpck6/s fragok6/s fragcr6/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:    ihdrer6/s iadrer6/s iukwnp6/s  i2big6/s  idisc6/s  odisc6/s  inort6/s  onort6/s   asmf6/s  fragf6/s itrpck6/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:      imsg6/s   omsg6/s   iech6/s  iechr6/s  oechr6/s  igmbq6/s  igmbr6/s  ogmbr6/s igmbrd6/s ogmbrd6/s irtsol6/s ortsol6/s  irtad6/s inbsol6/s onbsol6/s  inbad6/s  onbad6/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:      ierr6/s idtunr6/s odtunr6/s  itmex6/s  otmex6/s iprmpb6/s oprmpb6/s iredir6/s oredir6/s ipck2b6/s opck2b6/s
-Average:         0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-
-Average:      idgm6/s   odgm6/s noport6/s idgmer6/s
-Average:         0.00      0.00      0.00      0.00
-
-Average:        CPU   total/s   dropd/s squeezd/s  rx_rps/s flw_lim/s
-Average:        all      8.00      0.00      0.00      0.00      0.00
-
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1621        1358          16        2802        3950
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:19:12 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:19:13 PM  all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-12:19:13 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-12:19:13 PM    1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       1    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.31     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.83     28.70     0.27  24.77    0.24    34.75    6.14     82.20     1.47  19.35    0.66    13.38    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-
-## Network Usage:
-enp0s1:
-12:19:14 PM    enp0s1     21.78     12.87      2.70      2.09      0.00      0.00      0.00      0.00
-Average:       enp0s1     21.78     12.87      2.70      2.09      0.00      0.00      0.00      0.00
-
-lo:
-12:19:15 PM        lo      8.91      8.91      0.72      0.72      0.00      0.00      0.00      0.00
-Average:           lo      8.91      8.91      0.72      0.72      0.00      0.00      0.00      0.00
-
-
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1649        1324          16        2808        3923
-Swap:          4095           0        4095
-
-## Disk Usage Summary:
-Filesystem      Size  Used Avail Use% Mounted on
-udev            2.8G     0  2.8G   0% /dev
-tmpfs           579M  1.7M  577M   1% /run
-/dev/vda2        59G   29G   27G  52% /
-tmpfs           2.9G     0  2.9G   0% /dev/shm
-tmpfs           5.0M  4.0K  5.0M   1% /run/lock
-tmpfs           2.9G     0  2.9G   0% /sys/fs/cgroup
-/dev/vda1       511M  5.3M  506M   2% /boot/efi
-/dev/loop0       70M   70M     0 100% /snap/core22/1383
-/dev/loop1       34M   34M     0 100% /snap/snapd/21467
-/dev/loop2       93M   93M     0 100% /snap/lxd/28475
-/dev/loop4       62M   62M     0 100% /snap/lxd/14808
-/dev/loop3       49M   49M     0 100% /snap/core18/1708
-/dev/loop6       34M   34M     0 100% /snap/snapd/21761
-/dev/loop5       50M   50M     0 100% /snap/core18/2826
-tmpfs           579M   32K  579M   1% /run/user/1000
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:31:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:31:33 PM  all    1.49    0.00    1.98    0.00    0.00    0.50    0.00    0.00    0.00   96.04
-12:31:33 PM    0    1.98    0.00    0.99    0.00    0.00    0.00    0.00    0.00    0.00   97.03
-12:31:33 PM    1    0.99    0.00    2.97    0.00    0.00    0.99    0.00    0.00    0.00   95.05
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    1.49    0.00    1.98    0.00    0.00    0.50    0.00    0.00    0.00   96.04
-Average:       0    1.98    0.00    0.99    0.00    0.00    0.00    0.00    0.00    0.00   97.03
-Average:       1    0.99    0.00    2.97    0.00    0.00    0.99    0.00    0.00    0.00   95.05
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.30     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.81     28.30     0.27  24.77    0.24    34.75    6.33     83.47     1.48  18.98    0.66    13.18    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-
-## Network Usage:
-enp0s1:
-12:31:34 PM    enp0s1      3.00      3.00      0.28      0.38      0.00      0.00      0.00      0.00
-Average:       enp0s1      3.00      3.00      0.28      0.38      0.00      0.00      0.00      0.00
-
-lo:
-12:31:35 PM        lo      8.00      8.00      0.62      0.62      0.00      0.00      0.00      0.00
-Average:           lo      8.00      8.00      0.62      0.62      0.00      0.00      0.00      0.00
-
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## CPU Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-12:34:03 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-12:34:04 PM  all    0.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-12:34:04 PM    0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-12:34:04 PM    1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
-
-Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-Average:     all    0.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.50
-Average:       0    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-Average:       1    1.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00   99.00
-
-## Disk Usage:
-Linux 5.4.0-186-generic (ysbeam) 	06/16/2024 	_aarch64_	(2 CPU)
-
-Device            r/s     rkB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dkB/s   drqm/s  %drqm d_await dareq-sz  aqu-sz  %util
-loop0            0.03      0.05     0.00   0.00    0.42     1.74    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop1            0.00      0.01     0.00   0.00    0.16     6.80    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop2            0.00      0.02     0.00   0.00    0.23    10.81    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop3            0.00      0.01     0.00   0.00    0.06     2.35    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop4            0.00      0.01     0.00   0.00    0.18     6.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop5            0.00      0.01     0.00   0.00    0.07     2.25    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop6            0.30      0.30     0.00   0.00    0.54     1.02    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-loop7            0.00      0.00     0.00   0.00    0.75     1.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.00
-vda              0.81     28.22     0.27  24.77    0.24    34.75    6.38     83.95     1.49  18.91    0.66    13.16    0.00      0.00     0.00   0.00    0.00     0.00    0.00   0.28
-
-
-## Network Usage:
-enp0s1:
-12:34:06 PM    enp0s1      5.00      4.00      0.41      0.62      0.00      0.00      0.00      0.00
-Average:       enp0s1      5.00      4.00      0.41      0.62      0.00      0.00      0.00      0.00
-
-lo:
-12:34:07 PM        lo      5.00      5.00      0.42      0.42      0.00      0.00      0.00      0.00
-Average:           lo      5.00      5.00      0.42      0.42      0.00      0.00      0.00      0.00
-
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## Memory Usage:
-              total        used        free      shared  buff/cache   available
-Mem:           5781        1659        1282          16        2840        3913
-Swap:          4095           0        4095
-
-********************************************************************************* Usage Information *********************************************************************************
-
-## Network Usage:
-enp0s1:
-12:37:22 PM    enp0s1      6.00      6.00      0.58      0.80      0.00      0.00      0.00      0.00
-Average:       enp0s1      6.00      6.00      0.58      0.80      0.00      0.00      0.00      0.00
-
-lo:
-12:37:23 PM        lo      8.00      8.00      0.67      0.67      0.00      0.00      0.00      0.00
-Average:           lo      8.00      8.00      0.67      0.67      0.00      0.00      0.00      0.00
+03:46:19 PM        lo     13.00     13.00      1.05      1.05      0.00      0.00      0.00      0.00
+Average:           lo     13.00     13.00      1.05      1.05      0.00      0.00      0.00      0.00
 
