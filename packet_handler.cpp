@@ -464,6 +464,7 @@ bool CPacketHandler::PromptUserForBlockingIPs() {
         std::cout << COLOR_RED "\n## Do you want to block the detected malicious IPs? (y/n): " << COLOR_RESET;
         std::cin >> chUserInput;
         if (chUserInput == 'y' || chUserInput == 'Y') {
+            std::cout << COLOR_RED << "blocking ips..." << COLOR_RESET << "\n";
             return true;
         } else {
             std::cout << "No IPs blocked." << std::endl;
@@ -477,7 +478,7 @@ bool CPacketHandler::PromptUserForBlockingIPs() {
 
 // 로그파일에서 탐지된 이상 IP를 읽어와 해당 IP를 차단하는 iptables 명령을 실행하는 함수
 int CPacketHandler::BlockDetectedIPs() {
-    try{
+    try {
         std::ifstream infile("logs/malicious_ips.log");
         if (!infile.is_open()) {
             std::cerr << "Could not open malicious_ips.log for reading." << std::endl;
@@ -485,25 +486,31 @@ int CPacketHandler::BlockDetectedIPs() {
         }
 
         std::string strIp;
+        std::unordered_set<std::string> blockedIPs;
+
+        DisableOutput();
         while (std::getline(infile, strIp)) {
-            DisableOutput();
             int nSshInputResult = ::RunIptables("INPUT", strIp, "22", "ACCEPT");
             int nSshOutputResult = ::RunIptables("OUTPUT", strIp, "22", "ACCEPT");
-            EnableOutput();
+
             if (nSshInputResult != SUCCESS_CODE || nSshOutputResult != SUCCESS_CODE) {
-                std::cerr << "Failed to set SSH exception for IP " << strIp << "." << std::endl;
+                std::cout << "Failed to set SSH exception for IP " << strIp << "." << std::endl;
                 continue;
             }
             int result = ::RunIptables("INPUT", strIp, "80", "DROP");
             if (result == SUCCESS_CODE) {
-                std::cout << "IP " << strIp << " has been blocked successfully.\n" << std::endl;
+                blockedIPs.insert(strIp);
+                std::cout << "IP " << strIp << " has been blocked successfully." << std::endl;
             } else {
-                std::cerr << "Failed to block IP " << strIp << "." << std::endl;
+                std::cout << "Failed to block IP " << strIp << "." << std::endl;
             }
         }
 
         infile.close();
+        EnableOutput();
+        std::cout << "\n" << COLOR_GREEN << "IPs blocked successfully. Check blocked_ips.log" << COLOR_RESET << "\n";
     } catch (const std::exception& e) {
+        EnableOutput();
         std::cerr << "Exception caught in BlockDetectedIPs: " << e.what() << std::endl;
         return ERROR_CANNOT_BLOCK_IP;
     }

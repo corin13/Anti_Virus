@@ -191,7 +191,6 @@ int ViewLogs(){
     return SUCCESS_CODE;
 }
 
-
 //iptables 실행 함수
 int RunIptables(std::string direction, std::string ip, std::string port, std::string action){
     std::string iptablesCmd="iptables -A";
@@ -518,6 +517,7 @@ int RuleList(){
 
 //명령어 실행 함수
 void ExecCommand(std::string cmd){
+    cmd += " 2>/dev/null";
     FILE* pipe = popen(cmd.c_str(), "r");
     if (!pipe) {
         std::cerr << "ERROR : popen() failed" << std::endl;

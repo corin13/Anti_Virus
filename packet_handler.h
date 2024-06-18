@@ -49,6 +49,7 @@ public:
     bool PromptUserForPacketCapture();
     bool PromptUserForPacketAnalysis();
     static void SigintHandler(int signum);
+    void LogMessage(const std::string& message);
     int CapturePackets(const char* interfaceName);
     static int RunSystem(const char* interfaceName);
     int AnalyzeNetworkTraffic(const char *pcap_file);

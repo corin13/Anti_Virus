@@ -30,7 +30,7 @@ std::string CNetworkInterface::SelectNetworkInterface() {
         return GetErrorMessage(ERROR_CANNOT_FIND_INTERFACE);
     }
 
-    std::cout << "\nAvailable network interfaces:\n";
+    std::cout << "\n[Available network interfaces]\n";
     for (size_t siIndex = 0; siIndex < strInterfaces.size(); ++siIndex) {
         std::cout << siIndex + 1 << ". " << strInterfaces[siIndex] << "\n";
     }
@@ -73,10 +73,10 @@ int CNetworkInterface::ManageInterface() {
     }
 
     int nChoice;
-    std::cout << "\n## Select an option:\n";
-    std::cout << "\n1. Generate and capture packets in real-time\n";
+    std::cout << "\n[Select an option]\n";
+    std::cout << "1. Generate and capture packets in real-time\n";
     std::cout << "2. Analyze existing pcap file\n";
-    std::cout << "\nEnter your choice: ";
+    std::cout << "\n## Enter your choice: ";
     std::cin >> nChoice;
 
     if (nChoice == 1) {
