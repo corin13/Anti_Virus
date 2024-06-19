@@ -91,8 +91,6 @@ int CLoggingManager::GenerateLogs(const std::string& loggerName) {
 // 멀티 싱크 로거를 설정하고 로그 레벨에 맞는 메시지 출력을 확인하는 함수
 int CLoggingManager::MultiSinkLogger() {
     try {
-        spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [pid %P] [thread %t] [%s:%#] %v");
-
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         consoleSink->set_level(spdlog::level::info);
 
@@ -107,7 +105,7 @@ int CLoggingManager::MultiSinkLogger() {
         logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [pid %P] [thread %t] [%s:%#] %v");
 
         std::cout << " \n";
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 2; ++i) {
             logger->trace("Trace level message {}", i);
             logger->debug("Debug level message {}", i);
             logger->info("Info level message {}", i);
