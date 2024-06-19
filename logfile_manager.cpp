@@ -104,7 +104,6 @@ int CLoggingManager::MultiSinkLogger() {
         logger->set_level(spdlog::level::trace);
 
         spdlog::register_logger(logger);
-
         logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [pid %P] [thread %t] [%s:%#] %v");
 
         std::cout << " \n";
@@ -146,7 +145,7 @@ int CLoggingManager::TestMultiThreadedLogging() {
     try {
         std::vector<std::thread> vecThreads;
         const int nThreads = 4;
-        const int nLogsPerThread = 100;
+        const int nLogsPerThread = 625;
 
         for (int i = 1; i <= nThreads; ++i) {
             vecThreads.emplace_back([i, nLogsPerThread]() {
@@ -185,9 +184,6 @@ int CLoggingManager::MeasureAsyncLogPerformance() {
 
         const int nLogs = 10000;
         auto start = std::chrono::high_resolution_clock::now();
-        for (int i = 0; i < nLogs; ++i) {
-            logger->info("This is an asynchronous log message number {}", i);
-        }
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed = end - start;
 

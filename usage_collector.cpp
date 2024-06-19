@@ -221,7 +221,7 @@ int CUsageCollector::CollectAndSaveUsage() {
         DisplayMenu();
         GetUserChoices(bCollectCpu, bCollectDisk, bCollectNetwork, bCollectMemory);
         if (!bCollectCpu && !bCollectDisk && !bCollectNetwork && !bCollectMemory) {
-            std::cerr << "\nNo data collection selected. Exiting." << std::endl;
+            std::cerr << COLOR_GREEN << "\nNo data collection selected. Exiting." << COLOR_RESET << std::endl;
             return ERROR_UNKNOWN;
         }
 
