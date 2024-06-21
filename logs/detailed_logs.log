@@ -21369,3 +21369,67 @@ Malicious packet detected: 192.168.64.1
 [2024-06-19 12:47:32] [info] Logged message.
 [2024-06-19 12:48:39] [info] Logged message.
 [2024-06-19 12:49:40] [info] Logged message.
+[2024-06-19 12:50:20] [info] Logged message.
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+Large packet detected in 192.168.64.2: 1500 bytes
+Large packet detected in 192.168.64.1: 1500 bytes
+[2024-06-19 12:50:54] [info] Logged message.
+[2024-06-19 12:51:31] [info] Logged message.
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+Large packet detected in 192.168.64.2: 1500 bytes
+Large packet detected in 192.168.64.1: 1500 bytes
+[2024-06-19 12:52:11] [info] Logged message.
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+[2024-06-19 12:55:12] [info] Logged message.
+[2024-06-18 06:44:56] [info] Logged message.
+[2024-06-18 06:07:01] [info] Logged message.
+[2024-06-18 01:06:37] [info] Logged message.
+[2024-06-18 01:16:34] [info] Logged message.
+[2024-06-18 01:31:29] [info] Logged message.
+[2024-06-17 15:57:40] [info] Logged message.
+[2024-06-18 00:50:16] [info] Logged message.
+[2024-06-18 03:04:10] [info] Logged message.
+[2024-06-18 03:05:50] [info] Logged message.
+[2024-06-18 01:49:29] [info] Logged message.
+[2024-06-18 02:58:49] [info] Logged message.
+[2024-06-18 06:04:32] [info] Logged message.
+[2024-06-18 01:01:13] [info] Logged message.
+[2024-06-18 06:05:11] [info] Logged message.
+[2024-06-18 03:08:32] [info] Logged message.
+[2024-06-18 01:39:50] [info] Logged message.
+[2024-06-18 02:49:43] [info] Logged message.
+[2024-06-18 01:38:40] [info] Logged message.
+[2024-06-17 02:26:57] [info] Logged message.
+[2024-06-17 02:28:51] [info] Logged message.
+[2024-06-17 02:27:23] [info] Logged message.
+[2024-06-17 02:28:23] [info] Logged message.
+[2024-06-17 02:29:06] [info] Logged message.
+[2024-06-17 03:56:43] [info] Logged message.
+[2024-06-17 03:53:26] [info] Logged message.
+[2024-06-16 22:45:40] [info] Logged message.
+[2024-06-16 22:52:28] [info] Logged message.
+[2024-06-17 03:57:37] [info] Logged message.
+[2024-06-17 05:05:29] [info] Logged message.
+[2024-06-17 03:48:51] [info] Logged message.
+[2024-06-17 03:55:13] [info] Logged message.
+[2024-06-17 04:38:20] [info] Logged message.
+[2024-06-17 02:56:38] [info] Logged message.
+[2024-06-17 02:32:32] [info] Logged message.
+[2024-06-17 05:11:05] [info] Logged message.
+[2024-06-17 03:49:06] [info] Logged message.
+[2024-06-21 04:54:58] [info] Logged message.

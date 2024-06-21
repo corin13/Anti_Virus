@@ -13,10 +13,10 @@ int CLoggingManager::ManageLogLevel(){
     try {
         auto logger = spdlog::default_logger();
 
-        spdlog::set_level(spdlog::level::trace); 
+        spdlog::set_level(spdlog::level::trace);
         spdlog::trace("This is a trace message - visible at trace level");
 
-        spdlog::set_level(spdlog::level::debug); 
+        spdlog::set_level(spdlog::level::debug);
         spdlog::info("This is an info message - visible at debug level");
         spdlog::debug("This is a debug message - visible at debug level");
 
@@ -30,7 +30,7 @@ int CLoggingManager::ManageLogLevel(){
 
         spdlog::set_level(spdlog::level::critical);
         spdlog::critical("This is a critical message - visible at critical level");
-        spdlog::warn("This warning message will not be visible at critical level"); 
+        spdlog::warn("This warning message will not be visible at critical level");
         
         SPDLOG_TRACE("Some trace message with param {}", 42);
         SPDLOG_DEBUG("Some debug message");
@@ -69,11 +69,11 @@ int CLoggingManager::RotateLogs() {
 }
 
 // 로그 메시지를 생성하여 로그 파일의 크기를 빠르게 증가시키는 함수
-int CLoggingManager::GenerateLogs(const std::string& loggerName) {
+int CLoggingManager::GenerateLogs(const std::string& strLoggerName) {
     try {
-        auto logger = spdlog::get(loggerName);
+        auto logger = spdlog::get(strLoggerName);
         if (!logger) {
-            spdlog::error("Logger with name {} does not exist.", loggerName);
+            spdlog::error("Logger with name {} does not exist.", strLoggerName);
             return ERROR_UNKNOWN;
         }
 
@@ -95,7 +95,7 @@ int CLoggingManager::MultiSinkLogger() {
         consoleSink->set_level(spdlog::level::info);
 
         auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multi_sink.log", true);
-        fileSink->set_level(spdlog::level::trace);  
+        fileSink->set_level(spdlog::level::trace);
 
         std::vector<spdlog::sink_ptr> sinks {consoleSink, fileSink};
         auto logger = std::make_shared<spdlog::logger>("multiSinkLogger", sinks.begin(), sinks.end());
@@ -276,7 +276,6 @@ int CLoggingManager::TestLogging() {
         int nRotationResult = CLoggingManager::StartRotation();
 
         CLoggingManager instance;
-
         int nResult = instance.ManageLogLevel();
         if (nResult != SUCCESS_CODE) {
             spdlog::error("Failed to manage log level.");
