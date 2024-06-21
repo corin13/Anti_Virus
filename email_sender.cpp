@@ -2,11 +2,14 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <jsoncpp/json/json.h>
 #include <fstream>
 #include "ini.h"
 #include "secure_config.h"
 #include "util.h"
+#include "log_parser.h"
+#include "event_monitor.h"
 
 EmailSender::EmailSender(const std::string& smtpServer, int smtpPort, const std::string& emailAddress)
     : m_strSmtpServer(smtpServer), m_nSmtpPort(smtpPort), m_strEmailAddress(emailAddress), m_curl(nullptr) {
@@ -171,5 +174,190 @@ void EmailSender::SaveLastEmailSentTime() {
     if (timeFile.is_open()) {
         timeFile << lastEmailSentTime.time_since_epoch().count();
         timeFile.close();
+    }
+}
+
+std::string EmailSender::GetFirewallLogFilePath(const std::string& date) const {
+    return FIREWALL_LOG_FILE_PATH + date + ".log";
+}
+
+void EmailSender::SendLogEmail(){
+    std::cout << "\nPlease select the log type you'd like to send:\n\n"
+       << "1. File Event Log (Default)\n"
+       << "2. Firewall Log\n"
+       << "3. Packet Log\n\n"
+       << "Please enter the option: ";
+    
+    std::string logTypeInput;
+    int logTypeOption = 1;
+    while (true) {
+        getline(std::cin, logTypeInput);
+        if(logTypeInput == "1" || logTypeInput == "2"|| logTypeInput=="3") {
+            logTypeOption = std::stoi(logTypeInput);
+            break;
+        } else if(logTypeInput.empty()) {
+            break;
+        }
+        std::cout << "Invalid option. Please try again: ";
+    }
+    std::string logFilePath;
+    std::string emailBody;
+    std::string subject;
+    LogParser logParser;
+
+    switch (logTypeOption) {
+        case 1: {
+            CEventMonitor eventMonitor;
+            logFilePath = eventMonitor.getLogFilePath(); 
+            auto logData = logParser.ParseJsonLogFile(logFilePath);
+
+            auto currentTime = std::time(nullptr);
+            std::stringstream ss;
+            ss << std::put_time(std::localtime(&currentTime), "%Y-%m-%d");
+
+            emailBody = "<html><head><style>"
+                        "table {width: 100%; border-collapse: collapse;}"
+                        "th, td {border: 1px solid black; padding: 8px; text-align: left;}"
+                        "th {background-color: #f2f2f2;}"
+                        "</style></head><body>"
+                        "<h2>[파일 이벤트의 로그 기록]</h2>"
+                        "<p>안녕하세요,</p>"
+                        "<p>다음은 " + ss.str() + " 파일 이벤트의 로그 기록입니다:</p>"
+                        "<table>"
+                        "<tr><th>파일 경로</th><th>시간</th><th>이벤트 타입</th><th>파일 크기</th><th>해시 값 (new)</th><th>해시 값 (old)</th><th>PID</th><th>사용자</th></tr>";
+
+            for (const auto& entry : logData) {
+                emailBody += "<tr>"
+                             "<td>" + entry.at("target_file") + "</td>"
+                             "<td>" + entry.at("timestamp") + "</td>"
+                             "<td>" + entry.at("event_type") + "</td>"
+                             "<td>" + entry.at("file_size") + " bytes</td>"
+                             "<td>" + entry.at("new_hash") + "</td>"
+                             "<td>" + entry.at("old_hash") + "</td>"
+                             "<td>" + entry.at("pid") + "</td>"
+                             "<td>" + entry.at("user") + "</td>"
+                             "</tr>";
+            }
+
+            emailBody += "</table>"
+                         "<p>[연락처 정보]</p>"
+                         "<p>시스템 관리자: 이름 (이메일, 전화번호)</p>"
+                         "<p>감사합니다.</p>"
+                         "<p>우당탕 쿠당탕 드림</p>"
+                         "</body></html>";
+
+            subject = "파일 이벤트의 로그 기록";
+            break;
+        }
+        case 2:{
+            std::cout << "Enter the date of the log file (e.g., 240101): ";
+            std::string date;
+            getline(std::cin, date);
+            logFilePath = GetFirewallLogFilePath(date);
+            auto logData = logParser.ParseFirewallLog(logFilePath);
+
+            emailBody = "<html><body>"
+                        "<h2>[Alert] 일간 방화벽 로그 요약 보고서</h2>"
+                        "<p>안녕하세요,</p>"
+                        "<p>아래는 하루 동안의 방화벽 로그 요약 보고서 입니다.</p>"
+                        "<table border='1' cellpadding='5' cellspacing='0'>"
+                        "<tr><th>날짜</th><td>" + logData["날짜"] + "</td></tr>"
+                        "<tr><th>총 이벤트 수</th><td>" + logData["총 이벤트 수"] + "</td></tr>"
+                        "<tr><th>허용된 트래픽</th><td>" + logData["허용된 트래픽"] + "건</td></tr>"
+                        "<tr><th>차단된 트래픽</th><td>" + logData["차단된 트래픽"] + "건</td></tr>"
+                        "</table>"
+                         "<h3>세부 로그</h3>"
+                        "<table border='1' cellpadding='5' cellspacing='0'>"
+                        "<tr><th>Time</th><th>Hostname</th><th>Action</th><th>Details</th></tr>"
+                        + logData["entries"] +
+                        "</table>"
+                        "<p>[연락처 정보]</p>"
+                        "<p>시스템 관리자: 이름 (이메일, 전화번호)</p>"
+                        "<p>감사합니다.</p>"
+                        "</body></html>";
+
+            subject = "일간 방화벽 로그 요약 보고서";
+            break;
+        }
+        
+        case 3:{
+            std::cout << "Enter the date of the log file (e.g., 240101): ";
+            std::string date;
+            getline(std::cin, date);
+
+            // 230719 -> 2023-07-19 형식으로 변환
+            std::string year = "20" + date.substr(0, 2);
+            std::string month = date.substr(2, 2);
+            std::string day = date.substr(4, 2);
+            std::string formattedDate = year + "-" + month + "-" + day;
+
+            auto logData = logParser.ParsePacketLogFile(PACKET_LOG_FILE_PATH, formattedDate);
+
+            emailBody = "<html><body>"
+                        "<h2>[네트워크 이상 패킷 탐지 알림]</h2>"
+                        "<p>안녕하세요,</p>"
+                        "<p>네트워크에서 악성 패킷이 탐지되어 알림 드립니다.</p>"
+                        "<p>탐지 시스템: Server1</p>"
+                        "<h3>탐지된 이상 패킷 정보</h3>"
+                        "<table border='1' cellpadding='5' cellspacing='0'>"
+                        "<tr><th>타임스탬프</th><th>유형</th><th>내용</th></tr>";
+
+            // 로그 항목이 제대로 파싱되었는지 확인하기 위해 디버그 출력
+            if (logData.find(formattedDate) != logData.end()) {
+                for (const auto& entry : logData[formattedDate]) {
+                    std::istringstream logStream(entry);
+                    std::string line;
+                    std::string timestamp;
+                    std::string type;
+                    std::string content;
+
+                    // 로그 항목의 각 줄을 파싱하여 변환
+                    while (std::getline(logStream, line)) {
+                        if (line.find("[info]") != std::string::npos) {
+                            timestamp = line;
+                        } else if (line.find("IP Flooding detected in") != std::string::npos) {
+                            type = "IP 플러딩";
+                            content = "감지된 IP: " + line.substr(line.find("in ") + 3);
+                        } else if (line.find("Malicious packet detected:") != std::string::npos) {
+                            type = "악성 패킷";
+                            content = "감지된 패킷: " + line.substr(line.find("detected: ") + 10);
+                        } else if (line.find("Reason:") != std::string::npos) {
+                            content += "탐지된 이상 유형: " + line.substr(line.find("Reason: ") + 8);
+                        } else if (line.find("Large packet detected in") != std::string::npos) {
+                            type = "대형 패킷";
+                            content = "감지된 패킷: " + line.substr(line.find("in ") + 3);
+                        } else if (line.find("Packet fragmentation detected:") != std::string::npos) {
+                            type = "패킷 분할";
+                            content = "감지된 패킷: " + line.substr(line.find("detected: ") + 10);
+                        } else if (line.find("Malicious payload detected in") != std::string::npos) {
+                            type = "악성 페이로드";
+                            content = "감지된 페이로드: " + line.substr(line.find("in ") + 3);
+                        }
+                    }
+
+                    emailBody += "<tr><td>" + timestamp + "</td><td>" + type + "</td><td>" + content + "</td></tr>";
+                }
+            } else {
+                std::cerr << "No log data found for the given date." << std::endl;
+                emailBody += "<tr><td colspan='3'>No log data found for the given date.</td></tr>";
+            }
+
+            emailBody += "</table>"
+                         "<p>[연락처 정보]</p>"
+                         "<p>시스템 관리자: 이름 (이메일, 전화번호)</p>"
+                         "<p>감사합니다.</p>"
+                         "</body></html>";
+
+            subject = "네트워크 이상 패킷 탐지 알림";
+            logFilePath = PACKET_LOG_FILE_PATH;  // logFilePath 설정
+            break;
+        }
+        default:
+            return;
+    }
+    if (SendEmailWithAttachment(subject, emailBody, logFilePath) == 0) {
+        //
+    } else {
+        std::cerr << "Failed to send email.\n";
     }
 }

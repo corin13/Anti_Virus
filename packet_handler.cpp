@@ -447,7 +447,6 @@ int CPacketHandler::AnalyzeCapturedPackets() {
 
         if (PromptUserForBlockingIPs()) BlockDetectedIPs();
 
-        SendEmailWithLogPacketData(LOG_FILE_PATH);
     } catch (const std::exception& e) {
         std::cerr << "Exception caught in AnalyzeCapturedPackets: " << e.what() << std::endl;
         return ERROR_CANNOT_ANALYZE_PACKETS;
@@ -511,46 +510,3 @@ int CPacketHandler::BlockDetectedIPs() {
     return SUCCESS_CODE;
 }
 
-// 로그 파일에서 특정 정보를 파싱하여 이메일을 작성하고, 이메일을 전송하는 함수
-void CPacketHandler::SendEmailWithLogPacketData(const std::string& logFilePath) {
-    LogParser logParser;
-    std::vector<std::string> strKeys = {
-        "악성 패킷 출발지 IP", "출발지 IP 주소", "탐지된 이상 유형"
-    };
-    auto logData = logParser.ParseLogFile(logFilePath, strKeys);
-
-    std::string emailBody =
-        "[네트워크 이상 패킷 탐지 알림]\n\n"
-        "안녕하세요,\n"
-        "네트워크에서 악성 패킷이 탐지되어 알림 드립니다.\n\n"
-        "탐지 시스템: Server1\n\n"
-        "[탐지된 이상 패킷 정보]\n"
-        "출발지 IP 주소: " + logData["출발지 IP 주소"] + "\n"
-        "악성 IP 주소: " + logData["악성 패킷 출발지 IP"] + "\n"
-    
-        "탐지된 이상 유형: " + logData["탐지된 이상 유형"] + "\n\n"
-        "[추가 정보]\n"
-        "탐지된 패킷 내용: (필요 시 여기에 추가)\n"
-        "연관된 규칙: Rule-ID-12345 (DDoS 탐지 규칙)\n\n"
-        "[조치 권고 사항]\n"
-        "즉각적인 조치: 출발지 IP " + logData["출발지 IP 주소"] + "을 차단\n"
-        "추가 조사: 출발지 IP의 이전 트래픽 패턴 분석 등\n\n"
-        "[연락처 정보]\n"
-        "시스템 관리자: 이름 (이메일, 전화번호)\n\n"
-        "감사합니다.\n"
-        "~~드림";
-
-    std::string subject = "네트워크 이상 패킷 탐지 알림";
-
-    std::string recipientEmailAddress = Config::Instance().GetEmailAddress();
-    if (!recipientEmailAddress.empty()) {
-        EmailSender emailSender("smtps://smtp.gmail.com", 465, recipientEmailAddress);
-        if (emailSender.SendEmailWithAttachment(subject, emailBody, logFilePath) == 0) {
-            std::cout << "\n" << COLOR_GREEN << "Email sent successfully." << COLOR_RESET << "\n";
-        } else {
-            HandleError(ERROR_CANNOT_SEND_EMAIL);
-        }
-    } else {
-        std::cerr << "Email address is not configured.\n";
-    }
-}

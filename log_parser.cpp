@@ -6,50 +6,32 @@
 #include <regex>
 #include <jsoncpp/json/json.h>
 
-std::unordered_map<std::string, std::string> LogParser::ParseLogFile(const std::string& logFilePath, const std::vector<std::string>& keys) {
-    std::unordered_map<std::string, std::string> logData;
+std::unordered_map<std::string, std::vector<std::string>> LogParser::ParsePacketLogFile(const std::string& logFilePath, const std::string& date) {
+    std::unordered_map<std::string, std::vector<std::string>> logData;
     std::ifstream logFile(logFilePath);
     if (!logFile.is_open()) {
         std::cerr << "Could not open log file: " << logFilePath << std::endl;
         return logData;
     }
 
-    std::regex ipFloodingPattern("IP Flooding detected in (.+)");
-    std::regex maliciousPacketPattern("Malicious packet detected: (.+)");
-    std::regex reasonPattern("- Reason: (.+)");
-    std::regex largePacketPattern("Large packet detected in (.+): (\\d+) bytes");
-    std::regex loggedMessagePattern("\\[.+\\] \\[info\\] Logged message");
-   // std::regex timestampPattern("\\[(.+)\\] \\[info\\] Logged message");
-   // std::regex destinationIpPattern("Destination IP address: (.+)");
-   // std::regex sourcePortPattern("Source port: (.+)");
-   // std::regex destinationPortPattern("Destination port: (.+)");
-   // std::regex protocolPattern("Protocol: (.+)");
-
     std::string line;
+    bool capture = false;
     while (std::getline(logFile, line)) {
-        //std::cout << "Processing line: " << line << std::endl; // 디버깅 출력
+        // 날짜가 포함된 라인을 찾으면 capture 시작
+        if (line.find("[" + date) != std::string::npos) {
+            capture = true;
+        }
 
-        std::smatch match;
-        if (std::find(keys.begin(), keys.end(), "출발지 IP 주소") != keys.end() && std::regex_search(line, match, ipFloodingPattern)) {
-            logData["출발지 IP 주소"] = match[1];
-        } else if (std::find(keys.begin(), keys.end(), "악성 패킷 출발지 IP") != keys.end() && std::regex_search(line, match, maliciousPacketPattern)) {
-            logData["악성 패킷 출발지 IP"] = match[1];
-        } else if (std::find(keys.begin(), keys.end(), "탐지된 이상 유형") != keys.end() && std::regex_search(line, match, reasonPattern)) {
-            logData["탐지된 이상 유형"] = match[1];
-        }/* else if (std::find(keys.begin(), keys.end(), "대형 패킷 출발지 IP") != keys.end() && std::regex_search(line, match, largePacketPattern)) {
-            logData["대형 패킷 출발지 IP"] = match[1];
-            logData["패킷 크기"] = match[2];
-        } else if (std::find(keys.begin(), keys.end(), "탐지 시간") != keys.end() && std::regex_search(line, match, timestampPattern)) {
-            logData["탐지 시간"] = match[1];
-        } else if (std::find(keys.begin(), keys.end(), "목적지 IP 주소") != keys.end() && std::regex_search(line, match, destinationIpPattern)) {
-            logData["목적지 IP 주소"] = match[1];
-        } else if (std::find(keys.begin(), keys.end(), "출발지 포트") != keys.end() && std::regex_search(line, match, sourcePortPattern)) {
-            logData["출발지 포트"] = match[1];
-        } else if (std::find(keys.begin(), keys.end(), "목적지 포트") != keys.end() && std::regex_search(line, match, destinationPortPattern)) {
-            logData["목적지 포트"] = match[1];
-        } else if (std::find(keys.begin(), keys.end(), "프로토콜") != keys.end() && std::regex_search(line, match, protocolPattern)) {
-            logData["프로토콜"] = match[1];
-        }*/
+        // capture 상태에서는 로그를 기록
+        if (capture) {
+            logData[date].push_back(line);
+            std::cout << "Captured line: " << line << std::endl; // 디버그 출력
+        }
+
+        // 다음 날짜 라인이 나오면 capture 종료
+        if (capture && line.find("[2024-") != std::string::npos && line.find("[" + date) == std::string::npos) {
+            capture = false;
+        }
     }
     logFile.close();
     return logData;
@@ -104,23 +86,31 @@ std::unordered_map<std::string, std::string> LogParser::ParseFirewallLog(const s
     int allowedTraffic = 0;
     int blockedTraffic = 0;
     std::string date;
+    std::stringstream logEntries;
 
     while (std::getline(logFile, line)) {
         std::istringstream iss(line);
         std::string month, day, time, hostname, kernel, timestamp, action;
+        std::string restOfLine;
 
         iss >> month >> day >> time >> hostname >> kernel;
 
         std::getline(iss, timestamp, ']');
-        timestamp += "]"; 
+        timestamp += "]";
         iss >> action;
 
+        std::getline(iss, restOfLine);
+
         if (date.empty()) {
-            date = month + " " + day;  
+            date = month + " " + day;
         }
 
-
-
+        logEntries << "<tr>"
+                   << "<td>" << time << "</td>"
+                   << "<td>" << hostname << "</td>"
+                   << "<td>" << action << "</td>"
+                   << "<td>" << restOfLine << "</td>"
+                   << "</tr>";
 
         totalEvents++;
         if (action == "ALLOW") {
@@ -136,6 +126,7 @@ std::unordered_map<std::string, std::string> LogParser::ParseFirewallLog(const s
     logData["총 이벤트 수"] = std::to_string(totalEvents);
     logData["허용된 트래픽"] = std::to_string(allowedTraffic);
     logData["차단된 트래픽"] = std::to_string(blockedTraffic);
+    logData["entries"] = logEntries.str();
 
     return logData;
 }

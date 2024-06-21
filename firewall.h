@@ -64,7 +64,6 @@ public:
     int ViewLogs();
     int RunIptables(const std::string& direction, const std::string& ip, const std::string& port, const std::string& action);
     static void ExecCommand(const std::string& cmd);
-    void SendEmailWithFireWallLogData(const std::string& logFilePath);
 
 private:
     int AddRule(std::vector<std::string>& words);
