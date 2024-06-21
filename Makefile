@@ -37,4 +37,4 @@ clean:
 # 라이브러리 설치 규칙
 install:
 	sudo apt-get update
-	sudo apt-get install -y libjsoncpp-dev libcurl4-openssl-dev libspdlog-dev sysstat ifstat yara libyara-dev libpcap-dev cmake libsqlite3-dev  libssl-dev Jupyter-core
+	sudo apt-get install -y libjsoncpp-dev libcurl4-openssl-dev libspdlog-dev sysstat ifstat yara libyara-dev libpcap-dev cmake libsqlite3-dev  libssl-dev Jupyter-core git-lfs
