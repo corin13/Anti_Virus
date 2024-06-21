@@ -57,7 +57,7 @@ void CheckOption(int &argc, char** &argv) {
                 Firewall();
                 break;
             case 'e': {
-                std::string configPath = CONFIGPATH; // 기본 설정 파일 경로 설정
+                std::string configPath = CONFIGPATH;
                 LoadConfig(configPath);
                 std::string recipientEmailAddress = Config::Instance().GetEmailAddress(); // 이메일 주소 가져오기
                 std::cout << "Recipient Email Address: " << recipientEmailAddress << std::endl; // 이메일 주소 출력 (디버그용)

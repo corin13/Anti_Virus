@@ -65,11 +65,11 @@ int CFileScanner::StartIniScan(){
 
 
 int CFileScanner::PerformFileScan() {
-    std::cout << "Please enter the path (Default is '/') : ";
+    std::cout << "Please enter the path (Default is './') : ";
     getline(std::cin, m_strScanTargetPath);
 
     if(m_strScanTargetPath.empty()) {
-        m_strScanTargetPath = DEFAULT_PATH; // 경로가 비어있을 경우 디폴트로 '/' 설정
+        m_strScanTargetPath = DEFAULT_PATH; // 경로가 비어있을 경우 디폴트로 './' 설정
     }
     if (!IsDirectory(m_strScanTargetPath)) { // 경로 유효성 검사
         return ERROR_PATH_NOT_FOUND;

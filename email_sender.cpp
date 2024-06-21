@@ -250,7 +250,7 @@ void EmailSender::SendLogEmail(){
             break;
         }
         case 2:{
-            std::cout << "Enter the date of the log file (e.g., 230719): ";
+            std::cout << "Enter the date of the log file (e.g., 240101): ";
             std::string date;
             getline(std::cin, date);
             logFilePath = GetFirewallLogFilePath(date);
@@ -281,7 +281,7 @@ void EmailSender::SendLogEmail(){
         }
         
         case 3:{
-            std::cout << "Enter the date of the log file (e.g., 230719): ";
+            std::cout << "Enter the date of the log file (e.g., 240101): ";
             std::string date;
             getline(std::cin, date);
 
@@ -322,7 +322,7 @@ void EmailSender::SendLogEmail(){
                             type = "악성 패킷";
                             content = "감지된 패킷: " + line.substr(line.find("detected: ") + 10);
                         } else if (line.find("Reason:") != std::string::npos) {
-                            content += ", 이유: " + line.substr(line.find("Reason: ") + 8);
+                            content += "탐지된 이상 유형: " + line.substr(line.find("Reason: ") + 8);
                         } else if (line.find("Large packet detected in") != std::string::npos) {
                             type = "대형 패킷";
                             content = "감지된 패킷: " + line.substr(line.find("in ") + 3);
@@ -356,7 +356,7 @@ void EmailSender::SendLogEmail(){
             return;
     }
     if (SendEmailWithAttachment(subject, emailBody, logFilePath) == 0) {
-        std::cout << "\nEmail sent successfully.\n";
+        //
     } else {
         std::cerr << "Failed to send email.\n";
     }
