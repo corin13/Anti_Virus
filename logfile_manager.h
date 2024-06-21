@@ -7,7 +7,7 @@ class CLoggingManager {
 public:
     int ManageLogLevel();
     static int RotateLogs();
-    static int GenerateLogs(const std::string& loggerName);
+    static int GenerateLogs(const std::string& strLoggerName);
     int MultiSinkLogger();
     int SetupAsyncLogger();
     int TestMultiThreadedLogging();

@@ -62,6 +62,8 @@ std::string GetErrorMessage(int code) {
             return "Failed to block ips";
         case ERROR_INVALID_INPUT:
             return "INVALID_INPUT";
+        case ERROR_SEND_FAILED:
+            return "Failed to send packets";
         case ERROR_UNKNOWN:
         default:
             return "Unknown error";

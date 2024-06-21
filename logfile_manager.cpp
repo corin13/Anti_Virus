@@ -13,10 +13,10 @@ int CLoggingManager::ManageLogLevel(){
     try {
         auto logger = spdlog::default_logger();
 
-        spdlog::set_level(spdlog::level::trace); 
+        spdlog::set_level(spdlog::level::trace);
         spdlog::trace("This is a trace message - visible at trace level");
 
-        spdlog::set_level(spdlog::level::debug); 
+        spdlog::set_level(spdlog::level::debug);
         spdlog::info("This is an info message - visible at debug level");
         spdlog::debug("This is a debug message - visible at debug level");
 
@@ -30,7 +30,7 @@ int CLoggingManager::ManageLogLevel(){
 
         spdlog::set_level(spdlog::level::critical);
         spdlog::critical("This is a critical message - visible at critical level");
-        spdlog::warn("This warning message will not be visible at critical level"); 
+        spdlog::warn("This warning message will not be visible at critical level");
         
         SPDLOG_TRACE("Some trace message with param {}", 42);
         SPDLOG_DEBUG("Some debug message");
@@ -46,7 +46,7 @@ int CLoggingManager::ManageLogLevel(){
 int CLoggingManager::RotateLogs() {
     try {
         size_t siMaxSize = 1048576;  // 로그 파일 최대 크기를 1MB로 설정하여 빠른 로테이션 유도
-        size_t siMaxFiles = 2;  // 로그 파일 개수는 3(초기파일+2)개로 설정
+        size_t siMaxFiles = 1;  // 로그 파일 개수는 2(초기파일+1)개로 설정
 
         auto create_rotating_logger = [&](const std::string& loggerName, const std::string& fileName) {
             auto logger = spdlog::get(loggerName);
@@ -69,11 +69,11 @@ int CLoggingManager::RotateLogs() {
 }
 
 // 로그 메시지를 생성하여 로그 파일의 크기를 빠르게 증가시키는 함수
-int CLoggingManager::GenerateLogs(const std::string& loggerName) {
+int CLoggingManager::GenerateLogs(const std::string& strLoggerName) {
     try {
-        auto logger = spdlog::get(loggerName);
+        auto logger = spdlog::get(strLoggerName);
         if (!logger) {
-            spdlog::error("Logger with name {} does not exist.", loggerName);
+            spdlog::error("Logger with name {} does not exist.", strLoggerName);
             return ERROR_UNKNOWN;
         }
 
@@ -91,24 +91,21 @@ int CLoggingManager::GenerateLogs(const std::string& loggerName) {
 // 멀티 싱크 로거를 설정하고 로그 레벨에 맞는 메시지 출력을 확인하는 함수
 int CLoggingManager::MultiSinkLogger() {
     try {
-        spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [pid %P] [thread %t] [%s:%#] %v");
-
         auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         consoleSink->set_level(spdlog::level::info);
 
         auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multi_sink.log", true);
-        fileSink->set_level(spdlog::level::trace);  
+        fileSink->set_level(spdlog::level::trace);
 
         std::vector<spdlog::sink_ptr> sinks {consoleSink, fileSink};
         auto logger = std::make_shared<spdlog::logger>("multiSinkLogger", sinks.begin(), sinks.end());
         logger->set_level(spdlog::level::trace);
 
         spdlog::register_logger(logger);
-
         logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [pid %P] [thread %t] [%s:%#] %v");
 
         std::cout << " \n";
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 2; ++i) {
             logger->trace("Trace level message {}", i);
             logger->debug("Debug level message {}", i);
             logger->info("Info level message {}", i);
@@ -146,7 +143,7 @@ int CLoggingManager::TestMultiThreadedLogging() {
     try {
         std::vector<std::thread> vecThreads;
         const int nThreads = 4;
-        const int nLogsPerThread = 100;
+        const int nLogsPerThread = 625;
 
         for (int i = 1; i <= nThreads; ++i) {
             vecThreads.emplace_back([i, nLogsPerThread]() {
@@ -185,9 +182,6 @@ int CLoggingManager::MeasureAsyncLogPerformance() {
 
         const int nLogs = 10000;
         auto start = std::chrono::high_resolution_clock::now();
-        for (int i = 0; i < nLogs; ++i) {
-            logger->info("This is an asynchronous log message number {}", i);
-        }
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed = end - start;
 
@@ -282,7 +276,6 @@ int CLoggingManager::TestLogging() {
         int nRotationResult = CLoggingManager::StartRotation();
 
         CLoggingManager instance;
-
         int nResult = instance.ManageLogLevel();
         if (nResult != SUCCESS_CODE) {
             spdlog::error("Failed to manage log level.");

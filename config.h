@@ -22,4 +22,6 @@ public:
 private:
     Config() = default;
     INIReader m_reader;
+    std::string emailAddress;
+
 };

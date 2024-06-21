@@ -14,7 +14,7 @@ int CUdkdAgentOptions::DisplayErrorOption() {
 }
 
 // '-h' 또는 '--help' 옵션을 선택했을 때 호출되어, 사용 가능한 모든 옵션과 그 설명을 출력
-int CUdkdAgentOptions::DisplayHelpOption() { 
+int CUdkdAgentOptions::DisplayHelpOption() {
     std::cout << "Usage: ./UdkdAgent [OPTIONS]\n"
               << " \n"
               << "Options: \n"
@@ -26,9 +26,9 @@ int CUdkdAgentOptions::DisplayHelpOption() {
               << "  -m, --monitor               Monitor file events in the system and send the recorded log files via email.\n"
               << "  -n, --network               Generates and sends packets in real-time, captures and analyzes them to detect malicious packets, and blocks any detected malicious packets.\n"
               << "  -f, --firewall              Network Control Using Firewall Rules.\n"
-              << "  -c, --config                Scan Using Custom Rules.\n\n"
+              << "  -c, --config                Scan Using Custom Rules.\n"
+              << "  -e, --email                 Send log records to your email.(event monitor, firewall, packet)\n\n"
               << "  * -l(log) and -n(network) option requires sudo\n";
-
    
     return SUCCESS_CODE;
 }
@@ -79,5 +79,5 @@ int CUdkdAgentOptions::DisplayInfoOption() {
               << " \n"
               << "This tool is essential for maintaining optimal security in vulnerable or targeted environments, providing users with peace of mind through defensive capabilities.\n";
               
-    return SUCCESS_CODE;          
+    return SUCCESS_CODE;
 }

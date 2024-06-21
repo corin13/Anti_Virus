@@ -7,6 +7,7 @@
 #include <sys/inotify.h>
 #include "database_manager.h"
 #include "log_parser.h"
+#include "email_sender.h"
 
 #define SETTING_FILE "settings.ini"
 #define LOG_SAVE_PATH "logs/file_event_monitor_"
@@ -39,7 +40,7 @@ public:
     // 이메일
     void SendEmailWithLogData(const std::string& logFilePath); 
 
-
+    friend class EmailSender; 
 private:
     int m_inotifyFd;
     std::unordered_map<int, std::string> m_mapWatchDescriptors;

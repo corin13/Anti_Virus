@@ -11,15 +11,15 @@
 #include <unordered_set>
 #include <vector>
 #include "ansi_color.h"
+#include "config.h"
+#include "email_sender.h"
 #include "error_codes.h"
-#include "VariadicTable.h"
-#include "logfile_manager.h"
 #include "firewall.h"
+#include "logfile_manager.h"
+#include "log_parser.h"
 #include "packet_generator.h"
 #include "user_program.h"
-#include "email_sender.h"
-#include "log_parser.h"
-#include "config.h"
+#include "VariadicTable.h"
 
 #define COLUMN_WIDTH 30
 #define ETHERNET_HEADER_LENGTH 14
@@ -33,7 +33,6 @@
 #define FLOODING_THRESHOLD 10
 #define RANDOM_IP_THRESHOLD 50
 #define ABNORMAL_PACKET_RATIO 2
-#define LOG_FILE_PATH "logs/detailed_logs.log"
 
 class CPacketHandler {
 public:
@@ -42,24 +41,25 @@ public:
 
     void DisableOutput();
     void EnableOutput();
-    int BlockDetectedIPs();
-    int AnalyzeCapturedPackets();
+    void GetBlockedIPs();
     static int MonitorBandwidth();
-    bool PromptUserForBlockingIPs();
     bool PromptUserForPacketCapture();
     bool PromptUserForPacketAnalysis();
     static void SigintHandler(int signum);
+    int AnalyzeCapturedPackets(bool bBlockIPs);
+    void SaveBlockedIP(const std::string& strIp);
     int CapturePackets(const char* interfaceName);
     static int RunSystem(const char* interfaceName);
-    int AnalyzeNetworkTraffic(const char *pcap_file);
-    void SendEmailWithLogPacketData(const std::string& logFilePath);
+    int AnalyzeNetworkTraffic(const char *pcap_file, bool bBlockIPs);
     static int LogPacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* userCookie);
-    static int PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket);
-    int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP);
-    void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP);
+    static int PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket, bool bBlockIPs);
+    int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP, bool bBlockIPs);
+    void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP, bool bBlockIPs);
+
+    int m_DetectionCount;
+    VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;
 
 private:
-    int m_DetectionCount;
     int m_DuplicateIPCount;
     int m_LargePacketCount;
     int m_NormalPacketCount;
@@ -76,7 +76,6 @@ private:
     std::chrono::steady_clock::time_point lastCheckTime;
     std::unordered_set<std::string> strUniqueMaliciousIPs;
     std::unordered_map<std::string, int> nIpFloodingCount;
+    std::unordered_set<std::string> blockedIPs;
     std::unordered_map<std::string, std::unordered_set<std::string>> strIpAddressesForPayload;
-
-    VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;
 };
