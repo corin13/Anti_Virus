@@ -14,7 +14,7 @@ GTEST_LDFLAGS=-lgtest -lgtest_main
 
 # 최종 타겟 설정
 TARGET=UdkdAgent
-TEST_TARGET=runTests
+TEST_TARGET=RunTests
 
 # 소스 파일과 헤더 파일 찾기
 SOURCES=$(wildcard *.cpp)

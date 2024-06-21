@@ -35,6 +35,8 @@ public:
     static bool m_bStopScanning;
 
     CFileScanner();
+    CFileScanner(const std::string& logFilePath);
+    CFileScanner(int scanTypeOption, int fileTypeOption, const std::string& logFilePath);
     int StartScan();
     int StartIniScan();
 
@@ -48,6 +50,7 @@ private:
     double m_dScanTime;
     std::string m_strExtension;
     std::vector<ST_ScanData> m_vecScanData;
+    std::string m_strLogFilePath;
 
     int PerformFileScan();
     int ScanDirectory();

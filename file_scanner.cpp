@@ -15,8 +15,15 @@
 // 전역 변수 추가
 bool CFileScanner::m_bStopScanning = false;
 
-CFileScanner::CFileScanner() 
-    : m_nScanTypeOption(YARA_RULE), m_nFileTypeOption(ALL_FILES), m_nFileCount(0), m_llTotalSize(0), m_dScanTime(0.0) {}
+CFileScanner::CFileScanner(int scanTypeOption, int fileTypeOption, const std::string& logFilePath)
+    : m_nScanTypeOption(scanTypeOption), m_nFileTypeOption(fileTypeOption), m_nFileCount(0), 
+    m_llTotalSize(0), m_dScanTime(0.0), m_strLogFilePath(logFilePath) {}
+
+CFileScanner::CFileScanner()
+    : CFileScanner(YARA_RULE, ALL_FILES, LOG_FILE_PATH) {}
+
+CFileScanner::CFileScanner(const std::string& logFilePath)
+    : CFileScanner(YARA_RULE, ALL_FILES, logFilePath) {}
 
 // 신호 처리기 함수 추가
 void signalHandler(int signal) {
@@ -309,5 +316,5 @@ void CFileScanner::LogResult(ST_ScanData& data) {
     } else {
         logEntry["file_size"] = "N/A";
     }
-    SaveLogInJson(logEntry, LOG_FILE_PATH);
+    SaveLogInJson(logEntry, m_strLogFilePath);
 }
