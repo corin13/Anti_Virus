@@ -19528,3 +19528,38 @@ IP Flooding detected in 192.168.64.2
 - Reason: IP Flooding
 [2024-06-21 15:32:57] [info] Logged message.
 [2024-06-21 15:37:14] [info] Logged message.
+Large packet detected in 155.246.192.168: 2048 bytes
+Packet fragmentation detected: 155.246.192.168
+- Reason: Packet fragmentation
+Large packet detected in 116.251.192.168: 2048 bytes
+Packet fragmentation detected: 116.251.192.168
+- Reason: Large packet
+- Reason: Packet fragmentation
+Large packet detected in 45.56.99.101: 1500 bytes
+IP Flooding detected in 45.56.99.101
+IP Flooding detected in 192.168.1.27
+- Reason: IP Flooding
+Large packet detected in 64.185.227.156: 1500 bytes
+IP Flooding detected in 64.185.227.156
+IP Flooding detected in 204.11.58.28
+- Reason: IP Flooding
+Large packet detected in 40.126.29.10: 1500 bytes
+Large packet detected in 192.168.1.27: 1500 bytes
+IP Flooding detected in 40.126.29.10
+Large packet detected in 52.137.108.250: 1500 bytes
+IP Flooding detected in 52.137.108.250
+Large packet detected in 23.5.87.173: 1500 bytes
+IP Flooding detected in 23.5.87.173
+IP Flooding detected in 40.77.2.164
+- Reason: IP Flooding
+IP Flooding detected in 192.168.1.1
+- Reason: IP Flooding
+IP Flooding detected in 52.113.194.132
+- Reason: IP Flooding
+Large packet detected in 52.113.194.132: 1500 bytes
+Large packet detected in 52.109.77.1: 1500 bytes
+IP Flooding detected in 52.109.77.1
+Large packet detected in 104.46.162.226: 1500 bytes
+Large packet detected in 40.77.2.164: 1500 bytes
+IP Flooding detected in 104.46.162.226
+[2024-06-21 15:47:30] [info] Logged message.
