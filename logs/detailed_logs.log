@@ -22082,3 +22082,459 @@ IP Flooding detected in 192.168.64.2
 Malicious packet detected: 192.168.64.2
 - Reason: IP Flooding
 [2024-06-21 09:35:01] [info] Logged message.
+Large packet detected in 66.251.10.0: 2048 bytes
+Packet fragmentation detected: 66.251.10.0
+Malicious packet detected: 66.251.10.0
+- Reason: Packet fragmentation
+Large packet detected in 119.24.10.0: 2048 bytes
+Packet fragmentation detected: 119.24.10.0
+Malicious packet detected: 119.24.10.0
+- Reason: Large packet
+- Reason: Packet fragmentation
+Large packet detected in 200.77.10.0: 2048 bytes
+Packet fragmentation detected: 200.77.10.0
+Malicious packet detected: 200.77.10.0
+- Reason: Large packet
+- Reason: Packet fragmentation
+IP Flooding detected in 10.0.0.149
+Malicious packet detected: 10.0.0.149
+- Reason: IP Flooding
+Large packet detected in 10.0.0.6: 1500 bytes
+Malicious packet detected: 10.0.0.6
+Large packet detected in 66.251.0.0: 2048 bytes
+Packet fragmentation detected: 66.251.0.0
+Malicious packet detected: 66.251.0.0
+- Reason: Large packet
+- Reason: Packet fragmentation
+IP Flooding detected in 10.0.0.6
+Large packet detected in 10.0.0.149: 1500 bytes
+IP Flooding detected in 52.113.194.132
+Malicious packet detected: 52.113.194.132
+- Reason: IP Flooding
+Large packet detected in 13.89.179.10: 1500 bytes
+Malicious packet detected: 13.89.179.10
+IP Flooding detected in 13.89.179.10
+Large packet detected in 20.10.31.115: 1500 bytes
+Malicious packet detected: 20.10.31.115
+IP Flooding detected in 20.10.31.115
+Large packet detected in 13.107.4.254: 1488 bytes
+Malicious packet detected: 13.107.4.254
+Large packet detected in 131.253.33.254: 1500 bytes
+Malicious packet detected: 131.253.33.254
+IP Flooding detected in 13.107.4.254
+IP Flooding detected in 204.79.197.222
+Malicious packet detected: 204.79.197.222
+- Reason: IP Flooding
+IP Flooding detected in 131.253.33.254
+IP Flooding detected in 72.21.81.200
+Malicious packet detected: 72.21.81.200
+- Reason: IP Flooding
+IP Flooding detected in 13.107.42.254
+Malicious packet detected: 13.107.42.254
+- Reason: IP Flooding
+IP Flooding detected in 204.79.197.200
+Malicious packet detected: 204.79.197.200
+- Reason: IP Flooding
+Large packet detected in 13.107.128.254: 1500 bytes
+Malicious packet detected: 13.107.128.254
+IP Flooding detected in 13.107.237.57
+Malicious packet detected: 13.107.237.57
+- Reason: IP Flooding
+- Reason: Large packet
+IP Flooding detected in 204.79.197.254
+Malicious packet detected: 204.79.197.254
+- Reason: IP Flooding
+Large packet detected in 20.42.73.27: 1500 bytes
+Malicious packet detected: 20.42.73.27
+IP Flooding detected in 13.107.128.254
+IP Flooding detected in 20.42.73.27
+Large packet detected in 13.107.5.88: 1500 bytes
+Malicious packet detected: 13.107.5.88
+IP Flooding detected in 13.107.5.88
+IP Flooding detected in 40.126.28.14
+Malicious packet detected: 40.126.28.14
+- Reason: IP Flooding
+Large packet detected in 51.11.192.48: 1500 bytes
+Malicious packet detected: 51.11.192.48
+IP Flooding detected in 51.11.192.48
+IP Flooding detected in 128.254.207.55
+Malicious packet detected: 128.254.207.55
+- Reason: IP Flooding
+Large packet detected in 128.254.207.55: 1500 bytes
+IP Flooding detected in 20.189.173.3
+Malicious packet detected: 20.189.173.3
+- Reason: IP Flooding
+- Reason: Large packet
+Large packet detected in 20.189.173.3: 1500 bytes
+IP Flooding detected in 72.163.4.185
+Malicious packet detected: 72.163.4.185
+- Reason: IP Flooding
+IP Flooding detected in 184.51.39.62
+Malicious packet detected: 184.51.39.62
+- Reason: IP Flooding
+Large packet detected in 184.51.39.62: 1500 bytes
+IP Flooding detected in 102.156.32.143
+Malicious packet detected: 102.156.32.143
+- Reason: IP Flooding
+IP Flooding detected in 13.91.16.69
+Malicious packet detected: 13.91.16.69
+- Reason: IP Flooding
+Large packet detected in 13.91.16.69: 1500 bytes
+Large packet detected in 20.42.65.88: 1500 bytes
+Malicious packet detected: 20.42.65.88
+IP Flooding detected in 20.42.65.88
+IP Flooding detected in 52.152.108.96
+Malicious packet detected: 52.152.108.96
+- Reason: IP Flooding
+IP Flooding detected in 52.137.106.217
+Malicious packet detected: 52.137.106.217
+- Reason: IP Flooding
+- Reason: Large packet
+IP Flooding detected in 13.69.239.74
+Malicious packet detected: 13.69.239.74
+- Reason: IP Flooding
+IP Flooding detected in 40.126.28.20
+Malicious packet detected: 40.126.28.20
+- Reason: IP Flooding
+IP Flooding detected in 66.251.10.0
+IP Flooding detected in 208.187.122.74
+Malicious packet detected: 208.187.122.74
+- Reason: IP Flooding
+Large packet detected in 20.44.10.123: 1500 bytes
+Malicious packet detected: 20.44.10.123
+IP Flooding detected in 20.44.10.123
+Large packet detected in 72.163.4.185: 1500 bytes
+IP Flooding detected in 200.77.10.0
+Large packet detected in 20.44.10.122: 1500 bytes
+Malicious packet detected: 20.44.10.122
+IP Flooding detected in 20.44.10.122
+Large packet detected in 20.112.52.29: 1500 bytes
+Malicious packet detected: 20.112.52.29
+IP Flooding detected in 20.112.52.29
+Large packet detected in 96.7.169.183: 1500 bytes
+Malicious packet detected: 96.7.169.183
+IP Flooding detected in 96.7.169.183
+IP Flooding detected in 142.251.116.100
+Malicious packet detected: 142.251.116.100
+- Reason: IP Flooding
+Large packet detected in 142.250.68.132: 1487 bytes
+Malicious packet detected: 142.250.68.132
+IP Flooding detected in 142.250.68.132
+Large packet detected in 208.187.122.74: 1500 bytes
+Large packet detected in 192.229.211.108: 1500 bytes
+Malicious packet detected: 192.229.211.108
+IP Flooding detected in 72.247.204.96
+Malicious packet detected: 72.247.204.96
+- Reason: IP Flooding
+Large packet detected in 52.109.8.44: 1500 bytes
+Malicious packet detected: 52.109.8.44
+IP Flooding detected in 52.109.8.44
+Large packet detected in 204.79.197.239: 1500 bytes
+Malicious packet detected: 204.79.197.239
+IP Flooding detected in 40.126.29.6
+Malicious packet detected: 40.126.29.6
+- Reason: IP Flooding
+IP Flooding detected in 138.1.33.162
+Malicious packet detected: 138.1.33.162
+- Reason: IP Flooding
+IP Flooding detected in 78.31.67.7
+Malicious packet detected: 78.31.67.7
+- Reason: IP Flooding
+Large packet detected in 209.131.162.45: 1500 bytes
+Malicious packet detected: 209.131.162.45
+IP Flooding detected in 209.131.162.45
+Large packet detected in 68.87.41.40: 1500 bytes
+Malicious packet detected: 68.87.41.40
+IP Flooding detected in 68.87.41.40
+IP Flooding detected in 184.86.169.24
+Malicious packet detected: 184.86.169.24
+- Reason: IP Flooding
+Large packet detected in 184.86.169.24: 1500 bytes
+IP Flooding detected in 40.126.29.13
+Malicious packet detected: 40.126.29.13
+- Reason: IP Flooding
+IP Flooding detected in 40.126.7.32
+Malicious packet detected: 40.126.7.32
+- Reason: IP Flooding
+IP Flooding detected in 119.24.10.0
+Large packet detected in 104.208.16.89: 1500 bytes
+Malicious packet detected: 104.208.16.89
+IP Flooding detected in 104.208.16.89
+Large packet detected in 138.1.33.162: 1500 bytes
+Large packet detected in 72.247.204.96: 1500 bytes
+Large packet detected in 13.107.42.14: 1500 bytes
+Malicious packet detected: 13.107.42.14
+IP Flooding detected in 13.107.42.14
+Large packet detected in 23.64.146.226: 1500 bytes
+Malicious packet detected: 23.64.146.226
+IP Flooding detected in 23.64.146.226
+Large packet detected in 52.13.171.212: 1500 bytes
+Malicious packet detected: 52.13.171.212
+IP Flooding detected in 52.13.171.212
+Large packet detected in 172.64.155.106: 1500 bytes
+Malicious packet detected: 172.64.155.106
+IP Flooding detected in 172.64.155.106
+IP Flooding detected in 40.126.28.13
+Malicious packet detected: 40.126.28.13
+- Reason: IP Flooding
+Large packet detected in 142.251.33.4: 1500 bytes
+Malicious packet detected: 142.251.33.4
+IP Flooding detected in 142.251.33.4
+IP Flooding detected in 204.79.197.239
+IP Flooding detected in 40.126.29.12
+Malicious packet detected: 40.126.29.12
+- Reason: IP Flooding
+Large packet detected in 52.137.106.217: 1500 bytes
+Large packet detected in 40.126.28.21: 1500 bytes
+Malicious packet detected: 40.126.28.21
+Large packet detected in 40.126.29.15: 1500 bytes
+Malicious packet detected: 40.126.29.15
+IP Flooding detected in 40.126.29.15
+Large packet detected in 20.189.173.2: 1500 bytes
+Malicious packet detected: 20.189.173.2
+IP Flooding detected in 20.189.173.2
+IP Flooding detected in 23.58.117.164
+Malicious packet detected: 23.58.117.164
+- Reason: IP Flooding
+Large packet detected in 23.58.117.164: 1500 bytes
+Large packet detected in 69.58.187.40: 1500 bytes
+Malicious packet detected: 69.58.187.40
+IP Flooding detected in 69.58.187.40
+IP Flooding detected in 40.126.28.19
+Malicious packet detected: 40.126.28.19
+- Reason: IP Flooding
+Large packet detected in 152.216.7.110: 1500 bytes
+Malicious packet detected: 152.216.7.110
+IP Flooding detected in 23.210.67.195
+Malicious packet detected: 23.210.67.195
+- Reason: IP Flooding
+IP Flooding detected in 152.216.7.110
+IP Flooding detected in 142.251.116.113
+Malicious packet detected: 142.251.116.113
+- Reason: IP Flooding
+IP Flooding detected in 40.126.28.18
+Malicious packet detected: 40.126.28.18
+- Reason: IP Flooding
+Large packet detected in 40.126.28.18: 1500 bytes
+Large packet detected in 40.126.28.14: 1500 bytes
+IP Flooding detected in 52.183.220.149
+Malicious packet detected: 52.183.220.149
+- Reason: IP Flooding
+Large packet detected in 52.183.220.149: 1500 bytes
+IP Flooding detected in 52.140.118.28
+Malicious packet detected: 52.140.118.28
+- Reason: IP Flooding
+Large packet detected in 98.137.11.164: 1500 bytes
+Malicious packet detected: 98.137.11.164
+Large packet detected in 74.6.143.26: 1500 bytes
+Malicious packet detected: 74.6.143.26
+IP Flooding detected in 74.6.143.26
+IP Flooding detected in 40.126.29.5
+Malicious packet detected: 40.126.29.5
+- Reason: IP Flooding
+IP Flooding detected in 98.137.11.164
+Large packet detected in 40.126.7.35: 1500 bytes
+Malicious packet detected: 40.126.7.35
+IP Flooding detected in 40.126.28.22
+Malicious packet detected: 40.126.28.22
+- Reason: IP Flooding
+IP Flooding detected in 40.126.28.21
+IP Flooding detected in 13.107.42.16
+Malicious packet detected: 13.107.42.16
+- Reason: IP Flooding
+IP Flooding detected in 104.93.55.25
+Malicious packet detected: 104.93.55.25
+- Reason: IP Flooding
+Large packet detected in 104.93.55.25: 1500 bytes
+Large packet detected in 51.11.168.232: 1500 bytes
+Malicious packet detected: 51.11.168.232
+IP Flooding detected in 51.11.168.232
+IP Flooding detected in 142.250.115.100
+Malicious packet detected: 142.250.115.100
+- Reason: IP Flooding
+IP Flooding detected in 40.126.28.12
+Malicious packet detected: 40.126.28.12
+- Reason: IP Flooding
+Large packet detected in 13.69.239.74: 1500 bytes
+IP Flooding detected in 40.126.29.10
+Malicious packet detected: 40.126.29.10
+- Reason: IP Flooding
+Large packet detected in 40.126.29.10: 1500 bytes
+IP Flooding detected in 40.126.28.23
+Malicious packet detected: 40.126.28.23
+- Reason: IP Flooding
+IP Flooding detected in 96.6.184.69
+Malicious packet detected: 96.6.184.69
+- Reason: IP Flooding
+Large packet detected in 96.6.184.69: 1500 bytes
+IP Flooding detected in 5.75.205.43
+Malicious packet detected: 5.75.205.43
+- Reason: IP Flooding
+IP Flooding detected in 184.28.39.150
+Malicious packet detected: 184.28.39.150
+- Reason: IP Flooding
+- Reason: Large packet
+Large packet detected in 184.28.39.150: 1500 bytes
+IP Flooding detected in 23.111.114.52
+Malicious packet detected: 23.111.114.52
+- Reason: IP Flooding
+Large packet detected in 23.214.54.85: 1500 bytes
+Malicious packet detected: 23.214.54.85
+IP Flooding detected in 23.214.54.85
+Large packet detected in 142.250.115.108: 1500 bytes
+Malicious packet detected: 142.250.115.108
+IP Flooding detected in 142.250.115.108
+Large packet detected in 109.234.162.139: 1500 bytes
+Malicious packet detected: 109.234.162.139
+IP Flooding detected in 109.234.162.139
+IP Flooding detected in 162.55.176.65
+Malicious packet detected: 162.55.176.65
+- Reason: IP Flooding
+Large packet detected in 40.126.29.12: 1500 bytes
+Large packet detected in 163.172.203.87: 1500 bytes
+Malicious packet detected: 163.172.203.87
+IP Flooding detected in 163.172.203.87
+Large packet detected in 192.185.212.139: 1500 bytes
+Malicious packet detected: 192.185.212.139
+IP Flooding detected in 192.185.212.139
+Large packet detected in 52.109.77.2: 1500 bytes
+Malicious packet detected: 52.109.77.2
+IP Flooding detected in 52.109.77.2
+IP Flooding detected in 158.69.38.117
+Malicious packet detected: 158.69.38.117
+- Reason: IP Flooding
+IP Flooding detected in 64.29.145.194
+Malicious packet detected: 64.29.145.194
+- Reason: IP Flooding
+Large packet detected in 185.2.4.16: 1500 bytes
+Malicious packet detected: 185.2.4.16
+IP Flooding detected in 185.2.4.16
+Large packet detected in 40.126.28.23: 1500 bytes
+IP Flooding detected in 122.155.171.181
+Malicious packet detected: 122.155.171.181
+- Reason: IP Flooding
+Large packet detected in 192.185.213.59: 1500 bytes
+Malicious packet detected: 192.185.213.59
+IP Flooding detected in 192.185.213.59
+Large packet detected in 103.1.208.231: 1500 bytes
+Malicious packet detected: 103.1.208.231
+IP Flooding detected in 74.208.5.15
+Malicious packet detected: 74.208.5.15
+- Reason: IP Flooding
+Large packet detected in 109.234.164.201: 1500 bytes
+Malicious packet detected: 109.234.164.201
+IP Flooding detected in 109.234.164.201
+Large packet detected in 122.3.47.118: 1500 bytes
+Malicious packet detected: 122.3.47.118
+IP Flooding detected in 122.3.47.118
+IP Flooding detected in 107.180.26.64
+Malicious packet detected: 107.180.26.64
+- Reason: IP Flooding
+Large packet detected in 66.163.170.44: 1500 bytes
+Malicious packet detected: 66.163.170.44
+IP Flooding detected in 66.163.170.44
+Large packet detected in 103.92.235.87: 1500 bytes
+Malicious packet detected: 103.92.235.87
+IP Flooding detected in 103.92.235.87
+Large packet detected in 43.255.154.34: 1500 bytes
+Malicious packet detected: 43.255.154.34
+IP Flooding detected in 43.255.154.34
+Large packet detected in 74.208.5.15: 1500 bytes
+Large packet detected in 169.239.217.31: 1500 bytes
+Malicious packet detected: 169.239.217.31
+Large packet detected in 173.201.193.229: 1500 bytes
+Malicious packet detected: 173.201.193.229
+IP Flooding detected in 173.201.193.229
+IP Flooding detected in 184.168.96.183
+Malicious packet detected: 184.168.96.183
+- Reason: IP Flooding
+IP Flooding detected in 148.66.137.26
+Malicious packet detected: 148.66.137.26
+- Reason: IP Flooding
+Large packet detected in 198.38.82.29: 1500 bytes
+Malicious packet detected: 198.38.82.29
+IP Flooding detected in 198.38.82.29
+IP Flooding detected in 88.135.68.140
+Malicious packet detected: 88.135.68.140
+- Reason: IP Flooding
+Large packet detected in 88.135.68.140: 1500 bytes
+Large packet detected in 216.163.188.54: 1500 bytes
+Malicious packet detected: 216.163.188.54
+IP Flooding detected in 216.163.188.54
+IP Flooding detected in 20.190.157.11
+Malicious packet detected: 20.190.157.11
+- Reason: IP Flooding
+Large packet detected in 194.195.119.245: 1500 bytes
+Malicious packet detected: 194.195.119.245
+IP Flooding detected in 40.126.29.7
+Malicious packet detected: 40.126.29.7
+- Reason: IP Flooding
+Large packet detected in 20.189.173.11: 1500 bytes
+Malicious packet detected: 20.189.173.11
+IP Flooding detected in 20.189.173.11
+IP Flooding detected in 142.250.115.139
+Malicious packet detected: 142.250.115.139
+- Reason: IP Flooding
+IP Flooding detected in 10.0.0.1
+Malicious packet detected: 10.0.0.1
+- Reason: IP Flooding
+Large packet detected in 23.2.51.218: 1500 bytes
+Malicious packet detected: 23.2.51.218
+IP Flooding detected in 23.2.51.218
+[2024-06-21 10:08:44] [info] Logged message.
+Large packet detected in 155.246.192.168: 2048 bytes
+Packet fragmentation detected: 155.246.192.168
+Malicious packet detected: 155.246.192.168
+- Reason: Packet fragmentation
+Large packet detected in 116.251.192.168: 2048 bytes
+Packet fragmentation detected: 116.251.192.168
+Malicious packet detected: 116.251.192.168
+- Reason: Large packet
+- Reason: Packet fragmentation
+Large packet detected in 45.56.99.101: 1500 bytes
+Malicious packet detected: 45.56.99.101
+IP Flooding detected in 45.56.99.101
+IP Flooding detected in 192.168.1.27
+Malicious packet detected: 192.168.1.27
+- Reason: IP Flooding
+Large packet detected in 64.185.227.156: 1500 bytes
+Malicious packet detected: 64.185.227.156
+IP Flooding detected in 64.185.227.156
+IP Flooding detected in 204.11.58.28
+Malicious packet detected: 204.11.58.28
+- Reason: IP Flooding
+Large packet detected in 40.126.29.10: 1500 bytes
+Malicious packet detected: 40.126.29.10
+Large packet detected in 192.168.1.27: 1500 bytes
+IP Flooding detected in 40.126.29.10
+Large packet detected in 52.137.108.250: 1500 bytes
+Malicious packet detected: 52.137.108.250
+IP Flooding detected in 52.137.108.250
+Large packet detected in 23.5.87.173: 1500 bytes
+Malicious packet detected: 23.5.87.173
+IP Flooding detected in 23.5.87.173
+IP Flooding detected in 40.77.2.164
+Malicious packet detected: 40.77.2.164
+- Reason: IP Flooding
+IP Flooding detected in 192.168.1.1
+Malicious packet detected: 192.168.1.1
+- Reason: IP Flooding
+IP Flooding detected in 52.113.194.132
+Malicious packet detected: 52.113.194.132
+- Reason: IP Flooding
+Large packet detected in 52.113.194.132: 1500 bytes
+Large packet detected in 52.109.77.1: 1500 bytes
+Malicious packet detected: 52.109.77.1
+IP Flooding detected in 52.109.77.1
+Large packet detected in 104.46.162.226: 1500 bytes
+Malicious packet detected: 104.46.162.226
+Large packet detected in 40.77.2.164: 1500 bytes
+IP Flooding detected in 104.46.162.226
+[2024-06-21 10:36:29] [info] Logged message.
+IP Flooding detected in 192.168.64.1
+Malicious packet detected: 192.168.64.1
+- Reason: IP Flooding
+IP Flooding detected in 192.168.64.2
+Malicious packet detected: 192.168.64.2
+- Reason: IP Flooding
+[2024-06-21 10:36:36] [info] Logged message.

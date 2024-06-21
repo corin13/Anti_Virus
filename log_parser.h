@@ -12,7 +12,7 @@ public:
     LogParser() {}
     ~LogParser() {}
 
-    std::unordered_map<std::string, std::string> ParseLogFile(const std::string& logFilePath, const std::vector<std::string>& keys);
+    std::unordered_map<std::string, std::vector<std::string>> ParsePacketLogFile(const std::string& logFilePath, const std::string& date);
     std::vector<std::unordered_map<std::string, std::string>> ParseJsonLogFile(const std::string& logFilePath);
     std::unordered_map<std::string, std::string> ParseFirewallLog(const std::string& logFilePath);
 

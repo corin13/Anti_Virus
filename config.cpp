@@ -34,6 +34,13 @@ bool Config::Load(const std::string& filename) {
             std::cerr << "Failed to load configuration file from " << filename << "\n";
             return false;
         }
+        emailAddress = m_reader.Get("NOTIFICATION", "emailaddress", "");
+        if (emailAddress.empty()) {
+            std::cerr << "Email address not found in ini file\n";
+            return false;
+        }
+        std::cout << "Email address loaded: " << emailAddress << std::endl; // 디버그 출력
+        return true;
 
         return true;
     } catch (const std::exception& e) {

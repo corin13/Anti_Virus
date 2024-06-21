@@ -18,5 +18,25 @@
 	"scan_type" : "Hash",
 	"timestamp" : "2024-06-07 14:42:32.392",
 	"yara_rule" : "N/A"
+},
+{
+	"detected_file" : "/home/choeun/testfolder/malwareUDT.txt",
+	"file_size" : 15,
+	"hash_value" : "N/A",
+	"is_moved" : "False",
+	"path_after_moving" : "N/A",
+	"scan_type" : "Yara",
+	"timestamp" : "2024-06-15 05:51:28.945",
+	"yara_rule" : "UdKdtest"
+},
+{
+	"detected_file" : "/home/choeun/testfolder/malwareUDT.txt",
+	"file_size" : 15,
+	"hash_value" : "N/A",
+	"is_moved" : "False",
+	"path_after_moving" : "N/A",
+	"scan_type" : "Yara",
+	"timestamp" : "2024-06-20 01:47:40.893",
+	"yara_rule" : "UdKdtest"
 }
 ]

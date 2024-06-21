@@ -13,6 +13,7 @@
 #include "packet_handler.h"
 #include "usage_collector.h"
 #include "user_program.h"
+#include "email_sender.h"
 
 #define CONFIGPATH "./config.ini"
 
@@ -28,6 +29,7 @@ struct option options[] = {
     {"network", no_argument, 0, 'n'},
     {"config", required_argument, 0, 'c'},
     {"firewall", no_argument, 0, 'f'},
+    {"email", no_argument, 0, 'e'},
     {0,0,0,0}
 };
 
