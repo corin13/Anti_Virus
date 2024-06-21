@@ -46,7 +46,7 @@ int CLoggingManager::ManageLogLevel(){
 int CLoggingManager::RotateLogs() {
     try {
         size_t siMaxSize = 1048576;  // 로그 파일 최대 크기를 1MB로 설정하여 빠른 로테이션 유도
-        size_t siMaxFiles = 2;  // 로그 파일 개수는 3(초기파일+2)개로 설정
+        size_t siMaxFiles = 1;  // 로그 파일 개수는 2(초기파일+1)개로 설정
 
         auto create_rotating_logger = [&](const std::string& loggerName, const std::string& fileName) {
             auto logger = spdlog::get(loggerName);
