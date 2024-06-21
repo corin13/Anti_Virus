@@ -42,20 +42,19 @@ public:
     void DisableOutput();
     void EnableOutput();
     void GetBlockedIPs();
-    int AnalyzeCapturedPackets();
     static int MonitorBandwidth();
     bool PromptUserForPacketCapture();
     bool PromptUserForPacketAnalysis();
     static void SigintHandler(int signum);
-    void LogMessage(const std::string& message);
+    int AnalyzeCapturedPackets(bool bBlockIPs);
     void SaveBlockedIP(const std::string& strIp);
     int CapturePackets(const char* interfaceName);
     static int RunSystem(const char* interfaceName);
-    int AnalyzeNetworkTraffic(const char *pcap_file);
+    int AnalyzeNetworkTraffic(const char *pcap_file, bool bBlockIPs);
     static int LogPacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* userCookie);
-    static int PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket);
-    int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP);
-    void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP);
+    static int PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket, bool bBlockIPs);
+    int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP, bool bBlockIPs);
+    void ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& srcIP, bool bBlockIPs);
 
     int m_DetectionCount;
     VariadicTable<std::string, std::string, std::string, std::string, std::string, std::string> vt;

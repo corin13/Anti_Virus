@@ -99,7 +99,7 @@ int CNetworkInterface::ManageInterface() {
         std::lock_guard<std::mutex> lock(print_mutex);
         if (handler.PromptUserForPacketCapture()) {
             handler.CapturePackets(strInterfaceName.c_str());
-            if (handler.PromptUserForPacketAnalysis()) handler.AnalyzeCapturedPackets();
+            if (handler.PromptUserForPacketAnalysis()) handler.AnalyzeCapturedPackets(true);
         } else {
             std::cout << "No packets captured." << std::endl;
         }
@@ -109,7 +109,7 @@ int CNetworkInterface::ManageInterface() {
         std::cin >> strPcapFilePath;
 
         CPacketHandler handler;
-        auto result = handler.AnalyzeNetworkTraffic(strPcapFilePath.c_str());
+        auto result = handler.AnalyzeNetworkTraffic(strPcapFilePath.c_str(), false);
         if (result == SUCCESS_CODE) {
             std::cout << COLOR_GREEN "\nPacket analysis completed successfully." << COLOR_RESET << std::endl;
         } else {

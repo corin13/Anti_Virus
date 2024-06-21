@@ -36,12 +36,12 @@ CPacketHandler::CPacketHandler()
 CPacketHandler::~CPacketHandler() {}
 
 // 공통 패킷 처리 함수
-void CPacketHandler::ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& strSrcIP) {
-    pHandler->AnalyzePacket(pIpHeader, pPayload, nPayloadLength, strSrcIP);
+void CPacketHandler::ProcessPacket(CPacketHandler *pHandler, const struct ip* pIpHeader, int nPayloadLength, const u_char* pPayload, const std::string& strSrcIP, bool bBlockIPs) {
+    pHandler->AnalyzePacket(pIpHeader, pPayload, nPayloadLength, strSrcIP, bBlockIPs);
 }
 
 // pcap 패킷 처리 핸들러 함수
-int CPacketHandler::PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket) {
+int CPacketHandler::PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket, bool bBlockIPs) {
     try {
         CPacketHandler *pHandler = reinterpret_cast<CPacketHandler*>(pUserData);
         const struct ip* pIpHeader = (struct ip*)(pPacket + ETHERNET_HEADER_LENGTH);
@@ -51,7 +51,7 @@ int CPacketHandler::PacketHandler(u_char *pUserData, const struct pcap_pkthdr* p
         const u_char* pPayload = pPacket + ETHERNET_HEADER_LENGTH + nIpHeaderLength;
         std::string strSrcIP = inet_ntoa(pIpHeader->ip_src);
 
-        pHandler->ProcessPacket(pHandler, pIpHeader, nPayloadLength, pPayload, strSrcIP);
+        pHandler->ProcessPacket(pHandler, pIpHeader, nPayloadLength, pPayload, strSrcIP, bBlockIPs);
         return SUCCESS_CODE;
     } catch (const std::exception& e) {
         std::cerr << "Exception caught in PacketHandler: " << e.what() << std::endl;
@@ -79,7 +79,7 @@ int CPacketHandler::LogPacket(pcpp::RawPacket* pRawPacket, pcpp::PcapLiveDevice*
             int nPayloadLength = nPacketLen - (pIpHeader->ip_hl * IP_HEADER_LENGTH_UNIT);
             const u_char* pPayload = (const u_char*)pIpLayer->getData() + (pIpHeader->ip_hl * IP_HEADER_LENGTH_UNIT);
 
-            pHandler->ProcessPacket(pHandler, pIpHeader, nPayloadLength, pPayload, srcIP);
+            pHandler->ProcessPacket(pHandler, pIpHeader, nPayloadLength, pPayload, srcIP, true);
         }
         return SUCCESS_CODE;
     } catch (const std::exception& e) {
@@ -123,7 +123,7 @@ void CPacketHandler::SigintHandler(int signum) {
 }
 
 // pcap 파일을 열어 각 패킷을 분석하고 패킷을 탐지하는 함수
-int CPacketHandler::AnalyzeNetworkTraffic(const char *pcap_file) {
+int CPacketHandler::AnalyzeNetworkTraffic(const char *pcap_file, bool bBlockIPs) {
     try {
         char chErrBuf[PCAP_ERRBUF_SIZE];
         pcap_t *pHandle = pcap_open_offline(pcap_file, chErrBuf);
@@ -137,7 +137,7 @@ int CPacketHandler::AnalyzeNetworkTraffic(const char *pcap_file) {
         int nPacketCount = 0;
         while (int nRes = pcap_next_ex(pHandle, &pHeader, &pData) >= 0) {
             if (nRes == 0) continue;
-            PacketHandler(reinterpret_cast<u_char*>(this), pHeader, pData);
+            PacketHandler(reinterpret_cast<u_char*>(this), pHeader, pData, bBlockIPs);
             nPacketCount++;
         }
 
@@ -163,7 +163,7 @@ void CPacketHandler::SaveBlockedIP(const std::string& strIp) {
 }
 
 // 패킷을 분석하여 악성 여부를 판단하고 로그 파일에 기록
-int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP) {
+int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP, bool bBlockIPs) {
     try{
         bool bIsMalicious = false;
         bool bPayloadMalicious = false;
@@ -287,31 +287,34 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
                 strLoggedIPs.insert(strSrcIP);
 
                 // IP 자동 차단
-                if (blockedIPs.find(strSrcIP) == blockedIPs.end()) {
-                    DisableOutput();
-                    int nSshInputResult = ::RunIptables("INPUT", strSrcIP, "22", "ACCEPT");
-                    int nSshOutputResult = ::RunIptables("OUTPUT", strSrcIP, "22", "ACCEPT");
+                if (bBlockIPs){
+                    CFirewall firewall;
+                    if (blockedIPs.find(strSrcIP) == blockedIPs.end()) {
+                        DisableOutput();
+                        int nSshInputResult = firewall.RunIptables("INPUT", strSrcIP, "22", "ACCEPT");
+                        int nSshOutputResult = firewall.RunIptables("OUTPUT", strSrcIP, "22", "ACCEPT");
 
-                    if (nSshInputResult != SUCCESS_CODE || nSshOutputResult != SUCCESS_CODE) {
-                        std::cout << "Failed to set SSH exception for IP " << strSrcIP << "." << std::endl;
-                    } else {
-                        int nResult = ::RunIptables("INPUT", strSrcIP, "80", "DROP");
-                        if (nResult == SUCCESS_CODE) {
-                            blockedIPs.insert(strSrcIP);
-                            SaveBlockedIP(strSrcIP); // 차단된 IP 저장
-                            std::ofstream blockedIpFile("logs/blocked_ips.log", std::ios_base::app);
-                            if (blockedIpFile.is_open()) {
-                                blockedIpFile << strSrcIP << std::endl;
-                                blockedIpFile.close();
-                            }
-                            EnableOutput();
-                            std::cout << "IP " << strSrcIP << " has been blocked successfully." << std::endl;
+                        if (nSshInputResult != SUCCESS_CODE || nSshOutputResult != SUCCESS_CODE) {
+                            std::cout << "Failed to set SSH exception for IP " << strSrcIP << "." << std::endl;
                         } else {
-                            std::cout << "Failed to block IP " << strSrcIP << "." << std::endl;
+                            int nResult = firewall.RunIptables("INPUT", strSrcIP, "80", "DROP");
+                            if (nResult == SUCCESS_CODE) {
+                                blockedIPs.insert(strSrcIP);
+                                SaveBlockedIP(strSrcIP); // 차단된 IP 저장
+                                std::ofstream blockedIpFile("logs/blocked_ips.log", std::ios_base::app);
+                                if (blockedIpFile.is_open()) {
+                                    blockedIpFile << strSrcIP << std::endl;
+                                    blockedIpFile.close();
+                                }
+                                EnableOutput();
+                                std::cout << "IP " << strSrcIP << " has been blocked successfully." << std::endl;
+                            } else {
+                                std::cout << "Failed to block IP " << strSrcIP << "." << std::endl;
+                            }
                         }
-                    }
-                } else {
-                    std::cout << "IP " << strSrcIP << " is already blocked. Skipping." << std::endl;
+                    } else {
+                        std::cout << "IP " << strSrcIP << " is already blocked. Skipping." << std::endl;
+                }
             }
         }
 
@@ -394,7 +397,7 @@ int CPacketHandler::RunSystem(const char* pInterfaceName) {
         if (handler.PromptUserForPacketCapture()) {
             handler.CapturePackets(pInterfaceName);
             if (handler.PromptUserForPacketAnalysis()) {
-                handler.AnalyzeCapturedPackets();
+                handler.AnalyzeCapturedPackets(true);
             }
         } else {
             std::cout << "No packets captured." << std::endl;
@@ -472,9 +475,9 @@ int CPacketHandler::CapturePackets(const char* pInterfaceName) {
 }
 
 // 캡처된 패킷 파일을 분석한 결과를 표 형태로 출력하며, 필요한 경우 IP를 차단하고 로그 파일을 이메일로 전송하는 함수
-int CPacketHandler::AnalyzeCapturedPackets() {
+int CPacketHandler::AnalyzeCapturedPackets(bool bBlockIPs) {
     try{
-        auto result = AnalyzeNetworkTraffic("captured_packets.pcap");
+        auto result = AnalyzeNetworkTraffic("captured_packets.pcap", bBlockIPs);
         if (result == SUCCESS_CODE) {
             std::cout << COLOR_GREEN "\nPacket analysis completed successfully." << COLOR_RESET << std::endl;
         } else {
