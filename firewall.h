@@ -88,6 +88,3 @@ bool isValidIP(const std::string& ip);
 bool isValidPort(const std::string& port);
 bool isValidNumber(const std::string& number);
 
-
-//이메일
-void SendEmailWithFireWallLogData(const std::string& logFilePath);
