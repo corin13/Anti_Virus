@@ -60,7 +60,19 @@ protected:
 TEST_F(FileScannerTest, StartScanTest) {
     CFileScanner IFileScanner(strTestLogFilePath);
 
-    m_ssInput.str(strTestDir + "\n1\n2\ny\n");
+    m_ssInput.str(strTestDir + "\n1\n1\ny\n");
+    RedirectInput();
+    
+    int result = IFileScanner.StartScan();
+
+    RestoreInput();
+    EXPECT_EQ(result, SUCCESS_CODE);
+}
+
+TEST_F(FileScannerTest, SpecificExtensionTest) {
+    CFileScanner IFileScanner(strTestLogFilePath);
+
+    m_ssInput.str(strTestDir + "\n3\ntxt\n1\nn\n");
     RedirectInput();
     
     int result = IFileScanner.StartScan();
