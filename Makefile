@@ -4,7 +4,7 @@
 CXX=g++
 
 # 컴파일러 플래그 설정
-CXXFLAGS=-Wall -Wextra -O2 -std=c++17 -I/usr/local/include/pcapplusplus
+CXXFLAGS=-Wall -Wextra -O2 -std=c++17 -I/usr/local/include/pcapplusplus -I.
 
 # 링커 플래그 설정
 LDFLAGS=-lssl -lcrypto -lyara -lpthread -ljsoncpp -lcurl -lpcap -L/usr/local/lib -lPcap++ -lPacket++ -lCommon++ -lsqlite3 -lstdc++fs
