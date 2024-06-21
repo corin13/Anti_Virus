@@ -26,7 +26,8 @@ int CUdkdAgentOptions::DisplayHelpOption() {
               << "  -m, --monitor               Monitor file events in the system and send the recorded log files via email.\n"
               << "  -n, --network               Generates and sends packets in real-time, captures and analyzes them to detect malicious packets, and blocks any detected malicious packets.\n"
               << "  -f, --firewall              Network Control Using Firewall Rules.\n"
-              << "  -c, --config                Scan Using Custom Rules.\n\n"
+              << "  -c, --config                Scan Using Custom Rules.\n"
+              << "  -e, --email                 Send log records to your email.(event monitor, firewall, packet)\n\n"
               << "  * -l(log) and -n(network) option requires sudo\n";
 
    

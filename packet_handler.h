@@ -52,7 +52,6 @@ public:
     int CapturePackets(const char* interfaceName);
     static int RunSystem(const char* interfaceName);
     int AnalyzeNetworkTraffic(const char *pcap_file);
-    void SendEmailWithLogPacketData(const std::string& logFilePath);
     static int LogPacket(pcpp::RawPacket* rawPacket, pcpp::PcapLiveDevice* dev, void* userCookie);
     static int PacketHandler(u_char *pUserData, const struct pcap_pkthdr* pPkthdr, const u_char* pPacket);
     int AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP);
