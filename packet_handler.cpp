@@ -30,8 +30,9 @@
 CPacketHandler::CPacketHandler()
     : m_DetectionCount(0), m_NormalPacketCount(0), m_AbnormalPacketCount(0),
       m_DuplicateIPCount(0), m_LargePacketCount(0), m_MaliciousPayloadCount(0), m_MaliciousPacketCount(0),
-      vt({"No", "Packet Size", "Random src IP", "IP Flooding", "Fragmentation", "Data"}, COLUMN_WIDTH)
-      {}
+      vt({"No", "Packet Size", "Random src IP", "IP Flooding", "Fragmentation", "Data"}, COLUMN_WIDTH) {
+        GetBlockedIPs();
+      }
 CPacketHandler::~CPacketHandler() {}
 
 // 공통 패킷 처리 함수
@@ -148,6 +149,19 @@ int CPacketHandler::AnalyzeNetworkTraffic(const char *pcap_file) {
     }
 }
 
+void CPacketHandler::GetBlockedIPs() {
+    std::ifstream infile("logs/blocked_ips.log");
+    std::string strIp;
+    while (std::getline(infile, strIp)) {
+        blockedIPs.insert(strIp);
+    }
+}
+
+void CPacketHandler::SaveBlockedIP(const std::string& strIp) {
+    std::ofstream outfile("logs/blocked_ips.log", std::ios_base::app);
+    outfile << strIp << std::endl;
+}
+
 // 패킷을 분석하여 악성 여부를 판단하고 로그 파일에 기록
 int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPayload, int nPayloadLength, const std::string& strSrcIP) {
     try{
@@ -183,7 +197,7 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
         }
 
         // 동일 IP 주소에서 과도한 패킷 발생 확인
-        std::string floodingIP = "";
+        std::string strFloodingIP = "";
         nIpFloodingCount[strSrcIP]++;
         if (nIpFloodingCount[strSrcIP] > FLOODING_THRESHOLD && strProcessedIPs.find(strSrcIP + "-flooding") == strProcessedIPs.end()) {
             std::string strMsg = "IP Flooding detected in " + strSrcIP;
@@ -193,7 +207,7 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
             strProcessedIPs.insert(strSrcIP + "-flooding");
             bIsMalicious = true;
             bIpFloodingDetected = true;
-            floodingIP = strSrcIP;
+            strFloodingIP = strSrcIP;
         }
 
         // 출발지 IP 주소를 해당 페이로드에 대한 집합에 추가
@@ -271,13 +285,41 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
                 outfile << strSrcIP << std::endl;
                 outfile.close();
                 strLoggedIPs.insert(strSrcIP);
+
+                // IP 자동 차단
+                if (blockedIPs.find(strSrcIP) == blockedIPs.end()) {
+                    DisableOutput();
+                    int nSshInputResult = ::RunIptables("INPUT", strSrcIP, "22", "ACCEPT");
+                    int nSshOutputResult = ::RunIptables("OUTPUT", strSrcIP, "22", "ACCEPT");
+
+                    if (nSshInputResult != SUCCESS_CODE || nSshOutputResult != SUCCESS_CODE) {
+                        std::cout << "Failed to set SSH exception for IP " << strSrcIP << "." << std::endl;
+                    } else {
+                        int nResult = ::RunIptables("INPUT", strSrcIP, "80", "DROP");
+                        if (nResult == SUCCESS_CODE) {
+                            blockedIPs.insert(strSrcIP);
+                            SaveBlockedIP(strSrcIP); // 차단된 IP 저장
+                            std::ofstream blockedIpFile("logs/blocked_ips.log", std::ios_base::app);
+                            if (blockedIpFile.is_open()) {
+                                blockedIpFile << strSrcIP << std::endl;
+                                blockedIpFile.close();
+                            }
+                            EnableOutput();
+                            std::cout << "IP " << strSrcIP << " has been blocked successfully." << std::endl;
+                        } else {
+                            std::cout << "Failed to block IP " << strSrcIP << "." << std::endl;
+                        }
+                    }
+                } else {
+                    std::cout << "IP " << strSrcIP << " is already blocked. Skipping." << std::endl;
             }
+        }
 
             // 탐지된 패킷 정보를 표에 추가
             m_DetectionCount++;
             std::string strDetectedRandomIP = bRandomIPDetected ? std::to_string(strIpAddressesForPayload[strPayloadString].size()) + " different IPs" : "No";
             int nCount = std::count(pPayload, pPayload + nPayloadLength, 'A');
-            std::string strDisplayFloodingIP = !floodingIP.empty() ? floodingIP : "No";
+            std::string strDisplayFloodingIP = !strFloodingIP.empty() ? strFloodingIP : "No";
 
             vt.addRow(
                 std::to_string(m_DetectionCount),
@@ -288,7 +330,6 @@ int CPacketHandler::AnalyzePacket(const struct ip* pIpHeader, const u_char* pPay
                 bPayloadMalicious ? std::to_string(nCount) + " bytes" : "No"
             );
 
-            logFile << "Malicious packet detected: " << strSrcIP << std::endl;
             if (bPayloadMalicious) logFile << "- Reason: Malicious payload" << std::endl;
             if (bIpFloodingDetected) logFile << "- Reason: IP Flooding" << std::endl;
             if (bRandomIPDetected) logFile << "- Reason: Random source IP" << std::endl;
@@ -435,7 +476,7 @@ int CPacketHandler::AnalyzeCapturedPackets() {
     try{
         auto result = AnalyzeNetworkTraffic("captured_packets.pcap");
         if (result == SUCCESS_CODE) {
-            std::cout << COLOR_GREEN "Packet analysis completed successfully." << COLOR_RESET << std::endl;
+            std::cout << COLOR_GREEN "\nPacket analysis completed successfully." << COLOR_RESET << std::endl;
         } else {
             std::cerr << "Packet analysis failed with error code: " << result << std::endl;
         }
@@ -444,73 +485,9 @@ int CPacketHandler::AnalyzeCapturedPackets() {
         vt.print(std::cout);
         std::cout << COLOR_RESET;
 
-        if (PromptUserForBlockingIPs()) BlockDetectedIPs();
-
     } catch (const std::exception& e) {
         std::cerr << "Exception caught in AnalyzeCapturedPackets: " << e.what() << std::endl;
         return ERROR_CANNOT_ANALYZE_PACKETS;
-    }
-    return SUCCESS_CODE;
-}
-
-// 사용자에게 탐지된 IP를 차단할지 여부를 묻고 그 결과를 반환하는 함수
-bool CPacketHandler::PromptUserForBlockingIPs() {
-    try{
-        char chUserInput;
-        sleep(1);
-
-        std::cout << COLOR_RED "\n## Do you want to block the detected malicious IPs? (y/n): " << COLOR_RESET;
-        std::cin >> chUserInput;
-        if (chUserInput == 'y' || chUserInput == 'Y') {
-            std::cout << COLOR_RED << "blocking ips..." << COLOR_RESET << "\n";
-            return true;
-        } else {
-            std::cout << "No IPs blocked." << std::endl;
-            return false;
-        }
-    } catch (const std::exception& e) {
-        std::cerr << "Exception caught in PromptUserForBlockingIPs: " << e.what() << std::endl;
-        return ERROR_CANNOT_PROMPT_USER;
-    }
-}
-
-// 로그파일에서 탐지된 이상 IP를 읽어와 해당 IP를 차단하는 iptables 명령을 실행하는 함수
-int CPacketHandler::BlockDetectedIPs() {
-    try {
-        std::ifstream infile("logs/malicious_ips.log");
-        if (!infile.is_open()) {
-            std::cerr << "Could not open malicious_ips.log for reading." << std::endl;
-            return ERROR_CANNOT_OPEN_FILE;
-        }
-
-        std::string strIp;
-        std::unordered_set<std::string> blockedIPs;
-
-        DisableOutput();
-        while (std::getline(infile, strIp)) {
-            int nSshInputResult = ::RunIptables("INPUT", strIp, "22", "ACCEPT");
-            int nSshOutputResult = ::RunIptables("OUTPUT", strIp, "22", "ACCEPT");
-
-            if (nSshInputResult != SUCCESS_CODE || nSshOutputResult != SUCCESS_CODE) {
-                std::cout << "Failed to set SSH exception for IP " << strIp << "." << std::endl;
-                continue;
-            }
-            int nResult = ::RunIptables("INPUT", strIp, "80", "DROP");
-            if (nResult == SUCCESS_CODE) {
-                blockedIPs.insert(strIp);
-                std::cout << "IP " << strIp << " has been blocked successfully." << std::endl;
-            } else {
-                std::cout << "Failed to block IP " << strIp << "." << std::endl;
-            }
-        }
-
-        infile.close();
-        EnableOutput();
-        std::cout << "\n" << COLOR_GREEN << "IPs blocked successfully. Check blocked_ips.log" << COLOR_RESET << "\n";
-    } catch (const std::exception& e) {
-        EnableOutput();
-        std::cerr << "Exception caught in BlockDetectedIPs: " << e.what() << std::endl;
-        return ERROR_CANNOT_BLOCK_IP;
     }
     return SUCCESS_CODE;
 }

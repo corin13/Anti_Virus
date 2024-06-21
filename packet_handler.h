@@ -33,7 +33,6 @@
 #define FLOODING_THRESHOLD 10
 #define RANDOM_IP_THRESHOLD 50
 #define ABNORMAL_PACKET_RATIO 2
-#define LOG_FILE_PATH "logs/detailed_logs.log"
 
 class CPacketHandler {
 public:
@@ -42,14 +41,14 @@ public:
 
     void DisableOutput();
     void EnableOutput();
-    int BlockDetectedIPs();
+    void GetBlockedIPs();
     int AnalyzeCapturedPackets();
     static int MonitorBandwidth();
-    bool PromptUserForBlockingIPs();
     bool PromptUserForPacketCapture();
     bool PromptUserForPacketAnalysis();
     static void SigintHandler(int signum);
     void LogMessage(const std::string& message);
+    void SaveBlockedIP(const std::string& strIp);
     int CapturePackets(const char* interfaceName);
     static int RunSystem(const char* interfaceName);
     int AnalyzeNetworkTraffic(const char *pcap_file);
@@ -78,5 +77,6 @@ private:
     std::chrono::steady_clock::time_point lastCheckTime;
     std::unordered_set<std::string> strUniqueMaliciousIPs;
     std::unordered_map<std::string, int> nIpFloodingCount;
+    std::unordered_set<std::string> blockedIPs;
     std::unordered_map<std::string, std::unordered_set<std::string>> strIpAddressesForPayload;
 };
