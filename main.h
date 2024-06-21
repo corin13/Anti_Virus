@@ -1,25 +1,23 @@
 #pragma once
 
-#include "antidbg.h"
 #include <getopt.h>
 #include <iostream>
+#include "antidbg.h"
+#include "config.h"
+#include "event_monitor.h"
+#include "file_scanner.h"
+#include "firewall.h"
 #include "logfile_manager.h"
 #include "options_info.h"
-#include "file_scanner.h"
-#include "usage_collector.h"
-#include "event_monitor.h"
-#include "packet_handler.h"
-#include "config.h"
-#include "firewall.h"
 #include "packet_generator.h"
+#include "packet_handler.h"
+#include "usage_collector.h"
 #include "user_program.h"
 
 #define CONFIGPATH "./config.ini"
 
-using namespace std;
-
 // 인자값 필요로 한다면 no_argument -> required_argument
-struct option options[]={
+struct option options[] = {
     {"help", no_argument, 0, 'h'},
     {"info", no_argument, 0, 'i'},
     {"detect", no_argument, 0, 'd'},

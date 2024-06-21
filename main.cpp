@@ -10,20 +10,20 @@ CNetworkInterface IUserProgram;
 
 // 인자값 필요로 한다면 :붙이기 ex) hib:s:
 void CheckOption(int &argc, char** &argv){
-    int nOptionIndex= 0;
+    int nOptionIndex = 0;
     int nOpt;
-    const char* pOption="c:dhilmsunf"; 
-    bool networkOption = false;
+    const char* pOption="c:dhilmsunf";
+    bool bNetworkOption = false;
     std::string configPath;
 
-    while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
+    while ((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
             case 'd':
                 Detect();
                 break;
 
             case 'h':
-                IAgentOptions.DisplayHelpOption(); 
+                IAgentOptions.DisplayHelpOption();
                 break;
             
             case 'i':
@@ -53,13 +53,14 @@ void CheckOption(int &argc, char** &argv){
 
             case 'n':
                 IUserProgram.ManageInterface();
-                networkOption = true;
+                bNetworkOption = true;
                 break;
 
             case 'c':
                 LoadConfig(optarg);
                 IFileScanner.StartIniScan();
                 break;
+
             case 'f':
                 Firewall();
                 break;
@@ -75,7 +76,7 @@ void CheckOption(int &argc, char** &argv){
 }
 
 int main(int argc, char **argv){
-    if (argc > 1) 
+    if (argc > 1)
         CheckOption(argc, argv);
     else
         std::cout << "Try 'UdkdAgent --help' for more information." << std::endl;
