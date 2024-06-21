@@ -16,7 +16,6 @@
 
 #define CONFIGPATH "./config.ini"
 
-using namespace std;
 
 // 인자값 필요로 한다면 no_argument -> required_argument
 struct option options[]={

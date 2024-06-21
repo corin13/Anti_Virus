@@ -484,17 +484,18 @@ int CPacketHandler::BlockDetectedIPs() {
             return ERROR_CANNOT_OPEN_FILE;
         }
 
+        Firewall firewall;
         std::string strIp;
         while (std::getline(infile, strIp)) {
             DisableOutput();
-            int nSshInputResult = ::RunIptables("INPUT", strIp, "22", "ACCEPT");
-            int nSshOutputResult = ::RunIptables("OUTPUT", strIp, "22", "ACCEPT");
+            int nSshInputResult = firewall.RunIptables("INPUT", strIp, "22", "ACCEPT");
+            int nSshOutputResult = firewall.RunIptables("OUTPUT", strIp, "22", "ACCEPT");
             EnableOutput();
             if (nSshInputResult != SUCCESS_CODE || nSshOutputResult != SUCCESS_CODE) {
                 std::cerr << "Failed to set SSH exception for IP " << strIp << "." << std::endl;
                 continue;
             }
-            int result = ::RunIptables("INPUT", strIp, "80", "DROP");
+            int result = firewall.RunIptables("INPUT", strIp, "80", "DROP");
             if (result == SUCCESS_CODE) {
                 std::cout << "IP " << strIp << " has been blocked successfully.\n" << std::endl;
             } else {

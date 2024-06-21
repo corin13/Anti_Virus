@@ -7,6 +7,8 @@ CPacketHandler INetworkingOption;
 CEventMonitor IEventMonitor;
 CFileScanner IFileScanner;
 CNetworkInterface IUserProgram;
+CAntiDebugger IAntiDebugger;
+CFirewall IFirewall;
 
 // 인자값 필요로 한다면 :붙이기 ex) hib:s:
 void CheckOption(int &argc, char** &argv){
@@ -19,7 +21,7 @@ void CheckOption(int &argc, char** &argv){
     while((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1 ){
         switch(nOpt){
             case 'd':
-                Detect();
+                IAntiDebugger.Detect();
                 break;
 
             case 'h':
@@ -61,7 +63,7 @@ void CheckOption(int &argc, char** &argv){
                 IFileScanner.StartIniScan();
                 break;
             case 'f':
-                Firewall();
+                IFirewall.StartFirewall();
                 break;
 
             case '?':
