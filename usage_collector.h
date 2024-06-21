@@ -14,10 +14,10 @@ public:
     int GetDiskUsage(std::string& strResult);
     int GetNetworkUsage(std::string& strResult);
     int GetMemoryUsage(std::string& strResult);
-    void ShowProgress(const std::string& message, int progress, int total);
+    void ShowProgress(const std::string& strMessage, int nProgress, int nTotal);
     void DisplayMenu();
     void GetUserChoices(bool& bCollectCpu, bool& bCollectDisk, bool& bCollectNetwork, bool& bCollectMemory);
     int SaveUsageToFile(const std::string& strFileName, bool bCpu, bool bDisk, bool bNetwork, bool bMemory);
     int CollectAndSaveUsage();
-    int GetNetworkInterfaces(std::vector<std::string>& interfaces);
+    int GetNetworkInterfaces(std::vector<std::string>& strInterfaces);
 };

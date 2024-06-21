@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdio>
 #include <dirent.h>
 #include <fstream>
@@ -8,10 +9,9 @@
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <thread>
 #include <unistd.h>
 #include <vector>
-#include <chrono>
-#include <thread>
 #include "usage_collector.h"
 
 // 명령어를 실행하고 그 결과를 문자열로 반환하는 함수
@@ -168,12 +168,12 @@ void CUsageCollector::DisplayMenu() {
 
 // 사용자의 입력을 받아 선택된 옵션을 설정하는 함수
 void CUsageCollector::GetUserChoices(bool& bCollectCpu, bool& bCollectDisk, bool& bCollectNetwork, bool& bCollectMemory) {
-    std::string input;
-    std::getline(std::cin, input);
-    std::istringstream iss(input);
-    int choice;
-    while (iss >> choice) {
-        switch (choice) {
+    std::string strInput;
+    std::getline(std::cin, strInput);
+    std::istringstream iss(strInput);
+    int nChoice;
+    while (iss >> nChoice) {
+        switch (nChoice) {
             case 1:
                 bCollectCpu = true;
                 break;
@@ -187,31 +187,31 @@ void CUsageCollector::GetUserChoices(bool& bCollectCpu, bool& bCollectDisk, bool
                 bCollectMemory = true;
                 break;
             default:
-                std::cerr << "Invalid choice: " << choice << std::endl;
+                std::cerr << "Invalid choice: " << nChoice << std::endl;
                 break;
         }
     }
 }
 
 // 프로그레스 바를 표시하는 함수
-void CUsageCollector::ShowProgress(const std::string& message, int progress, int total) {
-    int barWidth = 70;
-    float progressRatio = static_cast<float>(progress) / total;
-    int pos = static_cast<int>(barWidth * progressRatio);
+void CUsageCollector::ShowProgress(const std::string& strMessage, int nProgress, int nTotal) {
+    int nBarWidth = 70;
+    float progressRatio = static_cast<float>(nProgress) / nTotal;
+    int nPos = static_cast<int>(nBarWidth * progressRatio);
 
     std::cout << COLOR_GREEN << "[";
-    for (int i = 0; i < barWidth; ++i) {
-        if (i < pos) std::cout << "=";
-        else if (i == pos) std::cout << ">";
+    for (int nIndex = 0; nIndex < nBarWidth; ++nIndex) {
+        if (nIndex < nPos) std::cout << "=";
+        else if (nIndex == nPos) std::cout << ">";
         else std::cout << " ";
     }
-    std::cout << "] " << int(progressRatio * 100.0) << " % " << message << COLOR_RESET << "\r";
+    std::cout << "] " << int(progressRatio * 100.0) << " % " << strMessage << COLOR_RESET << "\r";
     std::cout.flush();
 }
 
 // 사용자의 입력을 받아 수집할 데이터 유형을 선택하고 저장하는 함수
 int CUsageCollector::CollectAndSaveUsage() {
-    std::string filename = "usage_data.txt";
+    std::string strFilename = "usage_data.txt";
     bool bCollectCpu = false;
     bool bCollectDisk = false;
     bool bCollectNetwork = false;
@@ -225,56 +225,56 @@ int CUsageCollector::CollectAndSaveUsage() {
             return ERROR_UNKNOWN;
         }
 
-        int totalTasks = 0;
-        if (bCollectCpu) totalTasks++;
-        if (bCollectDisk) totalTasks++;
-        if (bCollectNetwork) totalTasks++;
-        if (bCollectMemory) totalTasks++;
+        int nTotalTasks = 0;
+        if (bCollectCpu) nTotalTasks++;
+        if (bCollectDisk) nTotalTasks++;
+        if (bCollectNetwork) nTotalTasks++;
+        if (bCollectMemory) nTotalTasks++;
 
-        int completedTasks = 0;
+        int nCompletedTasks = 0;
         std::string strCpuUsage, strDiskUsage, strNetworkUsage, strMemoryUsage, strUsageInfo;
         std::cout << "\nCollecting data...\n\n";
 
         if (bCollectCpu) {
-            ShowProgress("CPU Usage", completedTasks, totalTasks);
+            ShowProgress("CPU Usage", nCompletedTasks, nTotalTasks);
             int result = GetCpuUsage(strCpuUsage);
-            completedTasks++;
-            ShowProgress("CPU Usage", completedTasks, totalTasks);
+            nCompletedTasks++;
+            ShowProgress("CPU Usage", nCompletedTasks, nTotalTasks);
             if (result != SUCCESS_CODE) return result;
         }
 
         if (bCollectDisk) {
-            ShowProgress("Disk Usage", completedTasks, totalTasks);
+            ShowProgress("Disk Usage", nCompletedTasks, nTotalTasks);
             int result = GetDiskUsage(strDiskUsage);
-            completedTasks++;
-            ShowProgress("Disk Usage", completedTasks, totalTasks);
+            nCompletedTasks++;
+            ShowProgress("Disk Usage", nCompletedTasks, nTotalTasks);
             if (result != SUCCESS_CODE) return result;
         }
 
         if (bCollectNetwork) {
-            ShowProgress("Network Usage", completedTasks, totalTasks);
+            ShowProgress("Network Usage", nCompletedTasks, nTotalTasks);
             int result = GetNetworkUsage(strNetworkUsage);
-            completedTasks++;
-            ShowProgress("Network Usage", completedTasks, totalTasks);
+            nCompletedTasks++;
+            ShowProgress("Network Usage", nCompletedTasks, nTotalTasks);
             if (result != SUCCESS_CODE) return result;
         }
 
         if (bCollectMemory) {
-            ShowProgress("Memory Usage", completedTasks, totalTasks);
+            ShowProgress("Memory Usage", nCompletedTasks, nTotalTasks);
             int result = GetMemoryUsage(strMemoryUsage);
-            completedTasks++;
-            ShowProgress("Memory Usage", completedTasks, totalTasks);
+            nCompletedTasks++;
+            ShowProgress("Memory Usage", nCompletedTasks, nTotalTasks);
             if (result != SUCCESS_CODE) return result;
         }
 
         std::cout << std::endl;
 
-        int result = SaveUsageToFile(filename, bCollectCpu, bCollectDisk, bCollectNetwork, bCollectMemory);
+        int result = SaveUsageToFile(strFilename, bCollectCpu, bCollectDisk, bCollectNetwork, bCollectMemory);
         if (result != SUCCESS_CODE) {
             return result;
         }
 
-        std::cout << COLOR_GREEN << "Output has been saved to " << filename << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN << "Output has been saved to " << strFilename << COLOR_RESET << std::endl;
         return SUCCESS_CODE;
     } catch (const std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;
