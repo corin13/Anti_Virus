@@ -166,24 +166,56 @@ void CEventMonitor::createInotifyInstance() {
 // 파일 목록을 기반으로 inotify에 감시 대상 추가 함수
 void CEventMonitor::addWatchListToInotify() {
     for (const auto& filePath : m_vecWatchList) {
+        addPathToInotify(filePath);
+    }
+    std::cout << "\n";
+}
+
+// 주어진 경로를 inotify에 추가하고 하위 디렉토리를 순회하며 추가하는 함수
+void CEventMonitor::addPathToInotify(const std::string& path) {
+    std::stack<std::string> paths;
+    paths.push(path);
+
+    while (!paths.empty()) {
+        std::string currentPath = paths.top();
+        paths.pop();
+
         struct stat pathStat;
-        if (stat(filePath.c_str(), &pathStat) != 0) {
-            PrintErrorMessage(ERROR_CANNOT_OPEN_DIRECTORY, filePath);
+        if (stat(currentPath.c_str(), &pathStat) != 0) {
+            PrintErrorMessage(ERROR_CANNOT_OPEN_DIRECTORY, currentPath);
             continue;
         }
 
         if (S_ISREG(pathStat.st_mode) || S_ISDIR(pathStat.st_mode)) {
-            std::string fullPath = GetAbsolutePath(filePath);
+            std::string fullPath = GetAbsolutePath(currentPath);
             int wd = inotify_add_watch(m_inotifyFd, fullPath.c_str(), IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVED_TO | IN_MOVED_FROM);
             if (wd == -1) {
                 PrintErrorMessage(ERROR_CANNOT_OPEN_DIRECTORY, fullPath);
             } else {
                 m_mapWatchDescriptors[wd] = fullPath; // 전체 경로를 매핑에 추가
                 std::cout << COLOR_GREEN << "[+] Monitoring " << fullPath << COLOR_RESET << "\n";
+
+                if (S_ISDIR(pathStat.st_mode)) {
+                    DIR *dir = opendir(fullPath.c_str());
+                    if (dir != nullptr) {
+                        struct dirent *entry;
+                        while ((entry = readdir(dir)) != nullptr) {
+                            if (entry->d_name[0] != '.') { // 숨김 파일과 디렉토리 무시
+                                std::string childPath = fullPath + "/" + entry->d_name;
+                                struct stat childPathStat;
+                                if (stat(childPath.c_str(), &childPathStat) == 0 && S_ISDIR(childPathStat.st_mode)) {
+                                    paths.push(childPath); // 디렉토리인 경우에만 스택에 추가
+                                }
+                            }
+                        }
+                        closedir(dir);
+                    } else {
+                        PrintErrorMessage(ERROR_CANNOT_OPEN_DIRECTORY, fullPath);
+                    }
+                }
             }
         }
     }
-    std::cout << "\n";
 }
 
 // 이벤트 대기 루프 구현
