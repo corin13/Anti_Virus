@@ -2,6 +2,8 @@
 
 
 #define LOG_FILE_PATH "./logs/firewall/"
+#define FIREWALL_INI_FILE "firewall_rules.ini"
+
 #define EXIT_CONFIG (-1)
 
 ////////////////////////////////
@@ -24,7 +26,7 @@
 #define DELETE_NUMBER (1)
 ////////////////////////////////
 
-enum iniFormat {
+enum eIniFormat {
     ACTION=0,
     DIRECTION,
     IP,
