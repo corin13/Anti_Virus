@@ -330,7 +330,7 @@ void CEventMonitor::logEvent(ST_MonitorData& data) {
     if (data.fileSize != -1) {
         logEntry["file_size"] = Json::UInt64(data.fileSize);
     } else {
-        logEntry["file_size"] = "N/A";
+        logEntry["file_size"] = -1;
     }
 
     SaveLogInJson(logEntry, getLogFilePath());

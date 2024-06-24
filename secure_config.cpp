@@ -36,8 +36,7 @@ std::string CSecureConfig::decryptRSA(const std::vector<unsigned char>& encrypte
 
     FILE* privateKeyFile = fopen(m_privateKeyPath.c_str(), "rb");
     if (!privateKeyFile) {
-        //throw std::runtime_error("Unable to open private key file");
-        throw std::runtime_error("이게 열릴까"+m_privateKeyPath);
+        throw std::runtime_error("Unable to open private key file" + m_privateKeyPath);
 
     }
 
