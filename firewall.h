@@ -2,6 +2,8 @@
 
 
 #define LOG_FILE_PATH "./logs/firewall/"
+#define FIREWALL_INI_FILE "firewall_rules.ini"
+
 #define EXIT_CONFIG (-1)
 
 ////////////////////////////////
@@ -24,7 +26,7 @@
 #define DELETE_NUMBER (1)
 ////////////////////////////////
 
-enum iniFormat {
+enum eIniFormat {
     ACTION=0,
     DIRECTION,
     IP,
@@ -62,23 +64,23 @@ public:
     int RunFirewall();
     int ConfigureFirewall();
     int ViewLogs();
-    int RunIptables(const std::string& direction, const std::string& ip, const std::string& port, const std::string& action);
-    static void ExecCommand(const std::string& cmd);
+    int RunIptables(const std::string& strDirection, const std::string& strIp, const std::string& strPort, const std::string& strAction);
+    static void ExecCommand(const std::string& strCmd);
 
 private:
-    int AddRule(std::vector<std::string>& words);
-    int UpdateRule(std::vector<std::string>& words);
-    int DeleteRule(std::vector<std::string>& words);
+    int AddRule(std::vector<std::string>& vecWords);
+    int UpdateRule(std::vector<std::string>& vecWords);
+    int DeleteRule(std::vector<std::string>& vecWords);
     int RuleList();
 
     void PrintConfigManual();
-    static void handleExit(int signum);
-    std::vector<std::string> ConfigureUserInput(std::string& input);
-    std::string GetSectionName(const auto& iniData, int number);
-    bool isValidIP(const std::string& ip);
-    bool isValidPort(const std::string& port);
-    bool isValidNumber(const std::string& number);
-    int isValidInput(std::vector<std::string>& words);
+    static void handleExit(int nSignum);
+    std::vector<std::string> ConfigureUserInput(std::string& strInput);
+    std::string GetSectionName(const auto& vecIniData, int nNumber);
+    bool isValidIP(const std::string& strIp);
+    bool isValidPort(const std::string& strPort);
+    bool isValidNumber(const std::string& strNumber);
+    int isValidInput(std::vector<std::string>& vecWords);
     int PrintFirewallHelp();
     
 };
