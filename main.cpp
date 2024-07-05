@@ -1,5 +1,6 @@
 #include "main.h"
 #include "config.h"
+#include "crypto_utils.h"
 
 CUdkdAgentOptions IAgentOptions;
 CUsageCollector IUsageOption;
@@ -77,6 +78,12 @@ void CheckOption(int &argc, char** &argv) {
 }
 
 int main(int argc, char **argv){
+    const std::string keyFilePath = ENCRYPTION_KEY;
+
+    if (!CCryptoUtils::FileExists(keyFilePath)) {
+        std::vector<unsigned char> key = CCryptoUtils::GenerateRandomKey(32);
+        CCryptoUtils::SaveKeyToFile(key, keyFilePath);
+    }
     if (argc > 1)
         CheckOption(argc, argv);
     else

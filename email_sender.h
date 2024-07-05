@@ -31,6 +31,8 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> lastEmailSentTime;
     const std::chrono::minutes emailInterval = std::chrono::minutes(5);
     const std::string timeFilePath = "last_email_time.txt";
+    const std::string keyFilePath = "encryption_key.dat";
+
 
     std::string GetEmailPassword();
     std::string GetSenderEmail();

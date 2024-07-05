@@ -25,7 +25,6 @@ std::unordered_map<std::string, std::vector<std::string>> LogParser::ParsePacket
         // capture 상태에서는 로그를 기록
         if (capture) {
             logData[date].push_back(line);
-            std::cout << "Captured line: " << line << std::endl; // 디버그 출력
         }
 
         // 다음 날짜 라인이 나오면 capture 종료

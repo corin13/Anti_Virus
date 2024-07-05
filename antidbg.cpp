@@ -1,12 +1,5 @@
 #include "antidbg.h"
 
-/*
-수정해야 할 것들
-1. 변수명, 함수명 제대로 짓기
-2. 변수명 코딩 컨벤션 맞추기
-3. 시간 되면 파일 오픈, exe파일 해시 할 때 검증 절차 추가
-*/
-
 CAntiDebugger::CAntiDebugger() {
     mProcessName = GetName();
     mGdbHash = GetHash("/usr/bin/gdb");
@@ -131,35 +124,27 @@ std::string CAntiDebugger::GetName(){
 
 
 std::string CAntiDebugger::GetHash(const std::string& filePath) {
-    // 해시 값을 저장할 벡터를 생성해요.
     std::vector<unsigned char> vecHash(SHA256_DIGEST_LENGTH);
 
-    // 파일을 바이너리 모드로 열어요.
     std::ifstream ifs(filePath, std::ifstream::binary);
     
-    // 파일을 열지 못하면 예외를 발생시켜요.
     if (!ifs) {
         throw std::runtime_error("Failed to open file: " + filePath);
     }
 
-    // SHA-256 컨텍스트를 초기화해요.
     SHA256_CTX sha256Context;
     SHA256_Init(&sha256Context);
 
-    // 데이터를 읽어올 버퍼를 생성해요.
     std::vector<char> vecBuffer(1024);
     
-    // 파일을 끝까지 읽어요.
     while (ifs.good()) {
         ifs.read(vecBuffer.data(), vecBuffer.size());
         SHA256_Update(&sha256Context, vecBuffer.data(), ifs.gcount());
     }
     ifs.close();
 
-    // 최종 SHA-256 해시 값을 계산해요.
     SHA256_Final(vecHash.data(), &sha256Context);
 
-    // 해시 값을 16진수 문자열로 변환해요.
     std::ostringstream oss;
     for(const auto& byte : vecHash) {
         oss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte);
