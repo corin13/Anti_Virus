@@ -16,6 +16,7 @@
 #include "email_sender.h"
 
 #define CONFIGPATH "./config.ini"
+#define ENCRYPTION_KEY "./encryption_key.dat"
 
 // 인자값 필요로 한다면 no_argument -> required_argument
 struct option options[] = {

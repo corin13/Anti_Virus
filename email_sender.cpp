@@ -1,4 +1,3 @@
-#include "email_sender.h"
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
@@ -10,6 +9,9 @@
 #include "util.h"
 #include "log_parser.h"
 #include "event_monitor.h"
+#include "email_sender.h"
+#include "aes.h"
+#include "crypto_utils.h"
 
 EmailSender::EmailSender(const std::string& smtpServer, int smtpPort, const std::string& emailAddress)
     : m_strSmtpServer(smtpServer), m_nSmtpPort(smtpPort), m_strEmailAddress(emailAddress), m_curl(nullptr) {
@@ -158,23 +160,56 @@ int EmailSender::SendEmailWithAttachment(const std::string& subject, const std::
 }
 
 void EmailSender::LoadLastEmailSentTime() {
-    std::ifstream timeFile(timeFilePath);
+    std::vector<unsigned char> key = CCryptoUtils::GetOrGenerateKey(keyFilePath, 32);
+    
+    std::ifstream timeFile(timeFilePath, std::ios::binary);
     if (timeFile.is_open()) {
-        int64_t d;
-        timeFile >> d;
-        lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>(std::chrono::steady_clock::duration(d));
+        std::vector<unsigned char> encryptedData((std::istreambuf_iterator<char>(timeFile)), std::istreambuf_iterator<char>());
         timeFile.close();
+
+        try {
+            std::string decryptedData = CAES::DecryptData(encryptedData, key);
+            std::string storedHash = CCryptoUtils::LoadHashFromFile(timeFilePath + ".hash");
+
+            if (!CCryptoUtils::VerifyHash(decryptedData, storedHash)) {
+                throw std::runtime_error("Hash verification failed.");
+            }
+
+            int64_t d;
+            std::istringstream iss(decryptedData);
+            iss >> d;
+
+            if (iss.fail() || d < 0) {
+                lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>::min();
+            } else {
+                lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>(std::chrono::steady_clock::duration(d));
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "Decryption or hash verification failed: " << e.what() << "\n";
+            lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>::min();
+        }
     } else {
         lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>::min();
     }
 }
 
 void EmailSender::SaveLastEmailSentTime() {
-    std::ofstream timeFile(timeFilePath);
+    std::vector<unsigned char> key = CCryptoUtils::GetOrGenerateKey(keyFilePath, 32);
+
+    std::ostringstream oss;
+    oss << lastEmailSentTime.time_since_epoch().count();
+    std::string plainText = oss.str();
+
+    std::vector<unsigned char> encryptedData = CAES::EncryptData(plainText, key);
+    std::string hash = CCryptoUtils::GenerateHash(plainText);
+
+    std::ofstream timeFile(timeFilePath, std::ios::binary);
     if (timeFile.is_open()) {
-        timeFile << lastEmailSentTime.time_since_epoch().count();
+        timeFile.write(reinterpret_cast<const char*>(encryptedData.data()), encryptedData.size());
         timeFile.close();
     }
+
+    CCryptoUtils::SaveHashToFile(hash, timeFilePath + ".hash");
 }
 
 std::string EmailSender::GetFirewallLogFilePath(const std::string& date) const {
