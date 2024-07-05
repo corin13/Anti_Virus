@@ -46,6 +46,8 @@ int CFirewall::RunFirewall() {
     signal(SIGINT, handleExit);
     signal(SIGTERM, handleExit);
 
+    DefaultRuleSet();
+
     auto& vecIniData = FirewallConfig::Instance().GetIniData();
     for (auto& stId : vecIniData) {
         std::vector<std::string> vecIniList;
@@ -55,8 +57,11 @@ int CFirewall::RunFirewall() {
         }
         RunIptables(vecIniList[DIRECTION], vecIniList[IP], vecIniList[PORT], vecIniList[ACTION]);
     }
-
-    CFirewall::ExecCommand("./firewall_logs.sh");
+    
+    std::string logfile="/var/log/syslog";
+    std::string outputfile="./logs/firewall/$(date +%y%m%d).log";
+    std::string command = "tail -n 0 -F " + logfile + " | grep --line-buffered -E \"BLOCK|ALLOW\" | tee -a " + outputfile;
+    CFirewall::ExecCommand(command);
 
     return SUCCESS_CODE;
 }
@@ -116,26 +121,28 @@ int CFirewall::ConfigureFirewall() {
 
 int CFirewall::ViewLogs() {
     std::vector<std::string> vecFilesPath;
-    std::vector<std::string> vecFiles;
     int nNumber;
     int nCnt = 1;
+
+    VariadicTable<int, std::string> vt({"No", "File Name"}, 10);
 
     if (std::filesystem::exists(LOG_FILE_PATH)) {
         for (const auto& entry : std::filesystem::directory_iterator(LOG_FILE_PATH)) {
             if (std::filesystem::is_regular_file(entry.status())) {
                 vecFilesPath.push_back(entry.path().string());
-                vecFiles.push_back(entry.path().filename().string());
-            }
+            }   
         }
-    } else {
+    }
+    else {
         std::cerr << "ERROR: Cannot open file" << std::endl;
         return ERROR_CANNOT_OPEN_FILE;
     }
+    std::sort(vecFilesPath.begin(), vecFilesPath.end());
 
-    VariadicTable<int, std::string> vt({"No", "Name"}, 10);
-
-    for (const auto& strFile : vecFiles) {
-        vt.addRow(nCnt, strFile);
+    for(std::string strFilePath : vecFilesPath) {
+        size_t siLastSlash = strFilePath.find_last_of('/');
+        std::string strFileName = strFilePath.substr(siLastSlash + 1);
+        vt.addRow(nCnt, strFileName);
         nCnt++;
     }
 
@@ -149,12 +156,13 @@ int CFirewall::ViewLogs() {
 
     if (isValidNumber(strInput)) {
         nNumber = std::stoi(strInput);
-    } else {
+    } 
+    else {
         PrintInputError(strInput);
         return ERROR_INVALID_INPUT;
     }
 
-    if (nNumber < 1 || nNumber > vecFiles.size()) {
+    if (nNumber < 1 || nNumber > vecFilesPath.size()) {
         PrintError("Invalid number");
         return ERROR_INVALID_INPUT;
     }
@@ -357,7 +365,19 @@ int CFirewall::isValidInput(std::vector<std::string>& vecWords) {
 }
 
 int CFirewall::AddRule(std::vector<std::string>& vecWords) {
+    if (!FirewallConfig::Instance().Load(FIREWALL_INI_FILE)) {
+        std::cerr << "Failed to load firewall rules in Configure\n";
+        return ERROR_INVALID_FUNCTION;
+    }
+
     try {
+        
+        auto iniData = FirewallConfig::Instance().GetIniData();
+        if (iniData.size() >= MAX_RULE_NUM){
+            std::cout << "You cannot add more than " << std::to_string(MAX_RULE_NUM) << " rules \n" << std::endl;
+            return SUCCESS_CODE;
+        }
+
         FirewallConfig::Instance().AddRule(vecWords[ADD_DIRECTION], vecWords[ADD_IP], vecWords[ADD_PORT], vecWords[ADD_ACTION]);
         std::cout << "Rule successfully added\n" << std::endl;
         return SUCCESS_CODE;
@@ -412,12 +432,12 @@ int CFirewall::RuleList() {
     auto vecIniData = FirewallConfig::Instance().GetIniData();
     int nRuleNumber = 0;
 
-    for (const auto& stId : vecIniData) {
+    for (const auto& id : vecIniData) {
         nRuleNumber++;
         std::vector<std::string> vecDataFormat;
 
-        for (const auto& stSd : stId.second) {
-            vecDataFormat.push_back(stSd.second);
+        for (const auto& sd : id.second) {
+            vecDataFormat.push_back(sd.second);
         }
         vt.addRow(nRuleNumber, vecDataFormat[DIRECTION], vecDataFormat[IP], vecDataFormat[PORT], vecDataFormat[ACTION]);
     }
@@ -426,6 +446,27 @@ int CFirewall::RuleList() {
 
     return SUCCESS_CODE;
 }
+
+void CFirewall::DefaultRuleSet(){
+    std::vector<std::string> vecDefaultRules = {
+        "DROP INPUT ANY 0",
+        "DROP OUTPUT ANY 0",
+    };
+
+    for (std::string strRule : vecDefaultRules){
+
+        std::istringstream issRule(strRule);
+        std::vector<std::string> vecRule;
+        std::string strTmp;
+
+        while (issRule >> strTmp){
+            vecRule.push_back(strTmp);
+        }
+
+        RunIptables(vecRule[DIRECTION], vecRule[IP], vecRule[PORT], vecRule[ACTION]);
+    }
+}
+
 
 void CFirewall::PrintConfigManual() {
     std::cout << COLOR_BLUE "[ADD]    : " COLOR_RESET " [A/add] [TO/FROM] [IP] [PORT] [ACCEPT(o)/DROP(x)] \n"
@@ -460,6 +501,8 @@ void CFirewall::ExecCommand(const std::string& strCmd) {
 
     pclose(pPipe);
 }
+
+
 
 std::string CFirewall::GetSectionName(const auto& vecIniData, int nNumber) {
     int nCnt = 1;
