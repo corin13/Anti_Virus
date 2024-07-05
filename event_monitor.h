@@ -50,6 +50,7 @@ private:
     void readWatchList();
     void createInotifyInstance();
     void addWatchListToInotify();
+    void addPathToInotify(const std::string& path);
     void runEventLoop();
     void processEvent(struct inotify_event *event);
     std::string CalculateFileHash(std::string filePath);

@@ -1,6 +1,6 @@
 {
     "files.associations": {
-        "iosfwd": "cpp",
+        "chrono": "cpp",
         "any": "cpp",
         "array": "cpp",
         "atomic": "cpp",
@@ -8,7 +8,6 @@
         "*.tcc": "cpp",
         "bitset": "cpp",
         "cctype": "cpp",
-        "chrono": "cpp",
         "clocale": "cpp",
         "cmath": "cpp",
         "codecvt": "cpp",
@@ -51,6 +50,7 @@
         "fstream": "cpp",
         "initializer_list": "cpp",
         "iomanip": "cpp",
+        "iosfwd": "cpp",
         "iostream": "cpp",
         "istream": "cpp",
         "limits": "cpp",

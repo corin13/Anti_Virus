@@ -1,97 +1,102 @@
-#define DETECT (201)
-#define NOT_DETECT (200)
-
-#include "antidbg.h"
+    #include "antidbg.h"
 
 
-std::string GetStatInfo(const std::string& path) {
-    std::string stat_path = path + "/stat";
-    std::ifstream stat_file(stat_path);
-    std::string stat;
+CAntiDebugger::CAntiDebugger() {}
+CAntiDebugger::~CAntiDebugger() {}
 
-    if (!stat_file.is_open()) {
-        throw std::runtime_error("File: " + stat_path);
+std::string CAntiDebugger::GetStatInfo(const std::string& strPath) {
+    std::string strStatPath = strPath + "/stat";
+    std::ifstream ifsStatFile(strStatPath);
+    if (!ifsStatFile.is_open()) {
+        throw std::runtime_error("File: " + strStatPath);
     }
 
-    std::getline(stat_file, stat);
-    stat_file.close();
-    return stat;
+    std::string strStat((std::istreambuf_iterator<char>(ifsStatFile)), std::istreambuf_iterator<char>());
+
+    ifsStatFile.close();
+    return strStat;
 }
 
-std::vector<std::string> ParseStat(const std::string& stat) {
-    std::istringstream iss(stat);
-    std::string token;
-    std::vector<std::string> tokens;
+std::vector<std::string> CAntiDebugger::ParseStat(const std::string& strStat) {
+    std::istringstream issStrStat(strStat);
+    std::vector<std::string> vecTokens;
+    std::string strToken;
 
-    while (iss >> token) {
-        tokens.push_back(token);
+    while (issStrStat >> strToken) {
+        vecTokens.push_back(strToken);
     }
-    return tokens;
+    return vecTokens;
 }
 
-int CheckProcess() {
-    DIR* dir;
-    struct dirent* entry;
-    std::vector<std::string> dbg_pids;
-    std::vector<std::string> udkd_pids;
-    std::vector<std::string> udkd_ppids;
-    std::vector<std::string> stat_parse;
+int CAntiDebugger::CheckProcess() {
+    DIR* pDir;
+    struct dirent* pEntry;
+    std::unordered_set<std::string> setDbgPids;
+    std::vector<std::pair<std::string, std::string>> vecUdkdPids;
 
-    //dir open
-    if ((dir = opendir("/proc")) == nullptr){
+    if ((pDir = opendir("/proc")) == nullptr) {
         return ERROR_CANNOT_OPEN_DIRECTORY;
     }
 
-    while ((entry = readdir(dir)) != nullptr) {
-        if (entry->d_type == DT_DIR && std::string(entry->d_name).find_first_not_of("0123456789") == std::string::npos) {
-            std::string path = "/proc/" + std::string(entry->d_name);
-            std::string stat;
+    while ((pEntry = readdir(pDir)) != nullptr) {
+        if (pEntry->d_type == DT_DIR && std::string(pEntry->d_name).find_first_not_of("0123456789") == std::string::npos) {
+            std::string strPath = "/proc/" + std::string(pEntry->d_name);
+            std::string strStat;
 
             try {
-                stat = GetStatInfo(path);
-            } catch (const std::exception& e) {
+                strStat = GetStatInfo(strPath);
+            } 
+            catch (const std::exception& e) {
                 std::cerr << e.what() << std::endl;
+                closedir(pDir);
                 return ERROR_CANNOT_OPEN_FILE;
             }
 
-            std::vector<std::string> stat_parse = ParseStat(stat);
+            auto vecStatParse = ParseStat(strStat);
 
-            if (stat_parse[1] == "(gdb)") {
-                dbg_pids.push_back(stat_parse[0]);
-            } else if (stat_parse[1] == "(UdkdAgent)") {
-                udkd_pids.push_back(stat_parse[0]);
-                udkd_ppids.push_back(stat_parse[3]);
+            if (vecStatParse.size() > 3) {
+                std::string strPid = vecStatParse[0];
+                std::string strName = vecStatParse[1];
+                std::string strPpid = vecStatParse[3];
+
+                if (strName == "(gdb)") {
+                    setDbgPids.insert(strPid);
+                } else if (strName == "(UdkdAgent)") {
+                    vecUdkdPids.emplace_back(strPid, strPpid);
+                }
+            }
+            else{
+                std::cerr << "ERROR" <<std::endl;
+                return ERROR_UNKNOWN;
             }
         }
     }
-    closedir(dir);
+    closedir(pDir);
 
-    // Kill process
-    for (size_t i = 0; i < udkd_pids.size(); ++i) {
-        if (std::find(dbg_pids.begin(), dbg_pids.end(), udkd_ppids[i]) != dbg_pids.end()) {
-            kill(std::stoi(udkd_pids[i]), SIGTERM);
+    for (auto& [strPid, strPpid] : vecUdkdPids) {
+        if (setDbgPids.find(strPpid) != setDbgPids.end()) {
+            kill(std::stoi(strPid), SIGTERM);
+            
             return DETECT;
         }
-
+        
     }
     return NOT_DETECT;
 }
 
-void Detect() {
+void CAntiDebugger::Detect() {
     std::cout << "Process started. The system is now protected against debugging attempts." << std::endl;
 
     while (true) {
-        int stateCode = CheckProcess();
+        int nStateCode = CheckProcess();
 
-        if (stateCode == DETECT) {
+        if (nStateCode == DETECT) {
             std::cout << "Debugger detected! Terminating program" << std::endl;
-        }
-        else if(stateCode == NOT_DETECT) {
+        } else if (nStateCode == NOT_DETECT) {
             std::cout << "Anti-debugging Logic Running…" << std::endl;
-        }
-        else {
-            std::cout << GetErrorMessage(stateCode) << std:: endl;
-            exit(stateCode);
+        } else {
+            std::cout << GetErrorMessage(nStateCode) << std::endl;
+            exit(nStateCode);
         }
 
         sleep(3);

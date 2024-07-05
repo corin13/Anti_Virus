@@ -1,5 +1,6 @@
 #include "main.h"
 #include "config.h"
+#include "crypto_utils.h"
 
 CUdkdAgentOptions IAgentOptions;
 CUsageCollector IUsageOption;
@@ -8,19 +9,21 @@ CPacketHandler INetworkingOption;
 CEventMonitor IEventMonitor;
 CFileScanner IFileScanner;
 CNetworkInterface IUserProgram;
+CAntiDebugger IAntiDebugger;
+CFirewall IFirewall;
 
 // 인자값 필요로 한다면 :붙이기 ex) hib:s:
 void CheckOption(int &argc, char** &argv) {
     int nOptionIndex = 0;
     int nOpt;
     const char* pOption = "c:dhilmsunfe"; 
-    bool networkOption = false;
+    bool bNetworkOption = false;
     std::string configPath;
 
     while ((nOpt = getopt_long(argc, argv, pOption, options, &nOptionIndex)) != -1) {
         switch (nOpt) {
             case 'd':
-                Detect();
+                IAntiDebugger.Detect();
                 break;
             case 'h':
                 IAgentOptions.DisplayHelpOption();
@@ -47,14 +50,14 @@ void CheckOption(int &argc, char** &argv) {
                 break;
             case 'n':
                 IUserProgram.ManageInterface();
-                networkOption = true;
+                bNetworkOption = true;
                 break;
             case 'c':
                 LoadConfig(optarg);
                 IFileScanner.StartIniScan();
                 break;
             case 'f':
-                Firewall();
+                IFirewall.StartFirewall();
                 break;
             case 'e': {
                 std::string configPath = CONFIGPATH;
@@ -73,8 +76,15 @@ void CheckOption(int &argc, char** &argv) {
         }
     }
 }
+
 int main(int argc, char **argv){
-    if (argc > 1) 
+    const std::string keyFilePath = ENCRYPTION_KEY;
+
+    if (!CCryptoUtils::FileExists(keyFilePath)) {
+        std::vector<unsigned char> key = CCryptoUtils::GenerateRandomKey(32);
+        CCryptoUtils::SaveKeyToFile(key, keyFilePath);
+    }
+    if (argc > 1)
         CheckOption(argc, argv);
     else
         std::cout << "Try 'UdkdAgent --help' for more information." << std::endl;

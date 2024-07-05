@@ -5,3 +5,7 @@ logs/
 *.txt
 
 *.db
+
+*.dat
+
+*.hash

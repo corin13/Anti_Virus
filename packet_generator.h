@@ -26,6 +26,6 @@
 
 class CPacketGenerator {
 public: 
-    int GenerateMaliciousPackets(std::atomic<int>& totalMaliciousPacketsSent);
-    int SendMaliciousPacket(const char* src_ip, const char* dst_ip, int packet_count, std::ofstream& logFile);
+    int GenerateMaliciousPackets(std::atomic<int>& nTotalMaliciousPacketsSent);
+    int SendMaliciousPacket(const char* pSrcIp, const char* pDstIp, int nPacketCount, std::ofstream& logFile);
 };

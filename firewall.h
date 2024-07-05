@@ -2,13 +2,15 @@
 
 
 #define LOG_FILE_PATH "./logs/firewall/"
+#define FIREWALL_INI_FILE "firewall_rules.ini"
+
 #define EXIT_CONFIG (-1)
 
 ////////////////////////////////
 #define COMMAND (0)
 //ADD
 #define ADD_MAX_LENGTH (5)
-#define ADD_MIN_LENGHT (4)
+#define ADD_MIN_LENGTH (4)
 #define ADD_DIRECTION (1)
 #define ADD_IP (2)
 #define ADD_PORT (3)
@@ -24,7 +26,7 @@
 #define DELETE_NUMBER (1)
 ////////////////////////////////
 
-enum iniFormat {
+enum eIniFormat {
     ACTION=0,
     DIRECTION,
     IP,
@@ -56,35 +58,29 @@ enum iniFormat {
 #include "config.h"
 #include "util.h"
 
-int Firewall();
+class CFirewall {
+public:
+    int StartFirewall();
+    int RunFirewall();
+    int ConfigureFirewall();
+    int ViewLogs();
+    int RunIptables(const std::string& strDirection, const std::string& strIp, const std::string& strPort, const std::string& strAction);
+    static void ExecCommand(const std::string& strCmd);
 
-int RunFirewall();
-int ConfigureFirewall();
-int ViewLogs();
+private:
+    int AddRule(std::vector<std::string>& vecWords);
+    int UpdateRule(std::vector<std::string>& vecWords);
+    int DeleteRule(std::vector<std::string>& vecWords);
+    int RuleList();
 
-int AddRule(std::vector<std::string>& words);
-int UpdateRule(std::vector<std::string>& words);
-int DeleteRule(std::vector<std::string>& words);
-int RuleList();
-
-void PrintConfigMenual();
-
-void handle_exit(int signum);
-
-void ExecCommand(std::string cmd);
-void RunLogScript();
-
-int FirewallHelp();
-
-std::vector<std::string> ConfigureUserInput(std::string& input);
-std::string GetSectionName(auto& iniData, int number);
-
-
-int RunIptables();
-int RunIptables(std::string direction, std::string ip, std::string port, std::string action);
-
-int isVaildInput(std::vector<std::string>& words);
-bool isValidIP(const std::string& ip);
-bool isValidPort(const std::string& port);
-bool isValidNumber(const std::string& number);
-
+    void PrintConfigManual();
+    static void handleExit(int nSignum);
+    std::vector<std::string> ConfigureUserInput(std::string& strInput);
+    std::string GetSectionName(const auto& vecIniData, int nNumber);
+    bool isValidIP(const std::string& strIp);
+    bool isValidPort(const std::string& strPort);
+    bool isValidNumber(const std::string& strNumber);
+    int isValidInput(std::vector<std::string>& vecWords);
+    int PrintFirewallHelp();
+    
+};
