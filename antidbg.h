@@ -35,7 +35,7 @@ private:
     std::vector<std::string> ParseStat(const std::string& strStat);   // /proc/[pid]/stat 데이터 파싱
     int CheckProcess();   // 실행 중인 프로세스를 확인하여 디버거 감지
     std::string GetName(); //현재 실행되는 내 프로그램의 이름 가져오기 ex: (UdkdAgent)
-    std::string GetHash(const std::string& filePath); //md5로 해시하는 함수
+    std::string GetHash(const std::string& filePath); //sha256으로 해시하는 함수
     std::string mProcessName;
     std::string mGdbHash;
 };
