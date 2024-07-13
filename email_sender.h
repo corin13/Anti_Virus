@@ -41,5 +41,6 @@ private:
     void LoadLastEmailSentTime(); // 마지막 이메일 전송 시간 로드
     void SaveLastEmailSentTime(); // 마지막 이메일 전송 시간 저장
     std::string GetFirewallLogFilePath(const std::string& date) const; // 날짜별 로그 파일 경로 가져오기
+    void CreateFileWithPermissions(const std::string& filePath, mode_t mode); 
 
 };

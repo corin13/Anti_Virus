@@ -4,6 +4,9 @@
 #include <iomanip>
 #include <jsoncpp/json/json.h>
 #include <fstream>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "ini.h"
 #include "secure_config.h"
 #include "util.h"
@@ -114,6 +117,12 @@ int EmailSender::SendEmailWithAttachment(const std::string& subject, const std::
             return ERROR_CANNOT_SEND_EMAIL;
         }
     }
+    try {
+        LoadLastEmailSentTime();
+    } catch (const std::exception& e) {
+        std::cerr << "Email send attempt failed due to hash verification error: " << e.what() << std::endl;
+        return ERROR_CANNOT_SEND_EMAIL;
+    }
 
     std::string emailPassword = GetEmailPassword();
     if (emailPassword.empty()) {
@@ -183,10 +192,17 @@ void EmailSender::LoadLastEmailSentTime() {
                 lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>::min();
             } else {
                 lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>(std::chrono::steady_clock::duration(d));
+                auto now = std::chrono::steady_clock::now();
+                auto durationSinceLastEmail = std::chrono::duration_cast<std::chrono::hours>(now - lastEmailSentTime);
+                if (durationSinceLastEmail.count() >= 1) {
+                    lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>::min();
+                    SaveLastEmailSentTime();
+                }
             }
         } catch (const std::exception &e) {
             std::cerr << "Decryption or hash verification failed: " << e.what() << "\n";
-            lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>::min();
+            lastEmailSentTime = std::chrono::steady_clock::now() + std::chrono::minutes(10);
+            SaveLastEmailSentTime();
         }
     } else {
         lastEmailSentTime = std::chrono::time_point<std::chrono::steady_clock>::min();
@@ -202,15 +218,28 @@ void EmailSender::SaveLastEmailSentTime() {
 
     std::vector<unsigned char> encryptedData = CAES::EncryptData(plainText, key);
     std::string hash = CCryptoUtils::GenerateHash(plainText);
-
+    CreateFileWithPermissions(timeFilePath, S_IRUSR | S_IWUSR);
     std::ofstream timeFile(timeFilePath, std::ios::binary);
     if (timeFile.is_open()) {
         timeFile.write(reinterpret_cast<const char*>(encryptedData.data()), encryptedData.size());
         timeFile.close();
     }
-
+    CreateFileWithPermissions(timeFilePath + ".hash", S_IRUSR | S_IWUSR);
     CCryptoUtils::SaveHashToFile(hash, timeFilePath + ".hash");
 }
+
+void EmailSender::CreateFileWithPermissions(const std::string& filePath, mode_t mode) {
+    int fd = open(filePath.c_str(), O_WRONLY | O_CREAT, mode);
+    if (fd == -1) {
+        throw std::runtime_error("Failed to create file: " + filePath);
+    }
+    if (fchmod(fd, mode) == -1) {
+        close(fd);
+        throw std::runtime_error("Failed to set file permissions: " + filePath);
+    }
+    close(fd);
+}
+
 
 std::string EmailSender::GetFirewallLogFilePath(const std::string& date) const {
     return FIREWALL_LOG_FILE_PATH + date + ".log";
