@@ -3,7 +3,7 @@
 
 #define LOG_FILE_PATH "./logs/firewall/"
 #define FIREWALL_INI_FILE "firewall_rules.ini"
-
+#define MAX_RULE_NUM (1000)
 #define EXIT_CONFIG (-1)
 
 ////////////////////////////////
@@ -48,7 +48,6 @@ enum eIniFormat {
 #include <csignal>
 #include <algorithm>
 
-
 #include "error_codes.h"
 #include "VariadicTable.h"
 #include "config_firewall.h"
@@ -82,5 +81,6 @@ private:
     bool isValidNumber(const std::string& strNumber);
     int isValidInput(std::vector<std::string>& vecWords);
     int PrintFirewallHelp();
-    
+    void DefaultRuleSet();
+
 };
